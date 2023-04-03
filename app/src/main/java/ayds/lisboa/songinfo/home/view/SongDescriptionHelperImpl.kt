@@ -18,8 +18,21 @@ internal class SongDescriptionHelperImpl : SongDescriptionHelper {
                 }\n" +
                         "Artist: ${song.artistName}\n" +
                         "Album: ${song.albumName}\n" +
-                        "Year: ${song.getSongYear(song.releaseDate,song.releaseDatePrecision)}"
+                        "Year: ${getSongDate(song.releaseDate, song.releaseDatePrecision)}"
             else -> "Song not found"
         }
+    }
+
+    private fun getSongDate(releaseDate: String, releaseDatePrecision: String): String {
+        var result = ""
+        val releaseDateArray = releaseDate.split("-")
+
+        when (releaseDatePrecision) {
+            "year" -> result = releaseDateArray.first()
+            "month" -> result = releaseDateArray.component1() + "-" + releaseDateArray.component2()
+            "day" -> result = releaseDate
+        }
+
+        return result
     }
 }

@@ -24,15 +24,8 @@ internal class SongDescriptionHelperImpl : SongDescriptionHelper {
     }
 
     private fun getSongDate(releaseDate: String, releaseDatePrecision: String): String {
-        var result = ""
-        val releaseDateArray = releaseDate.split("-")
+        val songDateHelper:SongDateHelper =SongDateHelperImpl(releaseDate,releaseDatePrecision)
 
-        when (releaseDatePrecision) {
-            "year" -> result = releaseDateArray.first()
-            "month" -> result = releaseDateArray.component1() + "-" + releaseDateArray.component2()
-            "day" -> result = releaseDate
-        }
-
-        return result
+        return songDateHelper.getFormat()
     }
 }

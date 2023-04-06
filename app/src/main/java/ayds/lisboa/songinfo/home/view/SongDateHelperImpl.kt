@@ -12,7 +12,7 @@ class SongDateHelperImpl(private val releaseDate: String, private val releaseDat
     val date  = releaseDate.split("-")
     override fun getFormat(): String {
 
-        var result:String = ""
+        var result = ""
         when (releaseDatePrecision) {
             "year" ->  result = getYearFormat()
             "month"-> result =  getMonthFormat()
@@ -22,17 +22,17 @@ class SongDateHelperImpl(private val releaseDate: String, private val releaseDat
     }
     private fun getMonth(Month: String):String
     {
-        var result:String =""
+        var result = ""
         when(Month) {
-            "1"->result = "January"
-            "2"->result = "February"
-            "3"->result = "March"
-            "4"->result = "April"
-            "5"->result = "May"
-            "6"->result = "June"
-            "7"->result = "July"
-            "8"->result = "August"
-            "9"->result = "September"
+            "01"->result = "January"
+            "02"->result = "February"
+            "03"->result = "March"
+            "04"->result = "April"
+            "05"->result = "May"
+            "06"->result = "June"
+            "07"->result = "July"
+            "08"->result = "August"
+            "09"->result = "September"
             "10"->result = "October"
             "11"->result = "November"
             "12"->result = "December"
@@ -41,7 +41,7 @@ class SongDateHelperImpl(private val releaseDate: String, private val releaseDat
     }
 
     private fun getYearFormat():String{
-        var leapYear:LeapYear = LeapYearImpl(date.component1().toInt())
+        val leapYear:LeapYear = LeapYearImpl(date.component1().toInt())
         return date.component1() + " " + leapYear.isLeapYear()
     }
 

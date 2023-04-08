@@ -9,7 +9,7 @@ interface SongDateHelper {
 
 class SongDateHelperImpl(private val releaseDate: String, private val releaseDatePrecision: String): SongDateHelper {
 
-    val date  = releaseDate.split("-")
+    private val date  = releaseDate.split("-")
     override fun getFormat(): String {
 
         var result = ""
@@ -41,8 +41,8 @@ class SongDateHelperImpl(private val releaseDate: String, private val releaseDat
     }
 
     private fun getYearFormat():String{
-        val leapYear:LeapYear = LeapYearImpl(date.component1().toInt())
-        return date.component1() + " " + leapYear.isLeapYear()
+        val leapYear: LeapYear = LeapYearImpl(date.component1().toInt())
+        return date.component1() + " " + (if(leapYear.isLeapYear()) "(leap year)" else "(not a leap year)")
     }
 
     private fun getMonthFormat():String{

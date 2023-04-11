@@ -36,19 +36,4 @@ internal class SongDateHelperImpl(): SongDateHelper {
         return result
     }
 
-    private fun getYearFormat():String{
-        val date  = releaseDate.split("-")
-        val leapYear = UtilsInjector.leapYear.isLeapYear(date.component1().toInt())
-        return date.component1() + " " + (if(leapYear) "(leap year)" else "(not a leap year)")
-    }
-
-    private fun getMonthFormat():String{
-        private val date  = releaseDate.split("-")
-        return getMonth(date.component2()) + ", " +  date.component1()
-    }
-
-    private fun getDayFormat():String{
-        private val date  = releaseDate.split("-")
-        return date.component3() + "/" + date.component2() + "/" + date.component1()
-    }
 }

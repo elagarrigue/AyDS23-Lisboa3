@@ -4,24 +4,23 @@ import ayds.lisboa.songinfo.utils.UtilsInjector
 
 object DateCalculatorFactory{
 
-    fun get(releaseDate: String,releaseDatePrecision: String) {
-        when (releaseDatePrecision){
-            "year" -> YearCalculator(releaseDate,releaseDatePrecision)
-            "month"-> MonthCalculator(releaseDate,releaseDatePrecision)
-            "day" -> DayCalculator(releaseDate,releaseDatePrecision)
+    fun get(releaseDate: String,releaseDatePrecision: String): DateCalculator = when (releaseDatePrecision){
+            "year" -> YearCalculator(releaseDate)
+            "month"-> MonthCalculator(releaseDate)
+            else  -> DayCalculator(releaseDate)
         }
-    }
+
 }
+
 
 sealed class DateCalculator (
     val releaseDate: String,
-    val releaseDatePrecision: String
 ){
     abstract fun getDate() : String
 
 }
 
-class YearCalculator ( releaseDate: String, releaseDatePrecision: String): DateCalculator(releaseDate,releaseDatePrecision){
+class YearCalculator ( releaseDate: String): DateCalculator(releaseDate){
 
     override fun getDate(): String{
         val date  = releaseDate.split("-")
@@ -30,15 +29,15 @@ class YearCalculator ( releaseDate: String, releaseDatePrecision: String): DateC
     }
 }
 
-class MonthCalculator( releaseDate: String, releaseDatePrecision: String): DateCalculator(releaseDate,releaseDatePrecision){
+class MonthCalculator( releaseDate: String): DateCalculator(releaseDate){
 
     override fun getDate(): String {
         val date  = releaseDate.split("-")
-        return UtilsInjectors.getMonth(date.component2().toInt()) + ", " +  date.component1()
+        return UtilsInjector.month.getMonth(date.component2().toInt()) + ", " +  date.component1()
     }
 }
 
-class DayCalculator ( releaseDate: String, releaseDatePrecision: String): DateCalculator(releaseDate,releaseDatePrecision){
+class DayCalculator ( releaseDate: String): DateCalculator(releaseDate){
 
     override fun getDate(): String {
         val date  = releaseDate.split("-")

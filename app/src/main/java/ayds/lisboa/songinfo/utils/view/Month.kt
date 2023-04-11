@@ -6,9 +6,7 @@ interface Month {
 }
 
 internal class MonthImpl(): Month {
-    override fun getMonth(month: Int): String {
-
-        return when(month) {
+    override fun getMonth(month: Int): String = when(month) {
             1-> "January"
             2-> "February"
             3-> "March"
@@ -21,7 +19,6 @@ internal class MonthImpl(): Month {
             10-> "October"
             11-> "November"
             12-> "December"
+        else -> "No Month Match"
         }
-
-    }
 }

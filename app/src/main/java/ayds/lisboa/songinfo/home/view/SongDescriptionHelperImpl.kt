@@ -18,13 +18,8 @@ internal class SongDescriptionHelperImpl : SongDescriptionHelper {
                 }\n" +
                         "Artist: ${song.artistName}\n" +
                         "Album: ${song.albumName}\n" +
-                        "Release date: ${getSongDate(song.releaseDate, song.releaseDatePrecision)}"
+                        "Release date: ${HomeViewInjector.songDateHelper.getFormat(song.releaseDate, song.releaseDatePrecision)}"
             else -> "Song not found"
         }
-    }
-
-    private fun getSongDate(releaseDate: String, releaseDatePrecision: String): String {
-        val songDateHelper:SongDateHelper = SongDateHelperImpl(releaseDate, releaseDatePrecision)
-        return songDateHelper.getFormat()
     }
 }

@@ -1,17 +1,13 @@
 package ayds.lisboa.songinfo.home.view
 
-import ayds.lisboa.songinfo.utils.view.LeapYearImpl
-import ayds.lisboa.songinfo.utils.view.LeapYear
+import ayds.lisboa.songinfo.utils.UtilsInjector
 
 interface SongDateHelper {
-    fun getFormat(): String
+    fun getFormat(releaseDate: String, releaseDatePrecision: String): String
 }
 
-class SongDateHelperImpl(private val releaseDate: String, private val releaseDatePrecision: String): SongDateHelper {
-
-    private val date  = releaseDate.split("-")
-    override fun getFormat(): String {
-
+internal class SongDateHelperImpl(): SongDateHelper {
+    override fun getFormat(releaseDate: String, releaseDatePrecision: String): String {
         var result = ""
         when (releaseDatePrecision) {
             "year" ->  result = getYearFormat()
@@ -20,10 +16,10 @@ class SongDateHelperImpl(private val releaseDate: String, private val releaseDat
         }
         return result
     }
-    private fun getMonth(Month: String):String
+    private fun getMonth(month: String):String
     {
         var result = ""
-        when(Month) {
+        when(month) {
             "01"->result = "January"
             "02"->result = "February"
             "03"->result = "March"
@@ -41,15 +37,18 @@ class SongDateHelperImpl(private val releaseDate: String, private val releaseDat
     }
 
     private fun getYearFormat():String{
-        val leapYear: LeapYear = LeapYearImpl(date.component1().toInt())
-        return date.component1() + " " + (if(leapYear.isLeapYear()) "(leap year)" else "(not a leap year)")
+        val date  = releaseDate.split("-")
+        val leapYear = UtilsInjector.leapYear.isLeapYear(date.component1().toInt())
+        return date.component1() + " " + (if(leapYear) "(leap year)" else "(not a leap year)")
     }
 
     private fun getMonthFormat():String{
+        private val date  = releaseDate.split("-")
         return getMonth(date.component2()) + ", " +  date.component1()
     }
 
     private fun getDayFormat():String{
+        private val date  = releaseDate.split("-")
         return date.component3() + "/" + date.component2() + "/" + date.component1()
     }
 }

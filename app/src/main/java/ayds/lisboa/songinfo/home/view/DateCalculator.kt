@@ -34,7 +34,7 @@ class MonthCalculator( releaseDate: String, releaseDatePrecision: String): DateC
 
     override fun getDate(): String {
         val date  = releaseDate.split("-")
-        return getMonth(date.component2()) + ", " +  date.component1()
+        return UtilsInjectors.getMonth(date.component2().toInt()) + ", " +  date.component1()
     }
 }
 

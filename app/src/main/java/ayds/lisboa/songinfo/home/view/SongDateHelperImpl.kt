@@ -8,7 +8,5 @@ internal class SongDateHelperImpl : SongDateHelper {
     override fun getFormat(releaseDate: String, releaseDatePrecision: String): String {
         val calculator : DateCalculator = DateCalculatorFactory.get(releaseDate, releaseDatePrecision)
         return calculator.getDate()
-
     }
-
 }

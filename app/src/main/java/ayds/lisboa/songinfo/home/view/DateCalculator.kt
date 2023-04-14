@@ -1,7 +1,5 @@
 package ayds.lisboa.songinfo.home.view
 
-import ayds.lisboa.songinfo.utils.UtilsInjector
-
 interface DateCalculatorFactory{
     fun get(releaseDate: String, releaseDatePrecision: String):DateCalculator
 }

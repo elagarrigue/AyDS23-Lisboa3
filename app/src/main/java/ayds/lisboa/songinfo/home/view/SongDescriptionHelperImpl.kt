@@ -18,8 +18,12 @@ internal class SongDescriptionHelperImpl(private val dateCalculatorFactory: Date
                 }\n" +
                         "Artist: ${song.artistName}\n" +
                         "Album: ${song.albumName}\n" +
-                        "Release date: ${dateCalculatorFactory.get(song.releaseDate,song.releaseDatePrecision).getDate()}"
+                        "Release date: ${song.getReleaseDate()}"
             else -> "Song not found"
         }
+    }
+    private fun SpotifySong.getReleaseDate(): String {
+        val calculator = dateCalculatorFactory.get(this.releaseDate, this.releaseDatePrecision)
+        return calculator.getDate()
     }
 }

@@ -38,10 +38,10 @@ public class OtherInfoWindow extends AppCompatActivity {
   private final static String lastFMDefaultImage = "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Lastfm_logo.svg/320px-Lastfm_logo.svg.png";
 
   private final static String JSON = "JSON";
-  private final static String JSONartist = "artist";
-  private final static String JSONbio = "bio";
-  private final static String JSONcontent = "content";
-  private final static String JSONurl = "url";
+  private final static String JSONArtist = "artist";
+  private final static String JSONBio = "bio";
+  private final static String JSONContent = "content";
+  private final static String JSONUrl = "url";
   @Override
   protected void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -89,7 +89,7 @@ public class OtherInfoWindow extends AppCompatActivity {
     return retrofit.create(type);
   }
   private void getArtistInfoDb(String artistName){
-    artistInfoText =  DataBase.getInfo(dataBase, artistName);
+    artistInfoText = DataBase.getInfo(dataBase, artistName);
   }
   private boolean existInDb() {
     return artistInfoText != null;
@@ -107,10 +107,10 @@ public class OtherInfoWindow extends AppCompatActivity {
 
       Gson gson = new Gson();
       JsonObject jsonObject = gson.fromJson(callResponse.body(), JsonObject.class);
-      JsonObject artist = jsonObject.get(JSONartist).getAsJsonObject();
-      JsonObject bio = artist.get(JSONbio).getAsJsonObject();
-      JsonElement extract = bio.get(JSONbio);
-      JsonElement url = artist.get(JSONurl);
+      JsonObject artist = jsonObject.get(JSONArtist).getAsJsonObject();
+      JsonObject bio = artist.get(JSONBio).getAsJsonObject();
+      JsonElement extract = bio.get(JSONContent);
+      JsonElement url = artist.get(JSONUrl);
 
       if (extract == null) {
         artistInfoText = "No Results";

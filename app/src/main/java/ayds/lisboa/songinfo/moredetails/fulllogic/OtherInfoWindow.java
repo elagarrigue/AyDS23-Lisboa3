@@ -139,23 +139,30 @@ public class OtherInfoWindow extends AppCompatActivity {
   }
 
   private DataBase dataBase = null;
+  private String test = "test";
+  private String testExampleWord = "something";
+  private String ArtistExampleWord = "nothing";
 
   private void open(String artist) {
     dataBase = new DataBase(this);
 
-    DataBase.saveArtist(dataBase, "test", "sarasa");
+    DataBase.saveArtist(dataBase, test, testExampleWord);
 
-    Log.e(TAG, ""+ DataBase.getInfo(dataBase,"test"));
-    Log.e(TAG,""+ DataBase.getInfo(dataBase,"nada"));
+    Log.e(TAG, ""+ DataBase.getInfo(dataBase,test));
+    Log.e(TAG,""+ DataBase.getInfo(dataBase,ArtistExampleWord));
 
     getArtistInfo(artist);
   }
 
+  private final static String HTMLWidth = "<html><div width=400>";
+  private final static String HTMLFont = "<font face=\"arial\">";
+  private final static String HTMLFinals = "</font></div></html>";
+
   public static String textToHtml(String text, String term) {
     StringBuilder builder = new StringBuilder();
 
-    builder.append("<html><div width=400>");
-    builder.append("<font face=\"arial\">");
+    builder.append(HTMLWidth);
+    builder.append(HTMLFont);
 
     String textWithBold = text
             .replace("'", " ")
@@ -164,7 +171,7 @@ public class OtherInfoWindow extends AppCompatActivity {
 
     builder.append(textWithBold);
 
-    builder.append("</font></div></html>");
+    builder.append(HTMLFinals);
 
     return builder.toString();
   }

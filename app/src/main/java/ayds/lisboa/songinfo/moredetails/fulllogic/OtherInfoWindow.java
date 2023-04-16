@@ -29,6 +29,7 @@ public class OtherInfoWindow extends AppCompatActivity {
   private final static String ARTIST_NAME_EXTRA = "artistName";
   private final static String TAG = "tag";
   private TextView view;
+  private String text;
   private final static int layout = R.layout.activity_other_info;
   private final static int textPaneID = R.id.textPane2;
   private final static String retrofitBaseURL = "https://ws.audioscrobbler.com/2.0/";
@@ -48,53 +49,12 @@ public class OtherInfoWindow extends AppCompatActivity {
     Log.e(TAG,ARTIST_NAME_EXTRA + " " + artistName);
 
     new Thread(() -> {
-      String text = DataBase.getInfo(dataBase, artistName);
-      if (text != null) { // exists in db
-
-        text = "[*]" + text;
-      } else { // get from service
-        Response<String> callResponse;
-        try {
-          callResponse = lastFMAPI.getArtistInfo(artistName).execute();
-
-          Log.e(TAG,"JSON " + callResponse.body());
-
-          Gson gson = new Gson();
-          JsonObject jobj = gson.fromJson(callResponse.body(), JsonObject.class);
-          JsonObject artist = jobj.get("artist").getAsJsonObject();
-          JsonObject bio = artist.get("bio").getAsJsonObject();
-          JsonElement extract = bio.get("content");
-          JsonElement url = artist.get("url");
-
-
-          if (extract == null) {
-            text = "No Results";
-          } else {
-            text = extract.getAsString().replace("\\n", "\n");
-
-            text = textToHtml(text, artistName);
-
-
-            // save to DB  <o/
-
-            DataBase.saveArtist(dataBase, artistName, text);
-          }
-
-
-          final String urlString = url.getAsString();
-          findViewById(R.id.openUrlButton).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-              Intent intent = new Intent(Intent.ACTION_VIEW);
-              intent.setData(Uri.parse(urlString));
-              startActivity(intent);
-            }
-          });
-
-        } catch (IOException e1) {
-          Log.e(TAG, "Error " + e1);
-          e1.printStackTrace();
-        }
+      getArtistInfoDb(artistName);
+      if (existInDb()) {
+        saveInDb();
+      }
+      else {
+        getFromService(lastFMAPI);
         }
 
 
@@ -119,6 +79,62 @@ public class OtherInfoWindow extends AppCompatActivity {
 
       }).start();
 
+  }
+
+  private void getFromService(LastFMAPI lastFMAPI){
+    Response<String> callResponse;
+    try {
+      callResponse = lastFMAPI.getArtistInfo(artistName).execute();
+
+      Log.e(TAG,"JSON " + callResponse.body());
+
+      Gson gson = new Gson();
+      JsonObject jobj = gson.fromJson(callResponse.body(), JsonObject.class);
+      JsonObject artist = jobj.get("artist").getAsJsonObject();
+      JsonObject bio = artist.get("bio").getAsJsonObject();
+      JsonElement extract = bio.get("content");
+      JsonElement url = artist.get("url");
+
+
+      if (extract == null) {
+        text = "No Results";
+      } else {
+        text = extract.getAsString().replace("\\n", "\n");
+
+        text = textToHtml(text, artistName);
+
+
+        // save to DB  <o/
+
+        DataBase.saveArtist(dataBase, artistName, text);
+      }
+
+
+      final String urlString = url.getAsString();
+      findViewById(R.id.openUrlButton).setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+          Intent intent = new Intent(Intent.ACTION_VIEW);
+          intent.setData(Uri.parse(urlString));
+          startActivity(intent);
+        }
+      });
+
+    } catch (IOException e1) {
+      Log.e(TAG, "Error " + e1);
+      e1.printStackTrace();
+    }
+  }
+
+  private void saveInDb() {
+    text  = "[*]" + text;
+  }
+  private boolean existInDb() {
+    return text != null;
+  }
+
+  private void getArtistInfoDb(String artistName){
+    text =  DataBase.getInfo(dataBase, artistName);
   }
 
   private Retrofit createRetrofit() {

@@ -20,6 +20,7 @@ public class DataBase extends SQLiteOpenHelper {
   private static final String INFO = "info";
   private static final String SOURCE = "source";
   private static final String TABLE_ARTISTS = "artists";
+
   public static void testDB() {
 
     Connection connection = null;
@@ -65,13 +66,18 @@ public class DataBase extends SQLiteOpenHelper {
     SQLiteDatabase writableDatabase = dbHelper.getWritableDatabase();
 
 // Create a new map of values, where column names are the keys
+    ContentValues artistValues = getArtistValues(artist,info);
+
+// Insert the new row, returning the primary key value of the new row
+    writableDatabase.insert(TABLE_ARTISTS, null,artistValues);
+  }
+
+ protected static ContentValues getArtistValues(String artist, String info){
     ContentValues values = new ContentValues();
     values.put(ARTIST, artist);
     values.put(INFO, info);
     values.put(SOURCE, 1);
-
-// Insert the new row, returning the primary key value of the new row
-    long newRowId = writableDatabase.insert(TABLE_ARTISTS, null, values);
+    return values;
   }
 
   public static String getInfo(DataBase dbHelper, String artist) {

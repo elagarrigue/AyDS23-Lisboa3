@@ -13,14 +13,19 @@ import java.util.List;
 
 public class DataBase extends SQLiteOpenHelper {
 
-  public static void testDB()
-  {
+  private static final String db_url = "jdbc:sqlite:./dictionary.db";
+  private static final String ArtistQuery = "select * from artists";
+  private static final String ID = "id";
+  private static final String ARTIST = "artist";
+  private static final String INFO = "info";
+  private static final String SOURCE = "source";
+  private static final String TABLE_ARTISTS = "artists";
+  public static void testDB() {
 
     Connection connection = null;
-    try
-    {
+    try {
       // create a database connection
-      connection = DriverManager.getConnection("jdbc:sqlite:./dictionary.db");
+      connection = DriverManager.getConnection(db_url);
       Statement statement = connection.createStatement();
       statement.setQueryTimeout(30);  // set timeout to 30 sec.
 
@@ -28,64 +33,57 @@ public class DataBase extends SQLiteOpenHelper {
       //statement.executeUpdate("create table person (id integer, name string)");
       //statement.executeUpdate("insert into person values(1, 'leo')");
       //statement.executeUpdate("insert into person values(2, 'yui')");
-      ResultSet rs = statement.executeQuery("select * from artists");
-      while(rs.next())
-      {
+      ResultSet rs = statement.executeQuery(ArtistQuery);
+      while(rs.next()) {
         // read the result set
-        System.out.println("id = " + rs.getInt("id"));
-        System.out.println("artist = " + rs.getString("artist"));
-        System.out.println("info = " + rs.getString("info"));
-        System.out.println("source = " + rs.getString("source"));
+        System.out.println("id = " + rs.getInt(ID));
+        System.out.println("artist = " + rs.getString(ARTIST));
+        System.out.println("info = " + rs.getString(INFO));
+        System.out.println("source = " + rs.getString(SOURCE));
 
       }
     }
-    catch(SQLException e)
-    {
+    catch(SQLException e) {
       // if the error message is "out of memory",
       // it probably means no database file is found
       System.err.println(e.getMessage());
     }
-    finally
-    {
-      try
-      {
+    finally {
+      try {
         if(connection != null)
           connection.close();
       }
-      catch(SQLException e)
-      {
+      catch(SQLException e) {
         // connection close failed.
         System.err.println(e);
       }
     }
   }
 
-  public static void saveArtist(DataBase dbHelper, String artist, String info)
-  {
+  public static void saveArtist(DataBase dbHelper, String artist, String info) {
     // Gets the data repository in write mode
-    SQLiteDatabase db = dbHelper.getWritableDatabase();
+    SQLiteDatabase writableDatabase = dbHelper.getWritableDatabase();
 
 // Create a new map of values, where column names are the keys
     ContentValues values = new ContentValues();
-    values.put("artist", artist);
-    values.put("info", info);
-    values.put("source", 1);
+    values.put(ARTIST, artist);
+    values.put(INFO, info);
+    values.put(SOURCE, 1);
 
 // Insert the new row, returning the primary key value of the new row
-    long newRowId = db.insert("artists", null, values);
+    long newRowId = writableDatabase.insert(TABLE_ARTISTS, null, values);
   }
 
-  public static String getInfo(DataBase dbHelper, String artist)
-  {
+  public static String getInfo(DataBase dbHelper, String artist) {
 
-    SQLiteDatabase db = dbHelper.getReadableDatabase();
+    SQLiteDatabase readableDatabase = dbHelper.getReadableDatabase();
 
 // Define a projection that specifies which columns from the database
 // you will actually use after this query.
     String[] projection = {
-            "id",
-            "artist",
-            "info"
+            ID,
+            ARTIST,
+            INFO
     };
 
 // Filter results WHERE "title" = 'My Title'
@@ -95,7 +93,7 @@ public class DataBase extends SQLiteOpenHelper {
 // How you want the results sorted in the resulting Cursor
     String sortOrder = "artist DESC";
 
-    Cursor cursor = db.query(
+    Cursor cursor = readableDatabase.query(
             "artists",   // The table to query
             projection,             // The array of columns to return (pass null to get all)
             selection,              // The columns for the WHERE clause

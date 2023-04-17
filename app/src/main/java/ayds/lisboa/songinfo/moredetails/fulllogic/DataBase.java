@@ -72,7 +72,7 @@ public class DataBase extends SQLiteOpenHelper {
     writableDatabase.insert(TABLE_ARTISTS, null,artistValues);
   }
 
- protected static ContentValues getArtistValues(String artist, String info){
+ private static ContentValues getArtistValues(String artist, String info){
     ContentValues values = new ContentValues();
     values.put(ARTIST, artist);
     values.put(INFO, info);
@@ -100,7 +100,7 @@ public class DataBase extends SQLiteOpenHelper {
     String sortOrder = "artist DESC";
 
     Cursor cursor = readableDatabase.query(
-            "artists",   // The table to query
+            TABLE_ARTISTS,   // The table to query
             projection,             // The array of columns to return (pass null to get all)
             selection,              // The columns for the WHERE clause
             selectionArgs,          // The values for the WHERE clause
@@ -112,7 +112,7 @@ public class DataBase extends SQLiteOpenHelper {
     List<String> items = new ArrayList<String>();
     while(cursor.moveToNext()) {
       String info = cursor.getString(
-              cursor.getColumnIndexOrThrow("info"));
+              cursor.getColumnIndexOrThrow(INFO));
       items.add(info);
     }
     cursor.close();

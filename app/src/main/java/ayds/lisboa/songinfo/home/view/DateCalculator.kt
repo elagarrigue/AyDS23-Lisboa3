@@ -4,14 +4,14 @@ interface DateCalculatorFactory{
     fun get(releaseDate: String, releaseDatePrecision: String):DateCalculator
 }
 internal object DateCalculatorFactoryImpl : DateCalculatorFactory {
-    private const val year = "year"
-    private const val month = "month"
-    private const val day = "day"
+    private const val YEAR = "year"
+    private const val MONTH = "month"
+    private const val DAY = "day"
     override fun get(releaseDate: String, releaseDatePrecision: String): DateCalculator =
         when (releaseDatePrecision) {
-            year -> YearCalculator(releaseDate)
-            month -> MonthCalculator(releaseDate)
-            day -> DayCalculator(releaseDate)
+            YEAR -> YearCalculator(releaseDate)
+            MONTH -> MonthCalculator(releaseDate)
+            DAY -> DayCalculator(releaseDate)
             else -> DefaultCalculator(releaseDate)
         }
 }

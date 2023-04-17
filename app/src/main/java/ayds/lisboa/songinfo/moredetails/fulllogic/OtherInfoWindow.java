@@ -5,7 +5,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.text.Html;
 import android.util.Log;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -28,152 +27,204 @@ import retrofit2.converter.scalars.ScalarsConverterFactory;
 public class OtherInfoWindow extends AppCompatActivity {
   public final static String ARTIST_NAME_EXTRA = "artistName";
   private final static String TAG = "tag";
-  private TextView view;
-  private final static int layout = R.layout.activity_other_info;
-  private final static int textPaneID = R.id.textPane2;
-  private final static int imageViewID = R.id.imageView;
-  private final static String retrofitBaseURL = "https://ws.audioscrobbler.com/2.0/";
-  private String artistInfoText;
-  private final static String DBSaveSymbol = "[*]";
-  private final static String lastFMDefaultImage = "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Lastfm_logo.svg/320px-Lastfm_logo.svg.png";
-
   private final static String JSON = "JSON";
-  private final static String JSONArtist = "artist";
-  private final static String JSONBio = "bio";
-  private final static String JSONContent = "content";
-  private final static String JSONUrl = "url";
+  private final static String JSON_ARTIST = "artist";
+  private final static String JSON_BIO = "bio";
+  private final static String JSON_CONTENT = "content";
+  private final static String JSON_URL = "url";
+  private final static String LAST_FM_API_BASE_URL = "https://ws.audioscrobbler.com/2.0/";
+  private final static String DB_SAVE_SYMBOL = "[*]";
+  private final static String LAST_FM_DEFAULT_IMAGE = "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Lastfm_logo.svg/320px-Lastfm_logo.svg.png";
+  private final static String HTML_WIDTH = "<html><div width=400>";
+  private final static String HTML_FONT = "<font face=\"arial\">";
+  private final static String HTML_FINALS = "</font></div></html>";
+  private final static String NO_RESULTS = "No Results";
+
+  private String artistInfo;
+  private String artistName;
+  private TextView view;
+  private Retrofit retrofit;
+  private LastFMAPI lastFMAPI;
+  private DataBase dataBase;
+
   @Override
   protected void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(layout);
-    view = findViewById(textPaneID);
-    open(getIntent().getStringExtra(ARTIST_NAME_EXTRA));
+    initContentView();
+    initView();
+    initDatabase();
+    initRetrofit();
+    initLastFMAPI();
+    open();
   }
 
-  public void getArtistInfo(String artistName) {
-    Retrofit retrofit = createRetrofit();
-    LastFMAPI lastFMAPI = createLastFMAPI(retrofit);
+  private void initContentView() {
+    setContentView(R.layout.activity_other_info);
+  }
 
+  private void initView() {
+    view = findViewById(R.id.textPane2);
+  }
+
+  private void initDatabase() {
+    dataBase = new DataBase(this);
+  }
+  private void initRetrofit() {
+    Retrofit.Builder retrofitBuilder = new Retrofit.Builder();
+    retrofitBuilder.baseUrl(LAST_FM_API_BASE_URL);
+    retrofitBuilder.addConverterFactory(ScalarsConverterFactory.create());
+    retrofit = retrofitBuilder.build();
+  }
+  private void initLastFMAPI() {
+    lastFMAPI = retrofit.create(LastFMAPI.class);
+  }
+
+  private void open() {
+    getArtistName();
+    getArtistInfo();
+  }
+
+  private void getArtistName() {
+    artistName = getIntent().getStringExtra(ARTIST_NAME_EXTRA);
+  }
+
+  public void getArtistInfo() {
     Log.e(TAG,ARTIST_NAME_EXTRA + " " + artistName);
 
     new Thread(() -> {
-      getArtistInfoDb(artistName);
-
-      if (existInDb()) {
-        markAsSavedDB();
+      getArtistInfoDB();
+      if (existArtistInfoDB()) {
+        markArtistInfoAsSavedDB();
       } else {
-        getFromService(lastFMAPI, artistName);
+        getFromService();
       }
-
-      Log.e(TAG,"Get Image from " + lastFMDefaultImage);
-
-      runOnUiThread( () -> {
-        ImageView imageView = findViewById(imageViewID);
-        Picasso.get().load(lastFMDefaultImage).into(imageView);
-        view.setText(Html.fromHtml(artistInfoText));
-      });
-
+      update();
     }).start();
   }
 
-  private Retrofit createRetrofit() {
-    Retrofit retrofit = new Retrofit.Builder()
-            .baseUrl(retrofitBaseURL)
-            .addConverterFactory(ScalarsConverterFactory.create())
-            .build();
+  private void getArtistInfoDB(){
+    artistInfo = DataBase.getInfo(dataBase, artistName);
+  }
 
-    return retrofit;
+  private boolean existArtistInfoDB() {
+    return artistInfo != null;
   }
-  private LastFMAPI createLastFMAPI(Retrofit retrofit) {
-    Class<LastFMAPI> type = LastFMAPI.class;
-    return retrofit.create(type);
+
+  private void markArtistInfoAsSavedDB() {
+    artistInfo = DB_SAVE_SYMBOL + artistInfo;
   }
-  private void getArtistInfoDb(String artistName){
-    artistInfoText = DataBase.getInfo(dataBase, artistName);
-  }
-  private boolean existInDb() {
-    return artistInfoText != null;
-  }
-  private void markAsSavedDB() {
-    artistInfoText = DBSaveSymbol + artistInfoText;
-  }
-  private void getFromService(LastFMAPI lastFMAPI, String artistName){
-    Response<String> callResponse;
+
+  private void getFromService(){
+    JsonObject callResponseJson;
 
     try {
-      callResponse = lastFMAPI.getArtistInfo(artistName).execute();
-
-      Log.e(TAG,JSON + " " + callResponse.body());
-
-      Gson gson = new Gson();
-      JsonObject jsonObject = gson.fromJson(callResponse.body(), JsonObject.class);
-      JsonObject artist = jsonObject.get(JSONArtist).getAsJsonObject();
-      JsonObject bio = artist.get(JSONBio).getAsJsonObject();
-      JsonElement extract = bio.get(JSONContent);
-      JsonElement url = artist.get(JSONUrl);
-
-      if (extract == null) {
-        artistInfoText = "No Results";
-      } else {
-        artistInfoText = extract.getAsString().replace("\\n", "\n");
-        artistInfoText = textToHtml(artistInfoText, artistName);
-        // save to DB  <o/
-        DataBase.saveArtist(dataBase, artistName, artistInfoText);
-      }
-
-
-      final String urlString = url.getAsString();
-      findViewById(R.id.openUrlButton).setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-          Intent intent = new Intent(Intent.ACTION_VIEW);
-          intent.setData(Uri.parse(urlString));
-          startActivity(intent);
-        }
-      });
-
+      callResponseJson = getJSONResponse();
+      setBioContent(callResponseJson);
+      setURL(callResponseJson);
     } catch (IOException ioException) {
       Log.e(TAG, "Error " + ioException);
       ioException.printStackTrace();
     }
   }
 
-  private DataBase dataBase = null;
-  private String test = "test";
-  private String testExampleWord = "something";
-  private String ArtistExampleWord = "nothing";
+  private void setBioContent(JsonObject callResponseJson) {
+    JsonElement bioContent = getBioContent(callResponseJson);
 
-  private void open(String artist) {
-    dataBase = new DataBase(this);
-
-    DataBase.saveArtist(dataBase, test, testExampleWord);
-
-    Log.e(TAG, ""+ DataBase.getInfo(dataBase,test));
-    Log.e(TAG,""+ DataBase.getInfo(dataBase,ArtistExampleWord));
-
-    getArtistInfo(artist);
+    if (bioContent == null) {
+      artistInfo = NO_RESULTS;
+    } else {
+      String lineBreakJSON = "\\n";
+      String lineBreak = "\n";
+      artistInfo = bioContent.getAsString().replace(lineBreakJSON, lineBreak);
+      artistInfo = textToHtml(artistInfo, artistName);
+      saveArtistInfoDB();
+    }
   }
 
-  private final static String HTMLWidth = "<html><div width=400>";
-  private final static String HTMLFont = "<font face=\"arial\">";
-  private final static String HTMLFinals = "</font></div></html>";
+  private void setURL(JsonObject callResponseJson) {
+    JsonElement url = getURL(callResponseJson);
+    String urlString = url.getAsString();
+
+    findViewById(R.id.openUrlButton).setOnClickListener(v -> {
+      Intent intent = new Intent(Intent.ACTION_VIEW);
+      intent.setData(Uri.parse(urlString));
+      startActivity(intent);
+    });
+  }
+
+  private JsonObject getJSONResponse() throws IOException {
+    Response<String> callResponse = lastFMAPI.getArtistInfo(artistName).execute();
+    Gson gson = new Gson();
+    JsonObject result = gson.fromJson(callResponse.body(), JsonObject.class);
+
+    Log.e(TAG,JSON + " " + callResponse.body());
+
+    return result;
+  }
+
+  private JsonElement getBioContent(JsonObject callResponseJson) {
+    JsonObject artist = callResponseJson.get(JSON_ARTIST).getAsJsonObject();
+    JsonObject bio = artist.get(JSON_BIO).getAsJsonObject();
+    JsonElement content = bio.get(JSON_CONTENT);
+
+    return content;
+  }
+
+  private JsonElement getURL(JsonObject callResponseJson) {
+    JsonObject artist = callResponseJson.get(JSON_ARTIST).getAsJsonObject();
+    JsonElement url = artist.get(JSON_URL);
+
+    return url;
+  }
+
+  private void saveArtistInfoDB() {
+    DataBase.saveArtist(dataBase, artistName, artistInfo);
+  }
+
+  private void update() {
+    Log.e(TAG,"Get Image from " + LAST_FM_DEFAULT_IMAGE);
+
+    runOnUiThread( () -> {
+      setDefaultImage();
+      setArtistInfo();
+    });
+  }
+
+  private void setDefaultImage() {
+    int imageViewID = R.id.imageView;
+    ImageView imageView = findViewById(imageViewID);
+    Picasso.get().load(LAST_FM_DEFAULT_IMAGE).into(imageView);
+  }
+
+  private void setArtistInfo() {
+    view.setText(Html.fromHtml(artistInfo));
+  }
 
   public static String textToHtml(String text, String term) {
     StringBuilder builder = new StringBuilder();
-
-    builder.append(HTMLWidth);
-    builder.append(HTMLFont);
-
-    String textWithBold = text
-            .replace("'", " ")
-            .replace("\n", "<br>")
-            .replaceAll("(?i)" + term, "<b>" + term.toUpperCase() + "</b>");
-
-    builder.append(textWithBold);
-
-    builder.append(HTMLFinals);
+    builder.append(HTML_WIDTH);
+    builder.append(HTML_FONT);
+    builder.append(getTextWithBold(text, term));
+    builder.append(HTML_FINALS);
 
     return builder.toString();
+  }
+
+  private static String getTextWithBold(String text, String term) {
+    String textWithBold = text;
+    String singleQuote = "'";
+    String space = " ";
+    String lineBreak = "\n";
+    String lineBreakHTML = "<br>";
+    String caseInsensitive = "(?i)";
+    String startBoldLabel = "<b>";
+    String finishBoldLabel = "</b>";
+
+    textWithBold.replace(singleQuote, space);
+    textWithBold.replace(lineBreak, lineBreakHTML);
+    textWithBold.replaceAll(caseInsensitive + term,  startBoldLabel + term.toUpperCase() + finishBoldLabel);
+
+    return textWithBold;
   }
 
 }

@@ -21,6 +21,12 @@ public class DataBase extends SQLiteOpenHelper {
   private static final String SOURCE = "source";
   private static final String TABLE_ARTISTS = "artists";
 
+  private final static String resultSetSortOrder = "artist DESC";
+
+  private final static String artistColumn = "artist  = ?";
+
+  private static List<String> items = new ArrayList<String>();
+
   public static void testDB() {
 
     Connection connection = null;
@@ -86,39 +92,39 @@ public class DataBase extends SQLiteOpenHelper {
 
 // Define a projection that specifies which columns from the database
 // you will actually use after this query.
-    String[] projection = {
+    String[] databaseColumns = {
             ID,
             ARTIST,
             INFO
     };
 
 // Filter results WHERE "title" = 'My Title'
-    String selection = "artist  = ?";
-    String[] selectionArgs = { artist };
-
-// How you want the results sorted in the resulting Cursor
-    String sortOrder = "artist DESC";
+    String[] artistValues = { artist };
 
     Cursor cursor = readableDatabase.query(
             TABLE_ARTISTS,   // The table to query
-            projection,             // The array of columns to return (pass null to get all)
-            selection,              // The columns for the WHERE clause
-            selectionArgs,          // The values for the WHERE clause
+            databaseColumns,             // The array of columns to return (pass null to get all)
+            artistColumn,              // The columns for the WHERE clause
+            artistValues,          // The values for the WHERE clause
             null,                   // don't group the rows
             null,                   // don't filter by row groups
-            sortOrder               // The sort order
+            resultSetSortOrder               // The sort order
     );
-
-    List<String> items = new ArrayList<String>();
-    while(cursor.moveToNext()) {
-      String info = cursor.getString(
-              cursor.getColumnIndexOrThrow(INFO));
-      items.add(info);
-    }
+    insertInItems(cursor);
     cursor.close();
+    if(items.isEmpty()){
+        return null;
+    }else{
+        return items.get(0);
+    }
+  }
 
-    if(items.isEmpty()) return null;
-    else return items.get(0);
+  private static void insertInItems(Cursor cursor){
+      String info = "";
+      while(cursor.moveToNext()) {
+          info = cursor.getString(cursor.getColumnIndexOrThrow(INFO));
+          items.add(info);
+      }
   }
 
   public DataBase(Context context) {

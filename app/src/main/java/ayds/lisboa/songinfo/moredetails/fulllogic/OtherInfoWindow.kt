@@ -27,22 +27,19 @@ private const val JSON_CONTENT = "content"
 private const val JSON_URL = "url"
 private const val LAST_FM_API_BASE_URL = "https://ws.audioscrobbler.com/2.0/"
 private const val DB_SAVE_SYMBOL = "[*]"
-private const val LAST_FM_DEFAULT_IMAGE =
-    "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Lastfm_logo.svg/320px-Lastfm_logo.svg.png"
+private const val LAST_FM_DEFAULT_IMAGE = "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Lastfm_logo.svg/320px-Lastfm_logo.svg.png"
 private const val HTML_WIDTH = "<html><div width=400>"
 private const val HTML_FONT = "<font face=\"arial\">"
 private const val HTML_FINALS = "</font></div></html>"
 private const val NO_RESULTS = "No Results"
 
 class OtherInfoWindow : AppCompatActivity() {
-    private lateinit var artistInfo: String
-    private lateinit var artistName: String
     private lateinit var view: TextView
     private lateinit var retrofit: Retrofit
     private lateinit var lastFMAPI: LastFMAPI
     private lateinit var dataBase: DataBase
-
-    fun getArtistNameExtra() = ARTIST_NAME_EXTRA
+    private lateinit var artistName: String
+    private lateinit var artistInfo: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,43 +50,44 @@ class OtherInfoWindow : AppCompatActivity() {
         initLastFMAPI()
         open()
     }
-
+    fun getArtistNameExtra() = ARTIST_NAME_EXTRA
     private fun initContentView() {
         setContentView(R.layout.activity_other_info)
     }
-
     private fun initView() {
         view = findViewById(R.id.textPane2)
     }
-
     private fun initDatabase() {
         dataBase = DataBase(this)
     }
-
     private fun initRetrofit() {
         val retrofitBuilder = Retrofit.Builder()
         retrofitBuilder.baseUrl(LAST_FM_API_BASE_URL)
         retrofitBuilder.addConverterFactory(ScalarsConverterFactory.create())
         retrofit = retrofitBuilder.build()
     }
-
     private fun initLastFMAPI() {
         lastFMAPI = retrofit.create(LastFMAPI::class.java)
     }
-
+    private fun open() {
+        getArtistName()
+        Thread {
+            getArtistInfo()
+        }.start()
+    }
     private fun getArtistName() {
         artistName = intent.getStringExtra(ARTIST_NAME_EXTRA).toString()
     }
-
     private fun getArtistInfo() {
         val space = " "
         Log.e(TAG, "$ARTIST_NAME_EXTRA + $space + $artistName")
-        getArtistInfoDB()
-        when { existArtistInfoDB() -> markArtistInfoAsSavedDB()
+        getFromDB()
+        when {
+            existArtistInfoDB() -> markArtistInfoAsSavedDB()
             else -> {
                 try {
                     getFromService()
-                } catch (ioException:Exception) {
+                } catch (ioException: Exception) {
                     Log.e(TAG, "Error $ioException")
                     ioException.printStackTrace()
                 }
@@ -97,39 +95,35 @@ class OtherInfoWindow : AppCompatActivity() {
         }
         update()
     }
-
-    private fun open() {
-        getArtistName()
-        getArtistInfo()
-    }
-
-    private fun getArtistInfoDB() {
+    private fun getFromDB() {
         artistInfo = dataBase.getInfo(artistName).toString()
     }
-
     private fun existArtistInfoDB(): Boolean {
         return artistInfo.isEmpty()
     }
-
     private fun markArtistInfoAsSavedDB() {
         artistInfo = DB_SAVE_SYMBOL + artistInfo
     }
-
     private fun getFromService() {
-        val callResponseJson: JsonObject
+        val callResponse: JsonObject
         try {
-            callResponseJson = getJSONResponse()
-            setBioContent(callResponseJson)
-            setURL(callResponseJson)
+            callResponse = getJsonResponse()
+            setBioContent(callResponse)
+            setURL(callResponse)
         } catch (ioException: IOException) {
             Log.e(TAG, "Error $ioException")
             ioException.printStackTrace()
         }
     }
-
+    private fun getJsonResponse(): JsonObject {
+        val callResponse = lastFMAPI.getArtistInfo(artistName).execute()
+        val gson = Gson()
+        val result = gson.fromJson(callResponse.body(), JsonObject::class.java)
+        Log.e(TAG, JSON + " " + callResponse.body())
+        return result
+    }
     private fun setBioContent(callResponseJson: JsonObject) {
         val bioContent = getBioContent(callResponseJson)
-
         if (bioContent.isEmpty()) {
             artistInfo = NO_RESULTS
         } else {
@@ -140,63 +134,12 @@ class OtherInfoWindow : AppCompatActivity() {
             saveArtistInfoDB()
         }
     }
-
-    private fun setURL(callResponseJson: JsonObject) {
-        val url = getURL(callResponseJson)
-        urlAction(url)
-    }
-
-    private fun urlAction(urlString: String) {
-        findViewById<View>(R.id.openUrlButton).setOnClickListener {
-            val intent = Intent(Intent.ACTION_VIEW)
-            intent.data = Uri.parse(urlString)
-            startActivity(intent)
-        }
-    }
-
-    private fun getJSONResponse(): JsonObject {
-        val callResponse = lastFMAPI.getArtistInfo(artistName).execute()
-        val gson = Gson()
-        val result = gson.fromJson(callResponse.body(), JsonObject::class.java)
-        Log.e(TAG, JSON + " " + callResponse.body())
-        return result
-    }
-
     private fun getBioContent(callResponseJson: JsonObject): String {
         val artist = callResponseJson[JSON_ARTIST].asJsonObject
         val bio = artist[JSON_BIO].asJsonObject
         val bioContent = bio[JSON_CONTENT]
         return bioContent.asString
     }
-
-    private fun getURL(callResponseJson: JsonObject): String {
-        val artist = callResponseJson[JSON_ARTIST].asJsonObject
-        val url = artist[JSON_URL]
-        return url.asString
-    }
-
-    private fun saveArtistInfoDB() {
-        dataBase.saveArtist(artistName, artistInfo)
-    }
-
-    private fun update() {
-        val textGetImageFrom ="Get Image From"
-        Log.e(TAG, "$textGetImageFrom, $LAST_FM_DEFAULT_IMAGE")
-        runOnUiThread {
-            setDefaultImage()
-            setArtistInfo()
-        }
-    }
-
-    private fun setDefaultImage() {
-        val imageView = findViewById<ImageView>(R.id.imageView)
-        Picasso.get().load(LAST_FM_DEFAULT_IMAGE).into(imageView)
-    }
-
-    private fun setArtistInfo() {
-        view.text = HtmlCompat.fromHtml(artistInfo, HtmlCompat.FROM_HTML_MODE_LEGACY)
-    }
-
     private fun textToHtml(text: String, term: String?): String {
         val builder = StringBuilder()
         builder.append(HTML_WIDTH)
@@ -205,7 +148,6 @@ class OtherInfoWindow : AppCompatActivity() {
         builder.append(HTML_FINALS)
         return builder.toString()
     }
-
     private fun getTextWithBold(text: String, term: String?): String {
         val singleQuote = "'"
         val space = " "
@@ -221,5 +163,39 @@ class OtherInfoWindow : AppCompatActivity() {
             startBoldLabel + term!!.uppercase(Locale.getDefault()) + finishBoldLabel
         )
         return text
+    }
+    private fun saveArtistInfoDB() {
+        dataBase.saveArtist(artistName, artistInfo)
+    }
+    private fun setURL(callResponseJson: JsonObject) {
+        val url = getURL(callResponseJson)
+        urlAction(url)
+    }
+    private fun getURL(callResponseJson: JsonObject): String {
+        val artist = callResponseJson[JSON_ARTIST].asJsonObject
+        val url = artist[JSON_URL]
+        return url.asString
+    }
+    private fun urlAction(urlString: String) {
+        findViewById<View>(R.id.openUrlButton).setOnClickListener {
+            val intent = Intent(Intent.ACTION_VIEW)
+            intent.data = Uri.parse(urlString)
+            startActivity(intent)
+        }
+    }
+    private fun update() {
+        val textGetImageFrom = "Get Image From"
+        Log.e(TAG, "$textGetImageFrom, $LAST_FM_DEFAULT_IMAGE")
+        runOnUiThread {
+            setDefaultImage()
+            setArtistInfo()
+        }
+    }
+    private fun setDefaultImage() {
+        val imageView = findViewById<ImageView>(R.id.imageView)
+        Picasso.get().load(LAST_FM_DEFAULT_IMAGE).into(imageView)
+    }
+    private fun setArtistInfo() {
+        view.text = HtmlCompat.fromHtml(artistInfo, HtmlCompat.FROM_HTML_MODE_LEGACY)
     }
 }

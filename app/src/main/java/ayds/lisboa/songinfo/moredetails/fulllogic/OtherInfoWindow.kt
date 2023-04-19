@@ -11,7 +11,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.text.HtmlCompat
 import ayds.lisboa.songinfo.R
 import com.google.gson.Gson
-import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import com.squareup.picasso.Picasso
 import retrofit2.Retrofit
@@ -85,15 +84,18 @@ class OtherInfoWindow : AppCompatActivity() {
     private fun getArtistInfo() {
         val space = " "
         Log.e(TAG, "$ARTIST_NAME_EXTRA + $space + $artistName")
-        Thread {
-            getArtistInfoDB()
-            if (existArtistInfoDB()) {
-                markArtistInfoAsSavedDB()
-            } else {
-                getFromService()
+        getArtistInfoDB()
+        when { existArtistInfoDB() -> markArtistInfoAsSavedDB()
+            else -> {
+                try {
+                    getFromService()
+                } catch (ioException:Exception) {
+                    Log.e(TAG, "Error $ioException")
+                    ioException.printStackTrace()
+                }
             }
-            update()
-        }.start()
+        }
+        update()
     }
 
     private fun open() {
@@ -102,7 +104,7 @@ class OtherInfoWindow : AppCompatActivity() {
     }
 
     private fun getArtistInfoDB() {
-        artistInfo = dataBase.getInfo(artistName)
+        artistInfo = dataBase.getInfo(artistName).toString()
     }
 
     private fun existArtistInfoDB(): Boolean {

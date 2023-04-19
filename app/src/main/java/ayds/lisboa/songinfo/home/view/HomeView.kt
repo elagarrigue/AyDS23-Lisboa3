@@ -45,13 +45,14 @@ class HomeViewActivity : AppCompatActivity(), HomeView {
     private lateinit var termEditText: EditText
     private lateinit var descriptionTextView: TextView
     private lateinit var posterImageView: ImageView
+    private lateinit var otherInfoWindow: OtherInfoWindow
 
     override val uiEventObservable: Observable<HomeUiEvent> = onActionSubject
     override var uiState: HomeUiState = HomeUiState()
 
     override fun navigateToOtherDetails(artistName: String) {
-        val intent = Intent(this, OtherInfoWindow::class.java)
-        intent.putExtra(OtherInfoWindow.ARTIST_NAME_EXTRA, artistName)
+        val intent = Intent(this, otherInfoWindow.javaClass)
+        intent.putExtra(otherInfoWindow.getArtistNameExtra(), artistName)
         startActivity(intent)
     }
 
@@ -82,6 +83,7 @@ class HomeViewActivity : AppCompatActivity(), HomeView {
         termEditText = findViewById(R.id.termEditText)
         descriptionTextView = findViewById(R.id.descriptionTextView)
         posterImageView = findViewById(R.id.posterImageView)
+        otherInfoWindow = OtherInfoWindow()
     }
 
     private fun initListeners() {

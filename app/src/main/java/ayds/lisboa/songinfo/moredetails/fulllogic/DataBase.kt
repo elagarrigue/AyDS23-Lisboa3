@@ -62,8 +62,8 @@ class DataBase(context: Context?) : SQLiteOpenHelper(context, "dictionary.db", n
             println("source = " + rs.getString(SOURCE))
         }
     }
-    fun saveArtist(dbHelper: DataBase, artist: String, info: String) {
-        val writableDatabase = dbHelper.writableDatabase
+    fun saveArtist(artist: String, info: String) {
+        val writableDatabase = this.writableDatabase
         val artistValues = getArtistValues(artist, info)
         writableDatabase.insert(TABLE_ARTISTS, null, artistValues)
     }
@@ -76,8 +76,8 @@ class DataBase(context: Context?) : SQLiteOpenHelper(context, "dictionary.db", n
         return values
     }
 
-    fun getInfo(dbHelper: DataBase, artist: String): String? {
-        val readableDatabase = dbHelper.readableDatabase
+    fun getInfo(artist: String): String? {
+        val readableDatabase = this.readableDatabase
 
         val databaseColumns = arrayOf(
             ID,

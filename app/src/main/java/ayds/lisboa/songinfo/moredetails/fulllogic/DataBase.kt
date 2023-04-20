@@ -11,21 +11,19 @@ import java.sql.DriverManager
 import java.sql.SQLException
 import java.sql.Statement
 
+private const val dbUrl = "jdbc:sqlite:./dictionary.db"
+private const val artistQuery = "select * from artists"
+private const val ID = "id"
+private const val ARTIST = "artist"
+private const val INFO = "info"
+private const val SOURCE = "source"
+private const val TABLE_ARTISTS = "artists"
+private const val resultSetSortOrder = "artist DESC"
+private const val artistColumn = "artist  = ?"
+private val items: MutableList<String> = ArrayList()
+private const val creationQuery = "create table artists (id INTEGER PRIMARY KEY AUTOINCREMENT, artist string, info string, source integer)"
 
 class DataBase(context: Context?) : SQLiteOpenHelper(context, "dictionary.db", null, 1) {
-
-    private val dbUrl = "jdbc:sqlite:./dictionary.db"
-    private val artistQuery = "select * from artists"
-    private val ID = "id"
-    private val ARTIST = "artist"
-    private val INFO = "info"
-    private val SOURCE = "source"
-    private val TABLE_ARTISTS = "artists"
-    private val resultSetSortOrder = "artist DESC"
-    private val artistColumn = "artist  = ?"
-    private val items: MutableList<String> = ArrayList()
-    private val creationQuery = "create table artists (id INTEGER PRIMARY KEY AUTOINCREMENT, artist string, info string, source integer)"
-
 
     override fun onCreate(db: SQLiteDatabase) {
         db.execSQL(
@@ -76,7 +74,7 @@ class DataBase(context: Context?) : SQLiteOpenHelper(context, "dictionary.db", n
         return values
     }
 
-    fun getInfo(artist: String): String? {
+    fun getInfo(artist: String): String {
         val readableDatabase = this.readableDatabase
 
         val databaseColumns = arrayOf(
@@ -98,7 +96,7 @@ class DataBase(context: Context?) : SQLiteOpenHelper(context, "dictionary.db", n
         insertInItems(cursor)
         cursor.close()
         return if (items.isEmpty()) {
-            null
+            ""
         } else {
             items[0]
         }

@@ -18,9 +18,9 @@ import retrofit2.converter.scalars.ScalarsConverterFactory
 import java.io.IOException
 import java.util.*
 
-private const val ARTIST_NAME_EXTRA = "artistName"
 private const val TAG = "tag"
 private const val JSON = "JSON"
+private const val ERROR = "Error"
 private const val JSON_ARTIST = "artist"
 private const val JSON_BIO = "bio"
 private const val JSON_CONTENT = "content"
@@ -47,10 +47,10 @@ class OtherInfoWindow : AppCompatActivity() {
         initView()
         initDatabase()
         initRetrofit()
-        initLastFMAPI()
+        initLastFmApi()
+        getArtistName()
         open()
     }
-    fun getArtistNameExtra() = ARTIST_NAME_EXTRA
     private fun initContentView() {
         setContentView(R.layout.activity_other_info)
     }
@@ -66,13 +66,13 @@ class OtherInfoWindow : AppCompatActivity() {
         retrofitBuilder.addConverterFactory(ScalarsConverterFactory.create())
         retrofit = retrofitBuilder.build()
     }
-    private fun initLastFMAPI() {
+    private fun initLastFmApi() {
         lastFMAPI = retrofit.create(LastFMAPI::class.java)
     }
     private fun open() {
-        getArtistName()
         Thread {
             getArtistInfo()
+            updateView()
         }.start()
     }
     private fun getArtistName() {
@@ -88,15 +88,14 @@ class OtherInfoWindow : AppCompatActivity() {
                 try {
                     getFromService()
                 } catch (ioException: Exception) {
-                    Log.e(TAG, "Error $ioException")
+                    Log.e(TAG, "$ERROR $ioException")
                     ioException.printStackTrace()
                 }
             }
         }
-        update()
     }
     private fun getFromDB() {
-        artistInfo = dataBase.getInfo(artistName).toString()
+        artistInfo = dataBase.getInfo(artistName)
     }
     private fun existArtistInfoDB(): Boolean {
         return artistInfo.isEmpty()
@@ -111,7 +110,7 @@ class OtherInfoWindow : AppCompatActivity() {
             setBioContent(callResponse)
             setURL(callResponse)
         } catch (ioException: IOException) {
-            Log.e(TAG, "Error $ioException")
+            Log.e(TAG, "$ERROR $ioException")
             ioException.printStackTrace()
         }
     }
@@ -119,7 +118,8 @@ class OtherInfoWindow : AppCompatActivity() {
         val callResponse = lastFMAPI.getArtistInfo(artistName).execute()
         val gson = Gson()
         val result = gson.fromJson(callResponse.body(), JsonObject::class.java)
-        Log.e(TAG, JSON + " " + callResponse.body())
+        val space = " "
+        Log.e(TAG, JSON + space + callResponse.body())
         return result
     }
     private fun setBioContent(callResponseJson: JsonObject) {
@@ -183,9 +183,9 @@ class OtherInfoWindow : AppCompatActivity() {
             startActivity(intent)
         }
     }
-    private fun update() {
+    private fun updateView() {
         val textGetImageFrom = "Get Image From"
-        Log.e(TAG, "$textGetImageFrom, $LAST_FM_DEFAULT_IMAGE")
+        Log.e(TAG, "$textGetImageFrom: $LAST_FM_DEFAULT_IMAGE")
         runOnUiThread {
             setDefaultImage()
             setArtistInfo()
@@ -197,5 +197,8 @@ class OtherInfoWindow : AppCompatActivity() {
     }
     private fun setArtistInfo() {
         view.text = HtmlCompat.fromHtml(artistInfo, HtmlCompat.FROM_HTML_MODE_LEGACY)
+    }
+    companion object {
+        const val ARTIST_NAME_EXTRA = "artistName"
     }
 }

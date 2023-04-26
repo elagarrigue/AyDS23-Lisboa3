@@ -40,14 +40,13 @@ class DataBase(context: Context?) : SQLiteOpenHelper(context, DB_NAME, null, 1) 
     }
 
     fun getInfo(artist: String): String {
-        val readableDatabase = this.readableDatabase
         val databaseColumns = arrayOf(
             ID,
             ARTIST,
             INFO
         )
         val artistValues = arrayOf(artist)
-        val cursor = readableDatabase.query(
+        val cursor = this.readableDatabase.query(
             TABLE_ARTISTS,
             databaseColumns,
             ARTIST_COLUMN,
@@ -58,11 +57,7 @@ class DataBase(context: Context?) : SQLiteOpenHelper(context, DB_NAME, null, 1) 
         )
         insertInItems(cursor)
         cursor.close()
-        return if (items.isEmpty()) {
-            ""
-        } else {
-            items[0]
-        }
+        return items.firstOrNull() ?:""
     }
 
     private fun insertInItems(cursor: Cursor) {

@@ -15,21 +15,22 @@ private const val TABLE_ARTISTS = "artists"
 private const val RESULT_SET_ORDER = "artist DESC"
 private const val ARTIST_COLUMN = "artist  = ?"
 private const val CREATION_QUERY = "create table artists (id INTEGER PRIMARY KEY AUTOINCREMENT, artist string, info string, source integer)"
+private const val DB_NAME = "dictionary.db"
 
-class DataBase(context: Context?) : SQLiteOpenHelper(context, "dictionary.db", null, 1) {
+class DataBase(context: Context?) : SQLiteOpenHelper(context, DB_NAME, null, 1) {
     private val items: MutableList<String> = ArrayList()
     override fun onCreate(db: SQLiteDatabase) {
         db.execSQL(
             CREATION_QUERY
         )
-        Log.i("DB", "DB created")
     }
+
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {}
     fun saveArtist(artist: String, info: String) {
-        val writableDatabase = this.writableDatabase
         val artistValues = getArtistValues(artist, info)
-        writableDatabase.insert(TABLE_ARTISTS, null, artistValues)
+        this.writableDatabase.insert(TABLE_ARTISTS, null, artistValues)
     }
+
     private fun getArtistValues(artist: String, info: String): ContentValues {
         val values = ContentValues()
         values.put(ARTIST, artist)
@@ -37,6 +38,7 @@ class DataBase(context: Context?) : SQLiteOpenHelper(context, "dictionary.db", n
         values.put(SOURCE, 1)
         return values
     }
+
     fun getInfo(artist: String): String {
         val readableDatabase = this.readableDatabase
         val databaseColumns = arrayOf(
@@ -62,6 +64,7 @@ class DataBase(context: Context?) : SQLiteOpenHelper(context, "dictionary.db", n
             items[0]
         }
     }
+
     private fun insertInItems(cursor: Cursor) {
         var info: String
         while (cursor.moveToNext()) {

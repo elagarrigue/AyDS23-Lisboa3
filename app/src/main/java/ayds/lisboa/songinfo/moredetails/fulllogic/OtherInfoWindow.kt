@@ -9,19 +9,20 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.text.HtmlCompat
 import ayds.lisboa.songinfo.R
+import ayds.lisboa.songinfo.home.model.entities.Song
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import com.squareup.picasso.Picasso
 import retrofit2.Retrofit
 import retrofit2.converter.scalars.ScalarsConverterFactory
 import java.util.*
+import ayds.lisboa.songinfo.moredetails.fulllogic.ArtistInfo.SpotifyArtistInfo
 
 private const val JSON_ARTIST = "artist"
 private const val JSON_BIO = "bio"
 private const val JSON_CONTENT = "content"
 private const val JSON_URL = "url"
 private const val LAST_FM_API_BASE_URL = "https://ws.audioscrobbler.com/2.0/"
-private const val DB_SAVED_SYMBOL = "[*]"
 private const val LAST_FM_DEFAULT_IMAGE = "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Lastfm_logo.svg/320px-Lastfm_logo.svg.png"
 private const val HTML_WIDTH = "<html><div width=400>"
 private const val HTML_FONT = "<font face=\"arial\">"
@@ -85,24 +86,33 @@ class OtherInfoWindow : AppCompatActivity() {
     private fun getArtistInfoOnUpdateView() {
         val artistName = getArtistName()
         val artistInfo = getArtistInfo(artistName)
-        val artistInfoUrl = getArtistInfoUrl(artistName)
-        updateView(artistInfo, artistInfoUrl)
+
+        if (artistInfo.hasContent()) {
+            artistInfo.bioContent = NO_RESULTS
+        } else {
+            artistInfo.bioContent = jsonTextToHtml(artistInfo.bioContent, artistName)
+        }
+
+        updateView(artistInfo)
     }
 
     private fun getArtistName(): String {
         return intent.getStringExtra(ARTIST_NAME_EXTRA).toString()
     }
 
-    private fun getArtistInfo(artistName: String): String {
-        var artistInfo = getArtistInfoFromDb(artistName)
+    private fun getArtistInfo(artistName: String): SpotifyArtistInfo? {
+        var artistInfo: SpotifyArtistInfo? = getArtistInfoFromDb(artistName)
 
         when {
-            artistInfo.isNotEmpty() -> artistInfo = markArtistInfoAsSavedDB(artistInfo)
+            artistInfo != null -> markArtistInfoAsSavedDB(artistInfo)
             else -> {
                 try {
                     artistInfo = getArtistInfoFromService(artistName)
-                    artistInfo = if (artistInfo.isEmpty()) NO_RESULTS else jsonTextToHtml(artistInfo, artistName)
-                    saveArtistInfoDB(artistName, artistInfo)
+
+                    if (artistInfo.isLocallyStored) {
+                        saveArtistInfoDB(artistName, artistInfo)
+                    }
+
                 } catch (ioException: Exception) {
                     ioException.printStackTrace()
                 }
@@ -112,15 +122,25 @@ class OtherInfoWindow : AppCompatActivity() {
         return artistInfo
     }
 
-    private fun getArtistInfoFromDb(artistName: String): String {
+    private fun SpotifyArtistInfo.hasContent() = (bioContent.isNotEmpty())
+
+    private fun getArtistInfoFromDb(artistName: ArtistInfo): SpotifyArtistInfo {
         return dataBase.getInfo(artistName)
     }
 
-    private fun markArtistInfoAsSavedDB(artistInfo: String): String {
-        return DB_SAVED_SYMBOL + artistInfo
+    private fun markArtistInfoAsSavedDB(artistInfo: SpotifyArtistInfo) {
+        artistInfo.isLocallyStored = true
     }
 
-    private fun getArtistInfoFromService(artistName: String): String {
+    private fun getArtistInfoFromService(artistName: String): SpotifyArtistInfo {
+        val bioContent = getBioContent(artistName)
+        val url = getArtistInfoUrl(artistName)
+        val isLocallyStored = false
+
+        return SpotifyArtistInfo(bioContent, url, isLocallyStored)
+    }
+
+    private fun getBioContent(artistName: String): String {
         val callResponseJson = getJsonResponse(artistName)
         val artist = callResponseJson[JSON_ARTIST].asJsonObject
         val bio = artist[JSON_BIO].asJsonObject
@@ -172,15 +192,15 @@ class OtherInfoWindow : AppCompatActivity() {
         return text
     }
 
-    private fun saveArtistInfoDB(artistName: String, artistInfo: String) {
+    private fun saveArtistInfoDB(artistName: String, artistInfo: SpotifyArtistInfo) {
         dataBase.saveArtist(artistName, artistInfo)
     }
 
-    private fun updateView(artistInfo: String, artistInfoUrl: String) {
+    private fun updateView(artistInfo: SpotifyArtistInfo) {
         runOnUiThread {
             setDefaultImage()
             setArtistInfo(artistInfo)
-            setURL(artistInfoUrl)
+            setURL(artistInfo)
         }
     }
 
@@ -188,14 +208,14 @@ class OtherInfoWindow : AppCompatActivity() {
         Picasso.get().load(LAST_FM_DEFAULT_IMAGE).into(imageView)
     }
 
-    private fun setArtistInfo(artistInfo: String) {
-        artistInfoTextView.text = HtmlCompat.fromHtml(artistInfo, HtmlCompat.FROM_HTML_MODE_LEGACY)
+    private fun setArtistInfo(artistInfo: SpotifyArtistInfo) {
+        artistInfoTextView.text = HtmlCompat.fromHtml(artistInfo.bioContent, HtmlCompat.FROM_HTML_MODE_LEGACY)
     }
 
-    private fun setURL(url: String) {
+    private fun setURL(artistInfo: SpotifyArtistInfo) {
         openUrlButton.setOnClickListener {
             val intent = Intent(Intent.ACTION_VIEW)
-            intent.data = Uri.parse(url)
+            intent.data = Uri.parse(artistInfo.url)
             startActivity(intent)
         }
     }

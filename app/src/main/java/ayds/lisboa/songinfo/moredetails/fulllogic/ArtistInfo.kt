@@ -4,6 +4,6 @@ sealed class ArtistInfo {
     data class  SpotifyArtistInfo (
         var bioContent : String,
         var url : String,
-        var isLocallyStored : Boolean
+        var isLocallyStored : Boolean = false
         ) : ArtistInfo()
 }

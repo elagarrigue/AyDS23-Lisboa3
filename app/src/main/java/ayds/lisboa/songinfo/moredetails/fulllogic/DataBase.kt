@@ -5,7 +5,8 @@ import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
-import android.util.Log
+import ayds.lisboa.songinfo.moredetails.fulllogic.ArtistInfo.SpotifyArtistInfo
+import java.sql.SQLException
 
 private const val ID = "id"
 private const val ARTIST = "artist"
@@ -16,9 +17,22 @@ private const val RESULT_SET_ORDER = "artist DESC"
 private const val ARTIST_COLUMN = "artist  = ?"
 private const val CREATION_QUERY = "create table artists (id INTEGER PRIMARY KEY AUTOINCREMENT, artist string, info string, source integer)"
 private const val DB_NAME = "dictionary.db"
+private const val BIO_CONTENT = "bioContent"
+private const val URL = "URL"
 
-class DataBase(context: Context?) : SQLiteOpenHelper(context, DB_NAME, null, 1) {
-    private val items: MutableList<String> = ArrayList()
+
+interface Database{
+    fun saveArtist(artist: String, info: String)
+    fun getInfo(artist: String): SpotifyArtistInfo?
+}
+class DataBaseImpl(context: Context?) : SQLiteOpenHelper(context, DB_NAME, null, 1), Database {
+    private val databaseColumns = arrayOf(
+        ID,
+        ARTIST,
+        BIO_CONTENT,
+        URL
+    )
+
     override fun onCreate(db: SQLiteDatabase) {
         db.execSQL(
             CREATION_QUERY
@@ -26,7 +40,7 @@ class DataBase(context: Context?) : SQLiteOpenHelper(context, DB_NAME, null, 1) 
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {}
-    fun saveArtist(artist: String, info: String) {
+    override fun saveArtist(artist: String, info: String) {
         val artistValues = getArtistValues(artist, info)
         this.writableDatabase.insert(TABLE_ARTISTS, null, artistValues)
     }
@@ -39,13 +53,12 @@ class DataBase(context: Context?) : SQLiteOpenHelper(context, DB_NAME, null, 1) 
         return values
     }
 
-    fun getInfo(artist: String): String {
-        val databaseColumns = arrayOf(
-            ID,
-            ARTIST,
-            INFO
-        )
+    override fun getInfo(artist: String): SpotifyArtistInfo? {
         val artistValues = arrayOf(artist)
+        return cursorHandling(artistValues)
+    }
+
+    private fun cursorHandling(artistValues: Array<String>): SpotifyArtistInfo? {
         val cursor = this.readableDatabase.query(
             TABLE_ARTISTS,
             databaseColumns,
@@ -55,16 +68,26 @@ class DataBase(context: Context?) : SQLiteOpenHelper(context, DB_NAME, null, 1) 
             null,
             RESULT_SET_ORDER
         )
-        insertInItems(cursor)
+        val info: SpotifyArtistInfo? = map(cursor)
         cursor.close()
-        return items.firstOrNull() ?:""
+        return info
     }
-
-    private fun insertInItems(cursor: Cursor) {
-        var info: String
-        while (cursor.moveToNext()) {
-            info = cursor.getString(cursor.getColumnIndexOrThrow(INFO))
-            items.add(info)
+    private fun map(cursor:Cursor): SpotifyArtistInfo? =
+        try {
+            with(cursor) {
+                if (moveToNext()) {
+                    SpotifyArtistInfo(
+                        bioContent = getString(getColumnIndexOrThrow(BIO_CONTENT)),
+                        url= getString(getColumnIndexOrThrow(URL)),
+                    )
+                } else {
+                    null
+                }
+            }
+        } catch (e: SQLException) {
+            e.printStackTrace()
+            null
         }
-    }
+
+
 }

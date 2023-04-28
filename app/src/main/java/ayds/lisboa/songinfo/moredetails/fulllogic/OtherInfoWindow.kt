@@ -16,7 +16,9 @@ import retrofit2.Retrofit
 import retrofit2.converter.scalars.ScalarsConverterFactory
 import java.util.*
 import ayds.lisboa.songinfo.moredetails.fulllogic.ArtistInfo.SpotifyArtistInfo
-import ayds.lisboa.songinfo.moredetails.fulllogic.Database
+import ayds.lisboa.songinfo.moredetails.fulllogic.ArtistInfo.EmptyArtistInfo
+
+
 
 private const val JSON_ARTIST = "artist"
 private const val JSON_BIO = "bio"
@@ -33,7 +35,7 @@ class OtherInfoWindow : AppCompatActivity() {
     private lateinit var artistInfoTextView: TextView
     private lateinit var imageView: ImageView
     private lateinit var openUrlButton: View
-    private lateinit var dataBase: DataBase
+    private lateinit var dataBase: Database
     private lateinit var retrofit: Retrofit
     private lateinit var lastFMAPI: LastFMAPI
 
@@ -93,8 +95,8 @@ class OtherInfoWindow : AppCompatActivity() {
         return intent.getStringExtra(ARTIST_NAME_EXTRA).toString()
     }
 
-    private fun getArtistInfo(artistName: String): SpotifyArtistInfo {
-        var artistInfo = dataBase.getInfo(artistName)
+    private fun getArtistInfo(artistName: String): ArtistInfo {
+        var artistInfo = dataBase.getArtistInfo(artistName)
 
         when {
             artistInfo != null -> markArtistInfoAsSavedDB(artistInfo)
@@ -112,7 +114,7 @@ class OtherInfoWindow : AppCompatActivity() {
             }
         }
 
-        return artistInfo
+        return artistInfo ?: EmptyArtistInfo
     }
 
     private fun markArtistInfoAsSavedDB(artistInfo: SpotifyArtistInfo) {
@@ -182,7 +184,7 @@ class OtherInfoWindow : AppCompatActivity() {
         dataBase.saveArtist(artistName, artistInfo)
     }
 
-    private fun updateView(artistName: String, artistInfo: SpotifyArtistInfo) {
+    private fun updateView(artistName: String, artistInfo: ArtistInfo) {
         runOnUiThread {
             setDefaultImage()
             setBioContent(artistName, artistInfo)
@@ -194,18 +196,18 @@ class OtherInfoWindow : AppCompatActivity() {
         Picasso.get().load(LAST_FM_DEFAULT_IMAGE).into(imageView)
     }
 
-    private fun setBioContent(artistName: String, artistInfo: SpotifyArtistInfo) {
+    private fun setBioContent(artistName: String, artistInfo: ArtistInfo) {
         val bioContentFormatted = formatBioContent(artistName, artistInfo)
         artistInfoTextView.text = HtmlCompat.fromHtml(bioContentFormatted, HtmlCompat.FROM_HTML_MODE_LEGACY)
     }
 
-    private fun formatBioContent(artistName: String, artistInfo: SpotifyArtistInfo): String {
+    private fun formatBioContent(artistName: String, artistInfo: ArtistInfo): String {
         val bioContent = artistInfo.bioContent
 
         return if (bioContent.isEmpty()) NO_RESULTS else jsonTextToHtml(bioContent, artistName)
     }
 
-    private fun setURL(artistInfo: SpotifyArtistInfo) {
+    private fun setURL(artistInfo: ArtistInfo) {
         openUrlButton.setOnClickListener {
             val intent = Intent(Intent.ACTION_VIEW)
             intent.data = Uri.parse(artistInfo.url)

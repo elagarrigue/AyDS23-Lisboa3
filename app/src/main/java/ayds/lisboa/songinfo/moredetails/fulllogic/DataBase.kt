@@ -10,7 +10,6 @@ import java.sql.SQLException
 
 private const val ID = "id"
 private const val ARTIST = "artist"
-private const val INFO = "info"
 private const val SOURCE = "source"
 private const val TABLE_ARTISTS = "artists"
 private const val RESULT_SET_ORDER = "artist DESC"
@@ -20,11 +19,11 @@ private const val DB_NAME = "dictionary.db"
 private const val BIO_CONTENT = "bioContent"
 private const val URL = "URL"
 
-
 interface Database{
-    fun saveArtist(artist: String, info: String)
-    fun getInfo(artist: String): SpotifyArtistInfo?
+    fun saveArtist(artist: String, artistInfo: SpotifyArtistInfo)
+    fun getArtistInfo(artist: String): SpotifyArtistInfo?
 }
+
 class DataBaseImpl(context: Context?) : SQLiteOpenHelper(context, DB_NAME, null, 1), Database {
     private val databaseColumns = arrayOf(
         ID,
@@ -40,20 +39,23 @@ class DataBaseImpl(context: Context?) : SQLiteOpenHelper(context, DB_NAME, null,
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {}
-    override fun saveArtist(artist: String, info: String) {
-        val artistValues = getArtistValues(artist, info)
+
+    override fun saveArtist(artist: String, artistInfo: SpotifyArtistInfo) {
+        val artistValues = getArtistValues(artist, artistInfo)
         this.writableDatabase.insert(TABLE_ARTISTS, null, artistValues)
     }
 
-    private fun getArtistValues(artist: String, info: String): ContentValues {
-        val values = ContentValues()
-        values.put(ARTIST, artist)
-        values.put(INFO, info)
-        values.put(SOURCE, 1)
+    private fun getArtistValues(artist: String, artistInfo: SpotifyArtistInfo): ContentValues {
+        val values = ContentValues().apply {
+            put(ARTIST, artist)
+            put(BIO_CONTENT, artistInfo.bioContent)
+            put(URL, artistInfo.url)
+            put(SOURCE, 1)
+        }
         return values
     }
 
-    override fun getInfo(artist: String): SpotifyArtistInfo? {
+    override fun getArtistInfo(artist: String): SpotifyArtistInfo? {
         val artistValues = arrayOf(artist)
         return cursorHandling(artistValues)
     }
@@ -72,6 +74,7 @@ class DataBaseImpl(context: Context?) : SQLiteOpenHelper(context, DB_NAME, null,
         cursor.close()
         return info
     }
+
     private fun map(cursor:Cursor): SpotifyArtistInfo? =
         try {
             with(cursor) {
@@ -88,6 +91,4 @@ class DataBaseImpl(context: Context?) : SQLiteOpenHelper(context, DB_NAME, null,
             e.printStackTrace()
             null
         }
-
-
 }

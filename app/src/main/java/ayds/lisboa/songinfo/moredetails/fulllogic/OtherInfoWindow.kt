@@ -9,7 +9,6 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.text.HtmlCompat
 import ayds.lisboa.songinfo.R
-import ayds.lisboa.songinfo.home.model.entities.Song
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import com.squareup.picasso.Picasso
@@ -17,6 +16,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.scalars.ScalarsConverterFactory
 import java.util.*
 import ayds.lisboa.songinfo.moredetails.fulllogic.ArtistInfo.SpotifyArtistInfo
+import ayds.lisboa.songinfo.moredetails.fulllogic.Database
 
 private const val JSON_ARTIST = "artist"
 private const val JSON_BIO = "bio"
@@ -63,7 +63,7 @@ class OtherInfoWindow : AppCompatActivity() {
     }
 
     private fun initDatabase() {
-        dataBase = DataBase(this)
+        dataBase = DataBaseImpl(this)
     }
 
     private fun initRetrofit() {
@@ -86,22 +86,15 @@ class OtherInfoWindow : AppCompatActivity() {
     private fun getArtistInfoOnUpdateView() {
         val artistName = getArtistName()
         val artistInfo = getArtistInfo(artistName)
-
-        if (artistInfo.hasContent()) {
-            artistInfo.bioContent = NO_RESULTS
-        } else {
-            artistInfo.bioContent = jsonTextToHtml(artistInfo.bioContent, artistName)
-        }
-
-        updateView(artistInfo)
+        updateView(artistName, artistInfo)
     }
 
     private fun getArtistName(): String {
         return intent.getStringExtra(ARTIST_NAME_EXTRA).toString()
     }
 
-    private fun getArtistInfo(artistName: String): SpotifyArtistInfo? {
-        var artistInfo: SpotifyArtistInfo? = getArtistInfoFromDb(artistName)
+    private fun getArtistInfo(artistName: String): SpotifyArtistInfo {
+        var artistInfo = dataBase.getInfo(artistName)
 
         when {
             artistInfo != null -> markArtistInfoAsSavedDB(artistInfo)
@@ -122,12 +115,6 @@ class OtherInfoWindow : AppCompatActivity() {
         return artistInfo
     }
 
-    private fun SpotifyArtistInfo.hasContent() = (bioContent.isNotEmpty())
-
-    private fun getArtistInfoFromDb(artistName: ArtistInfo): SpotifyArtistInfo {
-        return dataBase.getInfo(artistName)
-    }
-
     private fun markArtistInfoAsSavedDB(artistInfo: SpotifyArtistInfo) {
         artistInfo.isLocallyStored = true
     }
@@ -135,9 +122,8 @@ class OtherInfoWindow : AppCompatActivity() {
     private fun getArtistInfoFromService(artistName: String): SpotifyArtistInfo {
         val bioContent = getBioContent(artistName)
         val url = getArtistInfoUrl(artistName)
-        val isLocallyStored = false
 
-        return SpotifyArtistInfo(bioContent, url, isLocallyStored)
+        return SpotifyArtistInfo(bioContent, url)
     }
 
     private fun getBioContent(artistName: String): String {
@@ -196,10 +182,10 @@ class OtherInfoWindow : AppCompatActivity() {
         dataBase.saveArtist(artistName, artistInfo)
     }
 
-    private fun updateView(artistInfo: SpotifyArtistInfo) {
+    private fun updateView(artistName: String, artistInfo: SpotifyArtistInfo) {
         runOnUiThread {
             setDefaultImage()
-            setArtistInfo(artistInfo)
+            setBioContent(artistName, artistInfo)
             setURL(artistInfo)
         }
     }
@@ -208,8 +194,15 @@ class OtherInfoWindow : AppCompatActivity() {
         Picasso.get().load(LAST_FM_DEFAULT_IMAGE).into(imageView)
     }
 
-    private fun setArtistInfo(artistInfo: SpotifyArtistInfo) {
-        artistInfoTextView.text = HtmlCompat.fromHtml(artistInfo.bioContent, HtmlCompat.FROM_HTML_MODE_LEGACY)
+    private fun setBioContent(artistName: String, artistInfo: SpotifyArtistInfo) {
+        val bioContentFormatted = formatBioContent(artistName, artistInfo)
+        artistInfoTextView.text = HtmlCompat.fromHtml(bioContentFormatted, HtmlCompat.FROM_HTML_MODE_LEGACY)
+    }
+
+    private fun formatBioContent(artistName: String, artistInfo: SpotifyArtistInfo): String {
+        val bioContent = artistInfo.bioContent
+
+        return if (bioContent.isEmpty()) NO_RESULTS else jsonTextToHtml(bioContent, artistName)
     }
 
     private fun setURL(artistInfo: SpotifyArtistInfo) {

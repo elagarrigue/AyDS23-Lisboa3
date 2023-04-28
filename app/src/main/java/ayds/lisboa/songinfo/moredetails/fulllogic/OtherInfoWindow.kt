@@ -24,6 +24,7 @@ private const val JSON_CONTENT = "content"
 private const val JSON_URL = "url"
 private const val LAST_FM_API_BASE_URL = "https://ws.audioscrobbler.com/2.0/"
 private const val LAST_FM_DEFAULT_IMAGE = "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Lastfm_logo.svg/320px-Lastfm_logo.svg.png"
+private const val DB_SAVED_SYMBOL = "[*]"
 private const val HTML_WIDTH = "<html><div width=400>"
 private const val HTML_FONT = "<font face=\"arial\">"
 private const val HTML_FINALS = "</font></div></html>"
@@ -86,7 +87,7 @@ internal class OtherInfoWindow : AppCompatActivity() {
     private fun getArtistInfoOnUpdateView() {
         val artistName = getArtistName()
         val artistInfo = getArtistInfo(artistName)
-        updateView(artistName, artistInfo as LastFmArtistInfo)
+        updateView(artistName, artistInfo)
     }
 
     private fun getArtistName(): String {
@@ -102,7 +103,6 @@ internal class OtherInfoWindow : AppCompatActivity() {
                 try {
                     artistInfo = getArtistInfoFromService(artistName)
                     saveArtistInfoDB(artistName, artistInfo)
-                    markArtistInfoAsSavedDB(artistInfo)
                 } catch (ioException: Exception) {
                     ioException.printStackTrace()
                 }
@@ -150,6 +150,41 @@ internal class OtherInfoWindow : AppCompatActivity() {
         return Gson().fromJson(callResponse.body(), JsonObject::class.java)
     }
 
+    private fun saveArtistInfoDB(artistName: String, artistInfo: LastFmArtistInfo) {
+        dataBase.saveArtist(artistName, artistInfo)
+    }
+
+    private fun updateView(artistName: String, artistInfo: ArtistInfo) {
+        runOnUiThread {
+            setDefaultImage()
+            setBioContent(artistName, artistInfo)
+            setURL(artistInfo)
+        }
+    }
+
+    private fun setDefaultImage() {
+        Picasso.get().load(LAST_FM_DEFAULT_IMAGE).into(imageView)
+    }
+
+    private fun setBioContent(artistName: String, artistInfo: ArtistInfo) {
+        val bioContentFormatted = getArtistInfoText(artistName, artistInfo)
+        artistInfoTextView.text = HtmlCompat.fromHtml(bioContentFormatted, HtmlCompat.FROM_HTML_MODE_LEGACY)
+    }
+
+    private fun getArtistInfoText(artistName: String, artistInfo: ArtistInfo): String {
+        return when (artistInfo) {
+            is LastFmArtistInfo -> artistInfo.formatBioContent(artistName)
+            else -> "Artist info not found."
+        }
+    }
+
+    private fun LastFmArtistInfo.formatBioContent(artistName: String): String {
+        val dbSaved = if (isLocallyStored) DB_SAVED_SYMBOL else ""
+        val bioContentFormatted = if (bioContent.isEmpty()) NO_RESULTS else jsonTextToHtml(bioContent, artistName)
+
+        return dbSaved + bioContentFormatted
+    }
+
     private fun jsonTextToHtml(text: String, term: String): String {
         val builder = StringBuilder()
         val textWithBold = getBoldHtmlText(text, term)
@@ -179,37 +214,20 @@ internal class OtherInfoWindow : AppCompatActivity() {
         return text
     }
 
-    private fun saveArtistInfoDB(artistName: String, artistInfo: LastFmArtistInfo) {
-        dataBase.saveArtist(artistName, artistInfo)
-    }
+    private fun setURL(artistInfo: ArtistInfo) {
+        val url = getArtistInfoUrl(artistInfo)
 
-    private fun updateView(artistName: String, artistInfo: LastFmArtistInfo) {
-        runOnUiThread {
-            setDefaultImage()
-            setBioContent(artistName, artistInfo)
-            setURL(artistInfo)
+        openUrlButton.setOnClickListener {
+            val intent = Intent(Intent.ACTION_VIEW)
+            intent.data = Uri.parse(url)
+            startActivity(intent)
         }
     }
 
-    private fun setDefaultImage() {
-        Picasso.get().load(LAST_FM_DEFAULT_IMAGE).into(imageView)
-    }
-
-    private fun setBioContent(artistName: String, artistInfo: ArtistInfo) {
-        val bioContentFormatted = formatBioContent(artistName, artistInfo as LastFmArtistInfo)
-        artistInfoTextView.text = HtmlCompat.fromHtml(bioContentFormatted, HtmlCompat.FROM_HTML_MODE_LEGACY)
-    }
-
-    private fun formatBioContent(artistName: String, artistInfo: LastFmArtistInfo): String {
-        val bioContent = artistInfo.bioContent
-        return if (bioContent.isEmpty()) NO_RESULTS else jsonTextToHtml(bioContent, artistName)
-    }
-
-    private fun setURL(artistInfo: LastFmArtistInfo) {
-        openUrlButton.setOnClickListener {
-            val intent = Intent(Intent.ACTION_VIEW)
-            intent.data = Uri.parse(artistInfo.url)
-            startActivity(intent)
+    private fun getArtistInfoUrl(artistInfo: ArtistInfo): String {
+        return when (artistInfo) {
+            is LastFmArtistInfo -> artistInfo.url
+            else -> "Artist info url not found."
         }
     }
 

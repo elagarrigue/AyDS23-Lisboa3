@@ -7,5 +7,4 @@ sealed class ArtistInfo {
         var isLocallyStored : Boolean = false
         ) : ArtistInfo()
     object EmptyArtistInfo : ArtistInfo()
-
 }

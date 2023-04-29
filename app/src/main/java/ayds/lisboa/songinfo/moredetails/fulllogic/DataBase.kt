@@ -16,16 +16,22 @@ private const val SOURCE = "source"
 private const val TABLE_ARTISTS = "artists"
 private const val RESULT_SET_ORDER = "artist DESC"
 private const val ARTIST_COLUMN = "artist  = ?"
-private const val CREATION_QUERY = "create table artists (id INTEGER PRIMARY KEY AUTOINCREMENT, artist string, bio_content string, url string, source integer)"
 private const val DB_NAME = "dictionary.db"
+private const val CREATE_ARTIST_INFO_TABLE =
+    "create table $TABLE_ARTISTS (" +
+            "$ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
+            "$ARTIST string, " +
+            "$BIO_CONTENT string, " +
+            "$URL string, " +
+            "$SOURCE integer)"
 
-interface Database{
+interface DataBase{
     fun saveArtist(artist: String, artistInfo: LastFmArtistInfo)
     fun getArtistInfo(artist: String): LastFmArtistInfo?
 }
 
-class DataBaseImpl(context: Context?) : SQLiteOpenHelper(context, DB_NAME, null, 1), Database {
-    private val databaseColumns = arrayOf(
+internal class DataBaseImpl(context: Context?) : SQLiteOpenHelper(context, DB_NAME, null, 1), DataBase {
+    private val projection = arrayOf(
         ID,
         ARTIST,
         BIO_CONTENT,
@@ -33,9 +39,7 @@ class DataBaseImpl(context: Context?) : SQLiteOpenHelper(context, DB_NAME, null,
     )
 
     override fun onCreate(db: SQLiteDatabase) {
-        db.execSQL(
-            CREATION_QUERY
-        )
+        db.execSQL(CREATE_ARTIST_INFO_TABLE)
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {}
@@ -52,27 +56,30 @@ class DataBaseImpl(context: Context?) : SQLiteOpenHelper(context, DB_NAME, null,
             put(URL, artistInfo.url)
             put(SOURCE, 1)
         }
+
         return values
     }
 
     override fun getArtistInfo(artist: String): LastFmArtistInfo? {
         val artistValues = arrayOf(artist)
+
         return cursorHandling(artistValues)
     }
 
     private fun cursorHandling(artistValues: Array<String>): LastFmArtistInfo? {
         val cursor = this.readableDatabase.query(
             TABLE_ARTISTS,
-            databaseColumns,
+            projection,
             ARTIST_COLUMN,
             artistValues,
             null,
             null,
             RESULT_SET_ORDER
         )
-        val info: LastFmArtistInfo? = map(cursor)
+        val artistInfo = map(cursor)
         cursor.close()
-        return info
+
+        return artistInfo
     }
 
     private fun map(cursor:Cursor): LastFmArtistInfo? =

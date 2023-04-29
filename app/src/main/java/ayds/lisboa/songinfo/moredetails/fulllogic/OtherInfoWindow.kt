@@ -34,7 +34,7 @@ internal class OtherInfoWindow : AppCompatActivity() {
     private lateinit var artistInfoTextView: TextView
     private lateinit var imageView: ImageView
     private lateinit var openUrlButton: View
-    private lateinit var dataBase: Database
+    private lateinit var dataBase: DataBase
     private lateinit var retrofit: Retrofit
     private lateinit var lastFMAPI: LastFMAPI
 
@@ -121,33 +121,32 @@ internal class OtherInfoWindow : AppCompatActivity() {
     }
     
     private fun getArtistInfoFromService(artistName: String): LastFmArtistInfo {
-        val bioContent = getBioContent(artistName)
-        val url = getArtistInfoUrl(artistName)
+        val artist = artistName.getJsonArtist()
+        val bioContent = artist.getBioContent()
+        val url = artist.getUrl()
 
         return LastFmArtistInfo(bioContent, url)
     }
 
-    private fun getBioContent(artistName: String): String {
-        val callResponseJson = getJsonResponse(artistName)
-        val artist = callResponseJson[JSON_ARTIST].asJsonObject
-        val bio = artist[JSON_BIO].asJsonObject
+    private fun String?.getJsonArtist(): JsonObject {
+        val callResponse = lastFMAPI.getArtistInfo(this).execute()
+        val callResponseJson = Gson().fromJson(callResponse.body(), JsonObject::class.java)
+        val jsonArtist = callResponseJson[JSON_ARTIST]
+
+        return jsonArtist.asJsonObject
+    }
+
+    private fun JsonObject.getBioContent(): String {
+        val bio = this[JSON_BIO].asJsonObject
         val bioContent = bio[JSON_CONTENT]
 
         return bioContent.asString
     }
 
-    private fun getArtistInfoUrl(artistName: String): String {
-        val callResponseJson = getJsonResponse(artistName)
-        val artist = callResponseJson[JSON_ARTIST].asJsonObject
-        val url = artist[JSON_URL]
+    private fun JsonObject.getUrl(): String {
+        val url = this[JSON_URL]
 
         return url.asString
-    }
-
-    private fun getJsonResponse(artistName: String): JsonObject {
-        val callResponse = lastFMAPI.getArtistInfo(artistName).execute()
-
-        return Gson().fromJson(callResponse.body(), JsonObject::class.java)
     }
 
     private fun saveArtistInfoDB(artistName: String, artistInfo: LastFmArtistInfo) {
@@ -174,7 +173,7 @@ internal class OtherInfoWindow : AppCompatActivity() {
     private fun getArtistInfoText(artistName: String, artistInfo: ArtistInfo): String {
         return when (artistInfo) {
             is LastFmArtistInfo -> artistInfo.formatBioContent(artistName)
-            else -> "Artist info not found."
+            else -> "Artist info text not found."
         }
     }
 

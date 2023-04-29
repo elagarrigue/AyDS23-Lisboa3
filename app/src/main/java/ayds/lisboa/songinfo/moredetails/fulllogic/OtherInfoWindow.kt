@@ -14,6 +14,7 @@ import com.google.gson.JsonObject
 import com.squareup.picasso.Picasso
 import retrofit2.Retrofit
 import retrofit2.converter.scalars.ScalarsConverterFactory
+import retrofit2.Response
 import java.util.*
 import ayds.lisboa.songinfo.moredetails.fulllogic.ArtistInfo.LastFmArtistInfo
 import ayds.lisboa.songinfo.moredetails.fulllogic.ArtistInfo.EmptyArtistInfo
@@ -29,6 +30,8 @@ private const val HTML_WIDTH = "<html><div width=400>"
 private const val HTML_FONT = "<font face=\"arial\">"
 private const val HTML_FINALS = "</font></div></html>"
 private const val NO_RESULTS = "No Results"
+private const val NO_ARTIST_INFO_FOUND = "Artist info not found."
+private const val NO_ARTIST_INFO_URL_FOUND = "Artist info url not found."
 
 internal class OtherInfoWindow : AppCompatActivity() {
     private lateinit var artistInfoTextView: TextView
@@ -121,17 +124,26 @@ internal class OtherInfoWindow : AppCompatActivity() {
     }
     
     private fun getArtistInfoFromService(artistName: String): LastFmArtistInfo {
-        val artist = artistName.getJsonArtist()
+        val artist = artistName.getArtist()
         val bioContent = artist.getBioContent()
         val url = artist.getUrl()
 
         return LastFmArtistInfo(bioContent, url)
     }
 
-    private fun String?.getJsonArtist(): JsonObject {
-        val callResponse = lastFMAPI.getArtistInfo(this).execute()
-        val callResponseJson = Gson().fromJson(callResponse.body(), JsonObject::class.java)
-        val jsonArtist = callResponseJson[JSON_ARTIST]
+    private fun String.getArtist(): JsonObject {
+        val callResponse = getResponse(this)
+
+        return getArtistFromResponse(callResponse.body())
+    }
+
+    private fun getResponse(artistName: String): Response<String> {
+        return lastFMAPI.getArtistInfo(artistName).execute()
+    }
+
+    private fun getArtistFromResponse(serviceData: String?): JsonObject {
+        val jsonServiceData = Gson().fromJson(serviceData, JsonObject::class.java)
+        val jsonArtist = jsonServiceData[JSON_ARTIST]
 
         return jsonArtist.asJsonObject
     }
@@ -173,7 +185,7 @@ internal class OtherInfoWindow : AppCompatActivity() {
     private fun getArtistInfoText(artistName: String, artistInfo: ArtistInfo): String {
         return when (artistInfo) {
             is LastFmArtistInfo -> artistInfo.formatBioContent(artistName)
-            else -> "Artist info text not found."
+            else -> NO_ARTIST_INFO_FOUND
         }
     }
 
@@ -226,7 +238,7 @@ internal class OtherInfoWindow : AppCompatActivity() {
     private fun getArtistInfoUrl(artistInfo: ArtistInfo): String {
         return when (artistInfo) {
             is LastFmArtistInfo -> artistInfo.url
-            else -> "Artist info url not found."
+            else -> NO_ARTIST_INFO_URL_FOUND
         }
     }
 

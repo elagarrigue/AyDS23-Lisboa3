@@ -6,8 +6,12 @@ import retrofit2.converter.scalars.ScalarsConverterFactory
 
 private const val LAST_FM_API_BASE_URL = "https://ws.audioscrobbler.com/2.0/"
 
-internal class LastFmServiceImpl: LastFmService {
-    private lateinit var lastFMAPI: LastFmApi
+interface LastFMService {
+    fun init()
+    fun getResponse(artistName: String): Response<String>
+}
+internal class LastFMServiceImpl: LastFMService {
+    private lateinit var lastFMAPI: LastFMApi
     private lateinit var retrofit: Retrofit
 
     override fun init() {
@@ -23,7 +27,7 @@ internal class LastFmServiceImpl: LastFmService {
     }
 
     private fun initLastFmApi() {
-        lastFMAPI = retrofit.create(LastFmApi::class.java)
+        lastFMAPI = retrofit.create(LastFMApi::class.java)
     }
 
     override fun getResponse(artistName: String): Response<String> {

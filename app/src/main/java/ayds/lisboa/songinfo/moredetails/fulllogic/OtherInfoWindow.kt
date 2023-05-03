@@ -12,7 +12,6 @@ import ayds.lisboa.songinfo.R
 import com.squareup.picasso.Picasso
 import java.util.*
 import ayds.lisboa.songinfo.moredetails.fulllogic.ArtistInfo.LastFmArtistInfo
-import ayds.lisboa.songinfo.moredetails.fulllogic.ArtistInfo.EmptyArtistInfo
 import retrofit2.Response
 
 private const val LAST_FM_DEFAULT_IMAGE = "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Lastfm_logo.svg/320px-Lastfm_logo.svg.png"
@@ -29,8 +28,8 @@ internal class OtherInfoWindow : AppCompatActivity() {
     private lateinit var imageView: ImageView
     private lateinit var openUrlButton: View
     private lateinit var dataBase: DataBase
-    private lateinit var lastFMService: LastFmService
-    private lateinit var lastFmToArtistInfoResolver: LastFmToArtistInfoResolver
+    private lateinit var lastFMService: LastFMService
+    private lateinit var lastFmToArtistInfoResolver: LastFMToArtistInfoResolver
 
     companion object {
         const val ARTIST_NAME_EXTRA = "artistName"
@@ -63,11 +62,11 @@ internal class OtherInfoWindow : AppCompatActivity() {
     }
 
     private fun initLastFmService() {
-        lastFMService = LastFmServiceImpl()
+        lastFMService = LastFMServiceImpl()
     }
 
     private fun initLastFmToArtistInfoResolver() {
-        lastFmToArtistInfoResolver = LastFmToArtistInfoResolverImpl()
+        lastFmToArtistInfoResolver = LastFMToArtistInfoResolverImpl()
     }
 
     private fun open() {

@@ -6,16 +6,16 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import ayds.lisboa.songinfo.moredetails.fulllogic.ArtistInfo.LastFmArtistInfo
 
-interface LastFMLocalStorage {
+interface LastFmLocalStorage {
     fun saveArtist(artistName: String, artistInfo: LastFmArtistInfo)
     fun getArtistInfo(artistName: String): LastFmArtistInfo?
 }
 
-internal class LastFMLocalStorageImpl (
+internal class LastFmLocalStorageImpl (
     context: Context,
     private val cursorToLastFMArtistMapper: CursorToLastFMArtistMapper,
 ) : SQLiteOpenHelper(context, DB_NAME, null, 1),
-    LastFMLocalStorage {
+    LastFmLocalStorage {
 
     private val projection = arrayOf(
         ID,

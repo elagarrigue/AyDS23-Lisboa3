@@ -3,12 +3,12 @@ package ayds.lisboa.songinfo.moredetails.fulllogic
 import ayds.lisboa.songinfo.moredetails.fulllogic.ArtistInfo.LastFmArtistInfo
 
 interface ArtistInfoRepository{
-    fun getArtistInfo(artistName: String): ArtistInfo
+    fun getArtistInfo(artistName: String): ArtistInfo?
 }
 
 internal class ArtistInfoRepositoryImpl(
-    private val lastFMLocalStorage: LastFMLocalStorage,
-    private val lastFMService: LastFMService
+    private val lastFMLocalStorage: LastFmLocalStorage,
+    private val lastFMService: LastFmService
 ) : ArtistInfoRepository {
 
 
@@ -21,6 +21,12 @@ internal class ArtistInfoRepositoryImpl(
                 try {
                     artistInfo = lastFMService.getArtistInfo(artistName)
                     saveArtistInfoDB(artistName, artistInfo)
+                    (artistInfo as? ArtistInfo.LastFmArtistInfo)?.let {
+                        when {
+                            it.isSavedSong() -> lastFMLocalStorage.updateSongTerm(term, it.id)
+                        }
+                    }
+
                 } catch (ioException: Exception) {
                     ioException.printStackTrace()
                 }

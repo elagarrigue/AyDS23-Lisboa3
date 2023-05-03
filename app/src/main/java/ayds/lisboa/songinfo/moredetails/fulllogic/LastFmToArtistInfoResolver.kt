@@ -8,10 +8,10 @@ private const val JSON_BIO = "bio"
 private const val JSON_CONTENT = "content"
 private const val JSON_URL = "url"
 
-interface LastFMToArtistInfoResolver {
+interface LastFmToArtistInfoResolver {
     fun getArtistInfoFromExternalData(serviceData: String?): ArtistInfo?
 }
-internal class LastFMToArtistInfoResolverImpl: LastFMToArtistInfoResolver {
+internal class LastFmToArtistInfoResolverImpl: LastFmToArtistInfoResolver {
 
     override fun getArtistInfoFromExternalData(serviceData: String?): ArtistInfo.LastFmArtistInfo? =
         try {

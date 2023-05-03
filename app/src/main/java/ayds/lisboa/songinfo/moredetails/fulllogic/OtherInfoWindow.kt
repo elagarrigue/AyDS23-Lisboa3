@@ -14,7 +14,6 @@ import com.google.gson.JsonObject
 import com.squareup.picasso.Picasso
 import retrofit2.Retrofit
 import retrofit2.converter.scalars.ScalarsConverterFactory
-import retrofit2.Response
 import java.util.*
 import ayds.lisboa.songinfo.moredetails.fulllogic.ArtistInfo.LastFmArtistInfo
 import ayds.lisboa.songinfo.moredetails.fulllogic.ArtistInfo.EmptyArtistInfo
@@ -39,7 +38,7 @@ internal class OtherInfoWindow : AppCompatActivity() {
     private lateinit var openUrlButton: View
     private lateinit var dataBase: DataBase
     private lateinit var retrofit: Retrofit
-    private lateinit var lastFMAPI: LastFMAPI
+
 
     companion object {
         const val ARTIST_NAME_EXTRA = "artistName"
@@ -135,10 +134,6 @@ internal class OtherInfoWindow : AppCompatActivity() {
         val callResponse = getResponse(this)
 
         return getArtistFromResponse(callResponse.body())
-    }
-
-    private fun getResponse(artistName: String): Response<String> {
-        return lastFMAPI.getArtistInfo(artistName).execute()
     }
 
     private fun getArtistFromResponse(serviceData: String?): JsonObject {

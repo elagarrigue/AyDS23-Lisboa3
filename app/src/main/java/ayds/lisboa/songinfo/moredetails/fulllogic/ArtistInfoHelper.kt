@@ -1,5 +1,7 @@
 package ayds.lisboa.songinfo.moredetails.fulllogic
 
+import ayds.lisboa.songinfo.moredetails.fulllogic.domain.ArtistInfo
+
 interface ArtistInfoHelper {
 
     fun getArtistInfoText(artistName: String, artistInfo: ArtistInfo): String

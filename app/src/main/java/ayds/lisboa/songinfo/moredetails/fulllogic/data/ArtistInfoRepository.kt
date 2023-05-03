@@ -1,8 +1,10 @@
-package ayds.lisboa.songinfo.moredetails.fulllogic
+package ayds.lisboa.songinfo.moredetails.fulllogic.data
 
-import ayds.lisboa.songinfo.home.model.entities.Song
-import ayds.lisboa.songinfo.moredetails.fulllogic.ArtistInfo.LastFmArtistInfo
-import ayds.lisboa.songinfo.moredetails.fulllogic.ArtistInfo.EmptyArtistInfo
+import ayds.lisboa.songinfo.moredetails.fulllogic.domain.ArtistInfo
+import ayds.lisboa.songinfo.moredetails.fulllogic.domain.ArtistInfo.LastFmArtistInfo
+import ayds.lisboa.songinfo.moredetails.fulllogic.domain.ArtistInfo.EmptyArtistInfo
+import ayds.lisboa.songinfo.moredetails.fulllogic.data.local.LastFmLocalStorage
+import ayds.lisboa.songinfo.moredetails.fulllogic.data.external.LastFmService
 
 interface ArtistInfoRepository{
     fun getArtistInfo(artistName: String): ArtistInfo?

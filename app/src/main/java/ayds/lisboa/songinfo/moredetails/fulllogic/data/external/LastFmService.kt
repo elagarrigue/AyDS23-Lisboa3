@@ -1,9 +1,9 @@
-package ayds.lisboa.songinfo.moredetails.fulllogic
+package ayds.lisboa.songinfo.moredetails.fulllogic.data.external
 
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.scalars.ScalarsConverterFactory
-import ayds.lisboa.songinfo.moredetails.fulllogic.ArtistInfo.LastFmArtistInfo
+import ayds.lisboa.songinfo.moredetails.fulllogic.domain.ArtistInfo.LastFmArtistInfo
 
 
 private const val LAST_FM_API_BASE_URL = "https://ws.audioscrobbler.com/2.0/"
@@ -15,7 +15,8 @@ interface LastFmService {
 internal class LastFmServiceImpl(
     private val lastFMAPI: LastFmApi,
     private val retrofit: Retrofit,
-    private val lastFmToArtistInfoResolver: LastFmToArtistInfoResolver): LastFmService {
+    private val lastFmToArtistInfoResolver: LastFmToArtistInfoResolver
+): LastFmService {
 
     // INITS PASAR A INYECTOR
     private fun init() {

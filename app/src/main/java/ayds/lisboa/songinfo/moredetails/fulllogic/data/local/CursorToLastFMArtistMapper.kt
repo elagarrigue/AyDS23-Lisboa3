@@ -1,7 +1,8 @@
-package ayds.lisboa.songinfo.moredetails.fulllogic
+package ayds.lisboa.songinfo.moredetails.fulllogic.data.local
 
 import android.database.Cursor
-import ayds.lisboa.songinfo.moredetails.fulllogic.ArtistInfo.LastFmArtistInfo
+import ayds.lisboa.songinfo.moredetails.fulllogic.domain.ArtistInfo
+import ayds.lisboa.songinfo.moredetails.fulllogic.domain.ArtistInfo.LastFmArtistInfo
 import java.sql.SQLException
 
 interface CursorToLastFMArtistMapper{
@@ -9,7 +10,7 @@ interface CursorToLastFMArtistMapper{
     fun map(cursor: Cursor): LastFmArtistInfo?
 }
 
-internal class CursorToLastFMArtistMapperImpl(): CursorToLastFMArtistMapper{
+internal class CursorToLastFMArtistMapperImpl(): CursorToLastFMArtistMapper {
 
     override fun map(cursor: Cursor): LastFmArtistInfo? =
         try {

@@ -1,8 +1,9 @@
-package ayds.lisboa.songinfo.moredetails.fulllogic
+package ayds.lisboa.songinfo.moredetails.fulllogic.data.external
 
+import ayds.lisboa.songinfo.moredetails.fulllogic.domain.ArtistInfo
 import com.google.gson.Gson
 import com.google.gson.JsonObject
-import ayds.lisboa.songinfo.moredetails.fulllogic.ArtistInfo.LastFmArtistInfo
+import ayds.lisboa.songinfo.moredetails.fulllogic.domain.ArtistInfo.LastFmArtistInfo
 
 private const val JSON_ARTIST = "artist"
 private const val JSON_BIO = "bio"

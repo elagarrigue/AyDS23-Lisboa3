@@ -1,4 +1,4 @@
-package ayds.lisboa.songinfo.moredetails.fulllogic
+package ayds.lisboa.songinfo.moredetails.fulllogic.domain
 
 sealed class ArtistInfo {
     data class LastFmArtistInfo (

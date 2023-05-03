@@ -11,7 +11,12 @@ import androidx.core.text.HtmlCompat
 import ayds.lisboa.songinfo.R
 import com.squareup.picasso.Picasso
 import java.util.*
-import ayds.lisboa.songinfo.moredetails.fulllogic.ArtistInfo.LastFmArtistInfo
+import ayds.lisboa.songinfo.moredetails.fulllogic.domain.ArtistInfo.LastFmArtistInfo
+import ayds.lisboa.songinfo.moredetails.fulllogic.data.external.LastFmServiceImpl
+import ayds.lisboa.songinfo.moredetails.fulllogic.data.external.LastFmToArtistInfoResolverImpl
+import ayds.lisboa.songinfo.moredetails.fulllogic.data.local.CursorToLastFMArtistMapperImpl
+import ayds.lisboa.songinfo.moredetails.fulllogic.data.local.LastFmLocalStorageImpl
+import ayds.lisboa.songinfo.moredetails.fulllogic.domain.ArtistInfo
 import retrofit2.Response
 
 private const val LAST_FM_DEFAULT_IMAGE = "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Lastfm_logo.svg/320px-Lastfm_logo.svg.png"

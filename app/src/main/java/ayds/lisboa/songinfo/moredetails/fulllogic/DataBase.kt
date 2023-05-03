@@ -8,23 +8,6 @@ import android.database.sqlite.SQLiteOpenHelper
 import ayds.lisboa.songinfo.moredetails.fulllogic.ArtistInfo.LastFmArtistInfo
 import java.sql.SQLException
 
-private const val ID = "id"
-private const val ARTIST = "artist"
-private const val BIO_CONTENT = "bio_content"
-private const val URL = "url"
-private const val SOURCE = "source"
-private const val TABLE_ARTISTS = "artists"
-private const val RESULT_SET_ORDER = "artist DESC"
-private const val ARTIST_COLUMN = "artist  = ?"
-private const val DB_NAME = "dictionary.db"
-private const val CREATE_ARTIST_INFO_TABLE =
-    "create table $TABLE_ARTISTS (" +
-            "$ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
-            "$ARTIST string, " +
-            "$BIO_CONTENT string, " +
-            "$URL string, " +
-            "$SOURCE integer)"
-
 interface DataBase{
     fun saveArtist(artist: String, artistInfo: LastFmArtistInfo)
     fun getArtistInfo(artist: String): LastFmArtistInfo?

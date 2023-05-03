@@ -33,4 +33,6 @@ internal class LastFMServiceImpl: LastFMService {
     override fun getResponse(artistName: String): Response<String> {
         return lastFMAPI.getArtistInfo(artistName).execute()
     }
+
+
 }

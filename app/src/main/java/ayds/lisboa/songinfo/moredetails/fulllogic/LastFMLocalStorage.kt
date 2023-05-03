@@ -7,8 +7,8 @@ import android.database.sqlite.SQLiteOpenHelper
 import ayds.lisboa.songinfo.moredetails.fulllogic.ArtistInfo.LastFmArtistInfo
 
 interface LastFMLocalStorage {
-    fun saveArtist(artistValues: ContentValues)
-    fun getArtistInfo(artistValues: Array<String>): LastFmArtistInfo?
+    fun saveArtist(artistName: String, artistInfo: LastFmArtistInfo)
+    fun getArtistInfo(artistName: String): LastFmArtistInfo?
 }
 
 internal class LastFMLocalStorageImpl (
@@ -30,11 +30,24 @@ internal class LastFMLocalStorageImpl (
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {}
 
-    override fun saveArtist(artistValues: ContentValues) {
+    override fun saveArtist(artistName: String,artistInfo: LastFmArtistInfo) {
+        val artistValues = getArtistValues(artistName, artistInfo)
         this.writableDatabase.insert(TABLE_ARTISTS, null, artistValues)
     }
 
-    override fun getArtistInfo(artistValues: Array<String>): LastFmArtistInfo? {
+    private fun getArtistValues(artist: String, artistInfo: LastFmArtistInfo): ContentValues {
+        val values = ContentValues().apply {
+            put(ARTIST, artist)
+            put(BIO_CONTENT, artistInfo.bioContent)
+            put(URL, artistInfo.url)
+            put(SOURCE, 1)
+        }
+
+        return values
+    }
+
+    override fun getArtistInfo(artistName: String): LastFmArtistInfo? {
+        val artistValues = arrayOf(artistName)
         val cursor = this.readableDatabase.query(
             TABLE_ARTISTS,
             projection,

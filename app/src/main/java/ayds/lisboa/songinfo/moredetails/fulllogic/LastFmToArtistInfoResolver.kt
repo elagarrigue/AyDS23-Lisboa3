@@ -2,6 +2,7 @@ package ayds.lisboa.songinfo.moredetails.fulllogic
 
 import com.google.gson.Gson
 import com.google.gson.JsonObject
+import ayds.lisboa.songinfo.moredetails.fulllogic.ArtistInfo.LastFmArtistInfo
 
 private const val JSON_ARTIST = "artist"
 private const val JSON_BIO = "bio"
@@ -9,11 +10,11 @@ private const val JSON_CONTENT = "content"
 private const val JSON_URL = "url"
 
 interface LastFmToArtistInfoResolver {
-    fun getArtistInfoFromExternalData(serviceData: String?): ArtistInfo?
+    fun getArtistInfoFromExternalData(serviceData: String?): LastFmArtistInfo?
 }
 internal class LastFmToArtistInfoResolverImpl: LastFmToArtistInfoResolver {
 
-    override fun getArtistInfoFromExternalData(serviceData: String?): ArtistInfo.LastFmArtistInfo? =
+    override fun getArtistInfoFromExternalData(serviceData: String?): LastFmArtistInfo? =
         try {
             serviceData?.getArtist()?.let { item ->
                 ArtistInfo.LastFmArtistInfo(

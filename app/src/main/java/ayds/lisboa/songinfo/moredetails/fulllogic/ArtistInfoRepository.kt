@@ -1,6 +1,8 @@
 package ayds.lisboa.songinfo.moredetails.fulllogic
 
+import ayds.lisboa.songinfo.home.model.entities.Song
 import ayds.lisboa.songinfo.moredetails.fulllogic.ArtistInfo.LastFmArtistInfo
+import ayds.lisboa.songinfo.moredetails.fulllogic.ArtistInfo.EmptyArtistInfo
 
 interface ArtistInfoRepository{
     fun getArtistInfo(artistName: String): ArtistInfo?
@@ -16,27 +18,23 @@ internal class ArtistInfoRepositoryImpl(
         var artistInfo = lastFMLocalStorage.getArtistInfo(artistName)
 
         when {
-            artistInfo != null -> markArtistInfoAsSavedDB(artistInfo)
+            artistInfo != null -> markArtistInfoAsLocal(artistInfo)
             else -> {
                 try {
                     artistInfo = lastFMService.getArtistInfo(artistName)
-                    saveArtistInfoDB(artistName, artistInfo)
-                    (artistInfo as? ArtistInfo.LastFmArtistInfo)?.let {
-                        when {
-                            it.isSavedSong() -> lastFMLocalStorage.updateSongTerm(term, it.id)
-                        }
+                    (artistInfo as? LastFmArtistInfo)?.let {
+                        saveArtistInfoDB(artistName, artistInfo)
                     }
-
                 } catch (ioException: Exception) {
                     ioException.printStackTrace()
                 }
             }
         }
 
-        return artistInfo ?: ArtistInfo.EmptyArtistInfo
+        return artistInfo ?: EmptyArtistInfo
     }
 
-    private fun markArtistInfoAsSavedDB(artistInfo: LastFmArtistInfo) {
+    private fun markArtistInfoAsLocal(artistInfo: LastFmArtistInfo) {
         artistInfo.isLocallyStored = true
     }
 

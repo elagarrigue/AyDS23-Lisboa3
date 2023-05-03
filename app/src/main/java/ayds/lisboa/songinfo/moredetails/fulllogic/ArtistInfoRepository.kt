@@ -65,20 +65,5 @@ internal class ArtistInfoRepositoryImpl(context: Context?) : SQLiteOpenHelper(co
         return artistInfo
     }
 
-    private fun map(cursor:Cursor): LastFmArtistInfo? =
-        try {
-            with(cursor) {
-                if (moveToNext()) {
-                    LastFmArtistInfo(
-                        bioContent = getString(getColumnIndexOrThrow(BIO_CONTENT)),
-                        url = getString(getColumnIndexOrThrow(URL)),
-                    )
-                } else {
-                    null
-                }
-            }
-        } catch (e: SQLException) {
-            e.printStackTrace()
-            null
-        }
+
 }

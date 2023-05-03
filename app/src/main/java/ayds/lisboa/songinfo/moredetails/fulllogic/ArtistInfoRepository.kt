@@ -8,12 +8,12 @@ import android.database.sqlite.SQLiteOpenHelper
 import ayds.lisboa.songinfo.moredetails.fulllogic.ArtistInfo.LastFmArtistInfo
 import java.sql.SQLException
 
-interface DataBase{
+interface ArtistInfoRepository{
     fun saveArtist(artist: String, artistInfo: LastFmArtistInfo)
     fun getArtistInfo(artist: String): LastFmArtistInfo?
 }
 
-internal class DataBaseImpl(context: Context?) : SQLiteOpenHelper(context, DB_NAME, null, 1), DataBase {
+internal class ArtistInfoRepositoryImpl(context: Context?) : SQLiteOpenHelper(context, DB_NAME, null, 1), ArtistInfoRepository {
     private val projection = arrayOf(
         ID,
         ARTIST,

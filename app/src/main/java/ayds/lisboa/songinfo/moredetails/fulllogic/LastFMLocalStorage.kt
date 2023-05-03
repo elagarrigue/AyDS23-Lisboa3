@@ -13,7 +13,7 @@ interface LastFMLocalStorage {
 
 internal class LastFMLocalStorageImpl (
     context: Context,
-    private val cursorToLastFMArtistMapper: CursorToLastFMArtistMapper
+    private val cursorToLastFMArtistMapper: CursorToLastFMArtistMapper,
 ) : SQLiteOpenHelper(context, DB_NAME, null, 1),
     LastFMLocalStorage {
 

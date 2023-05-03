@@ -9,20 +9,12 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.text.HtmlCompat
 import ayds.lisboa.songinfo.R
-import com.google.gson.Gson
-import com.google.gson.JsonObject
 import com.squareup.picasso.Picasso
-import retrofit2.Retrofit
-import retrofit2.converter.scalars.ScalarsConverterFactory
 import java.util.*
 import ayds.lisboa.songinfo.moredetails.fulllogic.ArtistInfo.LastFmArtistInfo
 import ayds.lisboa.songinfo.moredetails.fulllogic.ArtistInfo.EmptyArtistInfo
+import retrofit2.Response
 
-private const val JSON_ARTIST = "artist"
-private const val JSON_BIO = "bio"
-private const val JSON_CONTENT = "content"
-private const val JSON_URL = "url"
-private const val LAST_FM_API_BASE_URL = "https://ws.audioscrobbler.com/2.0/"
 private const val LAST_FM_DEFAULT_IMAGE = "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Lastfm_logo.svg/320px-Lastfm_logo.svg.png"
 private const val DB_SAVED_SYMBOL = "[*]"
 private const val HTML_WIDTH = "<html><div width=400>"
@@ -37,8 +29,8 @@ internal class OtherInfoWindow : AppCompatActivity() {
     private lateinit var imageView: ImageView
     private lateinit var openUrlButton: View
     private lateinit var dataBase: DataBase
-    private lateinit var retrofit: Retrofit
-
+    private lateinit var lastFMService: LastFmService
+    private lateinit var lastFmToArtistInfoResolver: LastFmToArtistInfoResolver
 
     companion object {
         const val ARTIST_NAME_EXTRA = "artistName"
@@ -49,8 +41,8 @@ internal class OtherInfoWindow : AppCompatActivity() {
         initContentView()
         initView()
         initDatabase()
-        initRetrofit()
-        initLastFmApi()
+        initLastFmService()
+        initLastFmToArtistInfoResolver()
         open()
     }
 
@@ -66,18 +58,16 @@ internal class OtherInfoWindow : AppCompatActivity() {
     }
 
     private fun initDatabase() {
-        dataBase = DataBaseImpl(this)
+        // INICIALIZAR CURSOR EN INJECTOR
+        dataBase = LastFMLocalStorageImpl(this, CursorToLastFMArtistMapperImpl())
     }
 
-    private fun initRetrofit() {
-        val retrofitBuilder = Retrofit.Builder()
-        retrofitBuilder.baseUrl(LAST_FM_API_BASE_URL)
-        retrofitBuilder.addConverterFactory(ScalarsConverterFactory.create())
-        retrofit = retrofitBuilder.build()
+    private fun initLastFmService() {
+        lastFMService = LastFmServiceImpl()
     }
 
-    private fun initLastFmApi() {
-        lastFMAPI = retrofit.create(LastFMAPI::class.java)
+    private fun initLastFmToArtistInfoResolver() {
+        lastFmToArtistInfoResolver = LastFmToArtistInfoResolverImpl()
     }
 
     private fun open() {
@@ -96,68 +86,19 @@ internal class OtherInfoWindow : AppCompatActivity() {
         return intent.getStringExtra(ARTIST_NAME_EXTRA).toString()
     }
 
-    private fun getArtistInfo(artistName: String): ArtistInfo {
-        var artistInfo = getArtistInfoFromDb(artistName)
-
-        when {
-            artistInfo != null -> markArtistInfoAsSavedDB(artistInfo)
-            else -> {
-                try {
-                    artistInfo = getArtistInfoFromService(artistName)
-                    saveArtistInfoDB(artistName, artistInfo)
-                } catch (ioException: Exception) {
-                    ioException.printStackTrace()
-                }
-            }
-        }
-
-        return artistInfo ?: EmptyArtistInfo
-    }
-
     private fun getArtistInfoFromDb(artistName: String): LastFmArtistInfo? {
         return dataBase.getArtistInfo(artistName)
     }
     
-    private fun markArtistInfoAsSavedDB(artistInfo: LastFmArtistInfo) {
-        artistInfo.isLocallyStored = true
-    }
-    
-    private fun getArtistInfoFromService(artistName: String): LastFmArtistInfo {
-        val artist = artistName.getArtist()
-        val bioContent = artist.getBioContent()
-        val url = artist.getUrl()
 
-        return LastFmArtistInfo(bioContent, url)
+
+    private fun getArtistInfoFromService(artistName: String): ArtistInfo? {
+        val artist = getResponse(artistName)
+        return lastFmToArtistInfoResolver.getArtistInfoFromExternalData(artist.body())
     }
 
-    private fun String.getArtist(): JsonObject {
-        val callResponse = getResponse(this)
-
-        return getArtistFromResponse(callResponse.body())
-    }
-
-    private fun getArtistFromResponse(serviceData: String?): JsonObject {
-        val jsonServiceData = Gson().fromJson(serviceData, JsonObject::class.java)
-        val jsonArtist = jsonServiceData[JSON_ARTIST]
-
-        return jsonArtist.asJsonObject
-    }
-
-    private fun JsonObject.getBioContent(): String {
-        val bio = this[JSON_BIO].asJsonObject
-        val bioContent = bio[JSON_CONTENT]
-
-        return bioContent.asString
-    }
-
-    private fun JsonObject.getUrl(): String {
-        val url = this[JSON_URL]
-
-        return url.asString
-    }
-
-    private fun saveArtistInfoDB(artistName: String, artistInfo: LastFmArtistInfo) {
-        dataBase.saveArtist(artistName, artistInfo)
+    private fun getResponse(artistName: String): Response<String> {
+        return lastFMService.getResponse(artistName)
     }
 
     private fun updateView(artistName: String, artistInfo: ArtistInfo) {

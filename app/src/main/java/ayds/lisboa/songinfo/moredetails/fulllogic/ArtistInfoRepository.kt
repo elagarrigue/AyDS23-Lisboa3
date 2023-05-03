@@ -29,14 +29,38 @@ internal class ArtistInfoRepositoryImpl(
 
         return values
     }
-
+    /*
     override fun getArtistInfo(artist: String): LastFmArtistInfo? {
         val artistValues = arrayOf(artist)
 
         return lastFMLocalStorage.getArtistInfo(artistValues)
     }
+*/
+    override fun getArtistInfo(artistName: String): ArtistInfo {
+        var artistInfo = lastFMLocalStorage.getArtistInfo(artistName)
 
+        when {
+            artistInfo != null -> markArtistInfoAsSavedDB(artistInfo)
+            else -> {
+                try {
+                    artistInfo = lastFMService.getArtistInfoFromService(artistName)
+                    saveArtistInfoDB(artistName, artistInfo)
+                } catch (ioException: Exception) {
+                    ioException.printStackTrace()
+                }
+            }
+        }
 
+        return artistInfo ?: ArtistInfo.EmptyArtistInfo
+    }
+
+    private fun markArtistInfoAsSavedDB(artistInfo: LastFmArtistInfo) {
+        artistInfo.isLocallyStored = true
+    }
+
+    private fun saveArtistInfoDB(artistName: String, artistInfo: LastFmArtistInfo) {
+        lastFMLocalStorage.saveArtist(artistName, artistInfo)
+    }
 
 
 }

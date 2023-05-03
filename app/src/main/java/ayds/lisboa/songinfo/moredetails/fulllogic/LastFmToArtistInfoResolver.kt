@@ -1,4 +1,5 @@
 package ayds.lisboa.songinfo.moredetails.fulllogic
 
-class LastFmToArtistInfoResolver {
+interface LastFmToArtistInfoResolver {
+    fun getArtistInfoFromExternalData(serviceData: String?): ArtistInfo?
 }

@@ -1,4 +1,4 @@
-package ayds.lisboa.songinfo.moredetails.fulllogic
+package ayds.lisboa.songinfo.moredetails.fulllogic.view
 
 import ayds.lisboa.songinfo.moredetails.fulllogic.domain.ArtistInfo
 
@@ -15,7 +15,7 @@ private const val NO_RESULTS = "No Results"
 private const val NO_ARTIST_INFO_FOUND = "Artist info not found."
 private const val NO_ARTIST_INFO_URL_FOUND = "Artist info url not found."
 
-internal class ArtistInfoHelperImpl(val htmlHelper: HtmlHelper): ArtistInfoHelper {
+internal class ArtistInfoHelperImpl(private val htmlHelper: HtmlHelper): ArtistInfoHelper {
 
     override fun getArtistInfoText(artistName: String, artistInfo: ArtistInfo): String {
         return when (artistInfo) {

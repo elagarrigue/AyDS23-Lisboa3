@@ -1,4 +1,4 @@
-package ayds.lisboa.songinfo.moredetails.fulllogic
+package ayds.lisboa.songinfo.moredetails.fulllogic.view
 
 import android.content.Intent
 import android.net.Uri
@@ -11,13 +11,7 @@ import androidx.core.text.HtmlCompat
 import ayds.lisboa.songinfo.R
 import com.squareup.picasso.Picasso
 import java.util.*
-import ayds.lisboa.songinfo.moredetails.fulllogic.domain.ArtistInfo.LastFmArtistInfo
-import ayds.lisboa.songinfo.moredetails.fulllogic.data.external.LastFmServiceImpl
-import ayds.lisboa.songinfo.moredetails.fulllogic.data.external.LastFmToArtistInfoResolverImpl
-import ayds.lisboa.songinfo.moredetails.fulllogic.data.local.CursorToLastFMArtistMapperImpl
-import ayds.lisboa.songinfo.moredetails.fulllogic.data.local.LastFmLocalStorageImpl
 import ayds.lisboa.songinfo.moredetails.fulllogic.domain.ArtistInfo
-import retrofit2.Response
 
 private const val LAST_FM_DEFAULT_IMAGE = "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Lastfm_logo.svg/320px-Lastfm_logo.svg.png"
 
@@ -34,9 +28,6 @@ internal class OtherInfoView : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         initContentView()
         initView()
-        initDatabase()
-        initLastFmService()
-        initLastFmToArtistInfoResolver()
         open()
     }
 
@@ -51,26 +42,16 @@ internal class OtherInfoView : AppCompatActivity() {
 
     }
 
-    private fun initDatabase() {
-        // INICIALIZAR CURSOR EN INJECTOR
-        dataBase = LastFmLocalStorageImpl(this, CursorToLastFMArtistMapperImpl())
-    }
-
-    private fun initLastFmService() {
-        lastFMService = LastFmServiceImpl()
-    }
-
-    private fun initLastFmToArtistInfoResolver() {
-        lastFmToArtistInfoResolver = LastFmToArtistInfoResolverImpl()
-    }
-
     private fun open() {
         Thread {
+            // SOLO DEBE SER UN SET, NO GET + SET
+            // POSIBLEMENTE SEA SOLO EL UPDATEVIEW()
             getArtistInfoOnUpdateView()
         }.start()
     }
 
     private fun getArtistInfoOnUpdateView() {
+        // MOVER METODO COMPLETO AL PRESENTER -> notify() por observer
         val artistName = getArtistName()
         val artistInfo = getArtistInfo(artistName)
         updateView(artistName, artistInfo)
@@ -78,19 +59,6 @@ internal class OtherInfoView : AppCompatActivity() {
 
     private fun getArtistName(): String {
         return intent.getStringExtra(ARTIST_NAME_EXTRA).toString()
-    }
-
-    private fun getArtistInfoFromDb(artistName: String): LastFmArtistInfo? {
-        return dataBase.getArtistInfo(artistName)
-    }
-
-    private fun getArtistInfoFromService(artistName: String): ArtistInfo? {
-        val artist = getResponse(artistName)
-        return lastFmToArtistInfoResolver.getArtistInfoFromExternalData(artist.body())
-    }
-
-    private fun getResponse(artistName: String): Response<String> {
-        return lastFMService.getResponse(artistName)
     }
 
     private fun updateView(artistName: String, artistInfo: ArtistInfo) {
@@ -106,12 +74,13 @@ internal class OtherInfoView : AppCompatActivity() {
     }
 
     private fun setBioContent(artistName: String, artistInfo: ArtistInfo) {
-        val bioContentFormatted = getArtistInfoText(artistName, artistInfo)
+        val bioContentFormatted = getArtistInfoText(artistName, artistInfo) // MOVER ESTE GET AL PRESENTER
+
         artistInfoTextView.text = HtmlCompat.fromHtml(bioContentFormatted, HtmlCompat.FROM_HTML_MODE_LEGACY)
     }
 
     private fun setURL(artistInfo: ArtistInfo) {
-        val url = getArtistInfoUrl(artistInfo)
+        val url = getArtistInfoUrl(artistInfo) // MOVER ESTE GET AL PRESENTER
 
         openUrlButton.setOnClickListener {
             val intent = Intent(Intent.ACTION_VIEW)

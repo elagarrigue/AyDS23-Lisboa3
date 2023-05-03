@@ -5,16 +5,12 @@ import ayds.lisboa.songinfo.moredetails.fulllogic.domain.ArtistInfo.LastFmArtist
 import ayds.lisboa.songinfo.moredetails.fulllogic.domain.ArtistInfo.EmptyArtistInfo
 import ayds.lisboa.songinfo.moredetails.fulllogic.data.local.LastFmLocalStorage
 import ayds.lisboa.songinfo.moredetails.fulllogic.data.external.LastFmService
-
-interface ArtistInfoRepository{
-    fun getArtistInfo(artistName: String): ArtistInfo?
-}
+import ayds.lisboa.songinfo.moredetails.fulllogic.domain.ArtistInfoRepository
 
 internal class ArtistInfoRepositoryImpl(
     private val lastFMLocalStorage: LastFmLocalStorage,
     private val lastFMService: LastFmService
 ) : ArtistInfoRepository {
-
 
     override fun getArtistInfo(artistName: String): ArtistInfo {
         var artistInfo = lastFMLocalStorage.getArtistInfo(artistName)
@@ -43,6 +39,5 @@ internal class ArtistInfoRepositoryImpl(
     private fun saveArtistInfoDB(artistName: String, artistInfo: LastFmArtistInfo) {
         lastFMLocalStorage.saveArtist(artistName, artistInfo)
     }
-
 
 }

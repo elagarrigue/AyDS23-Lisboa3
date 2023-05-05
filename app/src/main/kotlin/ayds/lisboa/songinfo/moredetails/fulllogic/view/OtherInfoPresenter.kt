@@ -1,6 +1,6 @@
 package ayds.lisboa.songinfo.moredetails.fulllogic.view
 
-import ayds.lisboa.songinfo.home.view.HomeUiEvent
+import ayds.lisboa.songinfo.moredetails.fulllogic.domain.ArtistInfo
 import ayds.lisboa.songinfo.moredetails.fulllogic.domain.ArtistInfoRepository
 import ayds.observer.Observer
 
@@ -10,28 +10,51 @@ interface OtherInfoPresenter {
 
 internal class OtherInfoPresenterImpl(private val artistInfoRepository: ArtistInfoRepository): OtherInfoPresenter {
     private lateinit var otherInfoView: OtherInfoView
+
     override fun setOtherInfoView(otherInfoView: OtherInfoView) {
-        this.otherInfoView=otherInfoView
+        this.otherInfoView = otherInfoView
         otherInfoView.uiEventObservable.subscribe(observer)
     }
 
-    private val observer: Observer<HomeUiEvent> =
-        Observer { value -> HomeUiEvent.OpenSongUrl -> openSongUrl()
+    private val observer: Observer<OtherInfoEvent> =
+        Observer { value ->
+            when (value) {
+                OtherInfoEvent.Open -> open()
             }
+        }
 
-
-    private fun openInfoUrl(){
-        //TODO
-    }
-
-    private fun open() {
-        getArtistInfoOnUpdateView()
+    private fun open(){
+        Thread {
+            getArtistInfoOnUpdateView()
+        }.start()
     }
 
     private fun getArtistInfoOnUpdateView() {
-        // MOVER METODO COMPLETO AL PRESENTER -> notify() por observer
         val artistName = otherInfoView.getArtistName()
         val artistInfo = artistInfoRepository.getArtistInfo(artistName)
-        otherInfoView.updateView(artistName, artistInfo)
+        updateUiState(artistInfo)
+        otherInfoView.updateView()
     }
+
+    private fun updateUiState(artistInfo: ArtistInfo) {
+        when (artistInfo) {
+            is ArtistInfo.LastFmArtistInfo -> updateOtherInfoState(artistInfo)
+            ArtistInfo.EmptyArtistInfo -> updateNoResultsUiState()
+        }
+    }
+
+    private fun updateOtherInfoState(artistInfo: ArtistInfo.LastFmArtistInfo) {
+        otherInfoView.uiState = otherInfoView.uiState.copy(
+            artistInfoBioContent = artistInfo.bioContent,
+            artistInfoUrl = artistInfo.url
+        )
+    }
+
+    private fun updateNoResultsUiState() {
+        otherInfoView.uiState = otherInfoView.uiState.copy(
+            artistInfoBioContent = "NO RESULTS",
+            artistInfoUrl = ""
+        )
+    }
+
 }

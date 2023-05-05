@@ -1,7 +1,6 @@
 package ayds.lisboa.songinfo.moredetails.fulllogic.view
 
-import android.content.Intent
-import android.net.Uri
+
 import android.os.Bundle
 import android.view.View
 import android.widget.ImageView
@@ -11,21 +10,23 @@ import androidx.core.text.HtmlCompat
 import ayds.lisboa.songinfo.R
 import ayds.lisboa.songinfo.moredetails.fulllogic.MoreDetailsInjector
 import com.squareup.picasso.Picasso
-import ayds.lisboa.songinfo.moredetails.fulllogic.domain.ArtistInfo
 import ayds.lisboa.songinfo.utils.UtilsInjector
 import ayds.lisboa.songinfo.utils.navigation.NavigationUtils
 import ayds.observer.Observable
 import ayds.observer.Subject
 
+
 interface OtherInfoView{
     val uiEventObservable: Observable<OtherInfoEvent>
     var uiState: OtherInfoUiState
 
+
     fun getArtistName():String
     fun updateView()
     fun openExternalLink(url: String)
+
 }
-internal class OtherInfoViewImpl : AppCompatActivity(),OtherInfoView {
+class OtherInfoViewImpl : AppCompatActivity(),OtherInfoView {
     private val onActionSubject = Subject<OtherInfoEvent>()
     private val navigationUtils: NavigationUtils = UtilsInjector.navigationUtils
 
@@ -35,6 +36,7 @@ internal class OtherInfoViewImpl : AppCompatActivity(),OtherInfoView {
 
     override val uiEventObservable = onActionSubject
     override var uiState: OtherInfoUiState = OtherInfoUiState()
+
 
     companion object {
         const val ARTIST_NAME_EXTRA = "artistName"
@@ -71,11 +73,10 @@ internal class OtherInfoViewImpl : AppCompatActivity(),OtherInfoView {
         return intent.getStringExtra(ARTIST_NAME_EXTRA).toString()
     }
 
-    override fun updateView() {
+     override fun updateView() {
         runOnUiThread {
             setDefaultImage()
             setBioContent()
-
         }
     }
 
@@ -88,10 +89,10 @@ internal class OtherInfoViewImpl : AppCompatActivity(),OtherInfoView {
     }
 
     private fun notifyInfoAction() {
-        onActionSubject.notify(OtherInfoEvent.Open)
+        onActionSubject.notify(OtherInfoEvent.OpenInfoUrl)
     }
 
-    override fun openExternalLink(url: String) {
+     override fun openExternalLink(url: String) {
         navigationUtils.openExternalUrl(this, url)
     }
 

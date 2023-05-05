@@ -14,14 +14,19 @@ internal class OtherInfoPresenterImpl(private val artistInfoRepository: ArtistIn
     override fun setOtherInfoView(otherInfoView: OtherInfoView) {
         this.otherInfoView = otherInfoView
         otherInfoView.uiEventObservable.subscribe(observer)
+        open()
     }
 
     private val observer: Observer<OtherInfoEvent> =
         Observer { value ->
             when (value) {
-                OtherInfoEvent.Open -> open()
+                OtherInfoEvent.OpenInfoUrl -> openInfoUrl()
             }
         }
+
+    private fun openInfoUrl() {
+       otherInfoView.openExternalLink(otherInfoView.uiState.artistInfoUrl)
+    }
 
     private fun open(){
         Thread {

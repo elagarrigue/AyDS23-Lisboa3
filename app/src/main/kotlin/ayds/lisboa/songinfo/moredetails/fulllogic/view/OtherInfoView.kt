@@ -1,6 +1,5 @@
 package ayds.lisboa.songinfo.moredetails.fulllogic.view
 
-
 import android.os.Bundle
 import android.view.View
 import android.widget.ImageView
@@ -15,18 +14,17 @@ import ayds.lisboa.songinfo.utils.navigation.NavigationUtils
 import ayds.observer.Observable
 import ayds.observer.Subject
 
-
 interface OtherInfoView{
     val uiEventObservable: Observable<OtherInfoEvent>
     var uiState: OtherInfoUiState
-
 
     fun getArtistName():String
     fun updateView()
     fun openExternalLink(url: String)
 
 }
-class OtherInfoViewImpl : AppCompatActivity(),OtherInfoView {
+class OtherInfoViewActivity : AppCompatActivity(), OtherInfoView {
+
     private val onActionSubject = Subject<OtherInfoEvent>()
     private val navigationUtils: NavigationUtils = UtilsInjector.navigationUtils
 
@@ -37,20 +35,19 @@ class OtherInfoViewImpl : AppCompatActivity(),OtherInfoView {
     override val uiEventObservable = onActionSubject
     override var uiState: OtherInfoUiState = OtherInfoUiState()
 
-
     companion object {
         const val ARTIST_NAME_EXTRA = "artistName"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        initModule()
         initContentView()
+        initModule()
+        initProperties()
         initListeners()
-        initView()
     }
 
-    private fun initModule(){
+    private fun initModule() {
         MoreDetailsInjector.init(this)
     }
 
@@ -58,22 +55,26 @@ class OtherInfoViewImpl : AppCompatActivity(),OtherInfoView {
         setContentView(R.layout.activity_other_info)
     }
 
-    private fun initView() {
+    private fun initProperties() {
         artistInfoTextView = findViewById(R.id.textPane2)
         imageView = findViewById(R.id.imageView)
         openUrlButton = findViewById(R.id.openUrlButton)
 
     }
 
-    private fun initListeners(){
-        openUrlButton.setOnClickListener {notifyInfoAction()}
+    private fun initListeners() {
+        openUrlButton.setOnClickListener { notifyOpenUrlAction() }
+    }
+
+    private fun notifyOpenUrlAction() {
+        onActionSubject.notify(OtherInfoEvent.OpenInfoUrl)
     }
 
     override fun getArtistName(): String {
         return intent.getStringExtra(ARTIST_NAME_EXTRA).toString()
     }
 
-     override fun updateView() {
+    override fun updateView() {
         runOnUiThread {
             setDefaultImage()
             setBioContent()
@@ -85,14 +86,11 @@ class OtherInfoViewImpl : AppCompatActivity(),OtherInfoView {
     }
 
     private fun setBioContent() {
-        artistInfoTextView.text = HtmlCompat.fromHtml(uiState.artistInfoBioContent, HtmlCompat.FROM_HTML_MODE_LEGACY)
+        artistInfoTextView.text =
+            HtmlCompat.fromHtml(uiState.artistInfoBioContent, HtmlCompat.FROM_HTML_MODE_LEGACY)
     }
 
-    private fun notifyInfoAction() {
-        onActionSubject.notify(OtherInfoEvent.OpenInfoUrl)
-    }
-
-     override fun openExternalLink(url: String) {
+    override fun openExternalLink(url: String) {
         navigationUtils.openExternalUrl(this, url)
     }
 

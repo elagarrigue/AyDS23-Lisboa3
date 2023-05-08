@@ -20,21 +20,24 @@ import retrofit2.converter.scalars.ScalarsConverterFactory
 private const val LAST_FM_API_BASE_URL = "https://ws.audioscrobbler.com/2.0/"
 
 object MoreDetailsInjector {
-    private val retrofit = getRetrofit()
-    private val lastFmApi = getLastFmApi(retrofit)
-    private val lastFmToArtistInfoResolver: LastFmToArtistInfoResolver = LastFmToArtistInfoResolverImpl()
-    private val lastFmService: LastFmService = LastFmServiceImpl(lastFmApi, lastFmToArtistInfoResolver)
+    private lateinit var otherInfoView: OtherInfoView
 
-    private val cursorToLastFMArtistMapper: CursorToLastFMArtistMapper = CursorToLastFMArtistMapperImpl()
+    private lateinit var cursorToLastFMArtistMapper: CursorToLastFMArtistMapper
     private lateinit var lastFmLocalStorage: LastFmLocalStorageImpl
 
-    private val artistInfoRepository: ArtistInfoRepository = ArtistInfoRepositoryImpl(lastFmLocalStorage, lastFmService)
-    private lateinit var  otherInfoView: OtherInfoView
-    private val otherInfoPresenter: OtherInfoPresenter = OtherInfoPresenterImpl(artistInfoRepository)
+    private lateinit var retrofit: Retrofit
+    private lateinit var lastFmApi: LastFmApi
+    private lateinit var lastFmToArtistInfoResolver: LastFmToArtistInfoResolver
+    private lateinit var lastFmService: LastFmService
+
+    private lateinit var artistInfoRepository: ArtistInfoRepository
+    private lateinit var otherInfoPresenter: OtherInfoPresenter
 
     fun init(otherInfoView: OtherInfoView) {
         initOtherInfoView(otherInfoView)
         initLastFmLocalStorage()
+        initLastFmService()
+        initArtistInfoRepository()
         initOtherInfoPresenter()
     }
 
@@ -42,10 +45,15 @@ object MoreDetailsInjector {
         this.otherInfoView = otherInfoView
     }
     private fun initLastFmLocalStorage(){
+        cursorToLastFMArtistMapper = CursorToLastFMArtistMapperImpl()
         lastFmLocalStorage = LastFmLocalStorageImpl(otherInfoView as Context, cursorToLastFMArtistMapper)
     }
-    private fun initOtherInfoPresenter(){
-        otherInfoPresenter.setOtherInfoView(otherInfoView)
+
+    private fun initLastFmService() {
+        retrofit = getRetrofit()
+        lastFmApi = getLastFmApi(retrofit)
+        lastFmToArtistInfoResolver = LastFmToArtistInfoResolverImpl()
+        lastFmService = LastFmServiceImpl(lastFmApi, lastFmToArtistInfoResolver)
     }
 
     private fun getRetrofit(): Retrofit {
@@ -59,9 +67,13 @@ object MoreDetailsInjector {
         return retrofit.create(LastFmApi::class.java)
     }
 
-    fun getArtistInfoRepository():ArtistInfoRepository = artistInfoRepository
+    private fun initArtistInfoRepository() {
+        artistInfoRepository = ArtistInfoRepositoryImpl(lastFmLocalStorage, lastFmService)
+    }
 
-
-
+    private fun initOtherInfoPresenter(){
+        otherInfoPresenter = OtherInfoPresenterImpl(artistInfoRepository)
+        otherInfoPresenter.setOtherInfoView(otherInfoView)
+    }
 
 }

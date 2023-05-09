@@ -9,8 +9,6 @@ import androidx.core.text.HtmlCompat
 import ayds.lisboa.songinfo.R
 import ayds.lisboa.songinfo.moredetails.fulllogic.MoreDetailsInjector
 import ayds.lisboa.songinfo.moredetails.fulllogic.domain.ArtistInfo
-import ayds.lisboa.songinfo.moredetails.fulllogic.domain.ArtistInfo.LastFmArtistInfo
-import ayds.lisboa.songinfo.moredetails.fulllogic.domain.ArtistInfo.EmptyArtistInfo
 import ayds.lisboa.songinfo.utils.UtilsInjector
 import ayds.lisboa.songinfo.utils.navigation.NavigationUtils
 import ayds.lisboa.songinfo.utils.view.ImageLoader
@@ -18,17 +16,22 @@ import ayds.lisboa.songinfo.utils.view.ImageLoader
 interface OtherInfoView{
     var uiState: OtherInfoUiState
 
+    fun setArtistInfoHelper(artistInfoHelper: ArtistInfoHelper)
     fun getArtistName():String
     fun updateView(artistInfo: ArtistInfo)
 
+
+
 }
-class OtherInfoViewActivity() : AppCompatActivity(), OtherInfoView {
+class OtherInfoViewActivity : AppCompatActivity(), OtherInfoView {
     private val navigationUtils: NavigationUtils = UtilsInjector.navigationUtils
     private val imageLoader: ImageLoader = UtilsInjector.imageLoader
 
     private lateinit var artistInfoTextView: TextView
     private lateinit var imageView: ImageView
     private lateinit var openUrlButton: View
+
+    private lateinit var artistInfoHelper: ArtistInfoHelper
 
     override var uiState: OtherInfoUiState = OtherInfoUiState()
 
@@ -58,6 +61,10 @@ class OtherInfoViewActivity() : AppCompatActivity(), OtherInfoView {
 
     }
 
+    override fun setArtistInfoHelper(artistInfoHelper: ArtistInfoHelper) {
+        this.artistInfoHelper = artistInfoHelper
+    }
+
     override fun getArtistName(): String {
         return intent.getStringExtra(ARTIST_NAME_EXTRA).toString()
     }
@@ -70,30 +77,16 @@ class OtherInfoViewActivity() : AppCompatActivity(), OtherInfoView {
             setUrl()
         }
     }
-
-    private fun updateUiState(artistInfo: ArtistInfo) {
-        when (artistInfo) {
-            is LastFmArtistInfo -> updateOtherInfoState(artistInfo)
-            EmptyArtistInfo -> updateNoResultsUiState()
-        }
-    }
-
-    private fun updateOtherInfoState(artistInfo: LastFmArtistInfo) {
-        uiState.copy(
-            artistInfoBioContent = artistInfo.bioContent,
-            artistInfoUrl = artistInfo.url
-        )
-    }
-
-    private fun updateNoResultsUiState() {
-        uiState.copy(
-            artistInfoBioContent = "NO RESULTS",
-            artistInfoUrl = ""
+    private fun updateUiState(artistInfo: ArtistInfo){
+        val artistName =this.getArtistName()
+       this.uiState=uiState.copy(
+            artistInfoBioContent = artistInfoHelper.getArtistInfoText(artistName,artistInfo),
+            artistInfoUrl = artistInfoHelper.getArtistInfoUrl(artistInfo)
         )
     }
 
     private fun setDefaultImage() {
-        imageLoader.loadImageIntoView(uiState.lastFmDefaultImage, imageView);
+        imageLoader.loadImageIntoView(uiState.lastFmDefaultImage, imageView)
     }
 
     private fun setBioContent() {

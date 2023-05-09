@@ -83,6 +83,7 @@ object MoreDetailsInjector {
     private fun initArtistInfoHelper() {
         htmlHelper = HtmlHelperImpl()
         artistInfoHelper = ArtistInfoHelperImpl(htmlHelper)
+        otherInfoView.setArtistInfoHelper(artistInfoHelper)
     }
 
     private fun initOtherInfoPresenter(){

@@ -11,6 +11,10 @@ import ayds.lisboa.songinfo.moredetails.fulllogic.data.local.CursorToLastFMArtis
 import ayds.lisboa.songinfo.moredetails.fulllogic.data.local.CursorToLastFMArtistMapperImpl
 import ayds.lisboa.songinfo.moredetails.fulllogic.data.local.LastFmLocalStorageImpl
 import ayds.lisboa.songinfo.moredetails.fulllogic.domain.ArtistInfoRepository
+import ayds.lisboa.songinfo.moredetails.fulllogic.view.ArtistInfoHelper
+import ayds.lisboa.songinfo.moredetails.fulllogic.view.ArtistInfoHelperImpl
+import ayds.lisboa.songinfo.moredetails.fulllogic.view.HtmlHelper
+import ayds.lisboa.songinfo.moredetails.fulllogic.view.HtmlHelperImpl
 import ayds.lisboa.songinfo.moredetails.fulllogic.view.OtherInfoPresenter
 import ayds.lisboa.songinfo.moredetails.fulllogic.view.OtherInfoPresenterImpl
 import ayds.lisboa.songinfo.moredetails.fulllogic.view.OtherInfoView
@@ -31,6 +35,10 @@ object MoreDetailsInjector {
     private lateinit var lastFmService: LastFmService
 
     private lateinit var artistInfoRepository: ArtistInfoRepository
+
+    private lateinit var artistInfoHelper: ArtistInfoHelper
+    private lateinit var htmlHelper: HtmlHelper
+
     private lateinit var otherInfoPresenter: OtherInfoPresenter
 
     fun init(otherInfoView: OtherInfoView) {
@@ -38,6 +46,7 @@ object MoreDetailsInjector {
         initLastFmLocalStorage()
         initLastFmService()
         initArtistInfoRepository()
+        initArtistInfoHelper()
         initOtherInfoPresenter()
     }
 
@@ -69,6 +78,11 @@ object MoreDetailsInjector {
 
     private fun initArtistInfoRepository() {
         artistInfoRepository = ArtistInfoRepositoryImpl(lastFmLocalStorage, lastFmService)
+    }
+
+    private fun initArtistInfoHelper() {
+        htmlHelper = HtmlHelperImpl()
+        artistInfoHelper = ArtistInfoHelperImpl(htmlHelper)
     }
 
     private fun initOtherInfoPresenter(){

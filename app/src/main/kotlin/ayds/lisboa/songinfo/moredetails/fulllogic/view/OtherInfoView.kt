@@ -8,31 +8,28 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.text.HtmlCompat
 import ayds.lisboa.songinfo.R
 import ayds.lisboa.songinfo.moredetails.fulllogic.MoreDetailsInjector
-import com.squareup.picasso.Picasso
+import ayds.lisboa.songinfo.moredetails.fulllogic.domain.ArtistInfo
+import ayds.lisboa.songinfo.moredetails.fulllogic.domain.ArtistInfo.LastFmArtistInfo
+import ayds.lisboa.songinfo.moredetails.fulllogic.domain.ArtistInfo.EmptyArtistInfo
 import ayds.lisboa.songinfo.utils.UtilsInjector
 import ayds.lisboa.songinfo.utils.navigation.NavigationUtils
-import ayds.observer.Observable
-import ayds.observer.Subject
+import ayds.lisboa.songinfo.utils.view.ImageLoader
 
 interface OtherInfoView{
-    val uiEventObservable: Observable<OtherInfoEvent>
     var uiState: OtherInfoUiState
 
     fun getArtistName():String
-    fun updateView()
-    fun openExternalLink(url: String)
+    fun updateView(artistInfo: ArtistInfo)
 
 }
-class OtherInfoViewActivity : AppCompatActivity(), OtherInfoView {
-
-    private val onActionSubject = Subject<OtherInfoEvent>()
+class OtherInfoViewActivity() : AppCompatActivity(), OtherInfoView {
     private val navigationUtils: NavigationUtils = UtilsInjector.navigationUtils
+    private val imageLoader: ImageLoader = UtilsInjector.imageLoader
 
     private lateinit var artistInfoTextView: TextView
     private lateinit var imageView: ImageView
     private lateinit var openUrlButton: View
 
-    override val uiEventObservable = onActionSubject
     override var uiState: OtherInfoUiState = OtherInfoUiState()
 
     companion object {
@@ -44,7 +41,6 @@ class OtherInfoViewActivity : AppCompatActivity(), OtherInfoView {
         initContentView()
         initModule()
         initProperties()
-        initListeners()
     }
 
     private fun initModule() {
@@ -62,36 +58,50 @@ class OtherInfoViewActivity : AppCompatActivity(), OtherInfoView {
 
     }
 
-    private fun initListeners() {
-        openUrlButton.setOnClickListener { notifyOpenUrlAction() }
-    }
-
-    private fun notifyOpenUrlAction() {
-        onActionSubject.notify(OtherInfoEvent.OpenInfoUrl)
-    }
-
     override fun getArtistName(): String {
         return intent.getStringExtra(ARTIST_NAME_EXTRA).toString()
     }
 
-    override fun updateView() {
+    override fun updateView(artistInfo: ArtistInfo) {
         runOnUiThread {
+            updateUiState(artistInfo)
             setDefaultImage()
             setBioContent()
+            setUrl()
         }
     }
 
+    private fun updateUiState(artistInfo: ArtistInfo) {
+        when (artistInfo) {
+            is LastFmArtistInfo -> updateOtherInfoState(artistInfo)
+            EmptyArtistInfo -> updateNoResultsUiState()
+        }
+    }
+
+    private fun updateOtherInfoState(artistInfo: LastFmArtistInfo) {
+        uiState.copy(
+            artistInfoBioContent = artistInfo.bioContent,
+            artistInfoUrl = artistInfo.url
+        )
+    }
+
+    private fun updateNoResultsUiState() {
+        uiState.copy(
+            artistInfoBioContent = "NO RESULTS",
+            artistInfoUrl = ""
+        )
+    }
+
     private fun setDefaultImage() {
-        Picasso.get().load(uiState.lastFmDefaultImage).into(imageView)
+        imageLoader.loadImageIntoView(uiState.lastFmDefaultImage, imageView);
     }
 
     private fun setBioContent() {
-        artistInfoTextView.text =
-            HtmlCompat.fromHtml(uiState.artistInfoBioContent, HtmlCompat.FROM_HTML_MODE_LEGACY)
+        artistInfoTextView.text = HtmlCompat.fromHtml(uiState.artistInfoBioContent, HtmlCompat.FROM_HTML_MODE_LEGACY)
     }
 
-    override fun openExternalLink(url: String) {
-        navigationUtils.openExternalUrl(this, url)
+    private fun setUrl() {
+        openUrlButton.setOnClickListener { navigationUtils.openExternalUrl(this, uiState.artistInfoUrl) }
     }
 
 }

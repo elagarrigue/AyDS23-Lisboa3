@@ -1,4 +1,4 @@
-package ayds.lisboa.songinfo.moredetails.injector
+package ayds.lisboa.songinfo.moredetails.dependencyinyector
 
 import android.content.Context
 import ayds.lisboa.songinfo.moredetails.data.ArtistInfoRepositoryImpl
@@ -11,13 +11,13 @@ import ayds.lisboa.songinfo.moredetails.data.local.CursorToLastFMArtistMapper
 import ayds.lisboa.songinfo.moredetails.data.local.CursorToLastFMArtistMapperImpl
 import ayds.lisboa.songinfo.moredetails.data.local.LastFmLocalStorageImpl
 import ayds.lisboa.songinfo.moredetails.domain.ArtistInfoRepository
-import ayds.lisboa.songinfo.moredetails.presenter.ArtistInfoHelper
-import ayds.lisboa.songinfo.moredetails.presenter.ArtistInfoHelperImpl
-import ayds.lisboa.songinfo.moredetails.presenter.HtmlHelper
-import ayds.lisboa.songinfo.moredetails.presenter.HtmlHelperImpl
-import ayds.lisboa.songinfo.moredetails.presenter.OtherInfoPresenter
-import ayds.lisboa.songinfo.moredetails.presenter.OtherInfoPresenterImpl
-import ayds.lisboa.songinfo.moredetails.presenter.OtherInfoView
+import ayds.lisboa.songinfo.moredetails.presentation.ArtistInfoHelper
+import ayds.lisboa.songinfo.moredetails.presentation.ArtistInfoHelperImpl
+import ayds.lisboa.songinfo.moredetails.presentation.HtmlHelper
+import ayds.lisboa.songinfo.moredetails.presentation.HtmlHelperImpl
+import ayds.lisboa.songinfo.moredetails.presentation.OtherInfoPresenter
+import ayds.lisboa.songinfo.moredetails.presentation.OtherInfoPresenterImpl
+import ayds.lisboa.songinfo.moredetails.presentation.OtherInfoView
 import retrofit2.Retrofit
 import retrofit2.converter.scalars.ScalarsConverterFactory
 

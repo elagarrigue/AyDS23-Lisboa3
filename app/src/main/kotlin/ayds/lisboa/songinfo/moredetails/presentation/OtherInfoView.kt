@@ -1,4 +1,4 @@
-package ayds.lisboa.songinfo.moredetails.presenter
+package ayds.lisboa.songinfo.moredetails.presentation
 
 import android.os.Bundle
 import android.view.View
@@ -7,7 +7,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.text.HtmlCompat
 import ayds.lisboa.songinfo.R
-import ayds.lisboa.songinfo.moredetails.injector.MoreDetailsInjector
+import ayds.lisboa.songinfo.moredetails.dependencyinyector.MoreDetailsInjector
 import ayds.lisboa.songinfo.utils.UtilsInjector
 import ayds.lisboa.songinfo.utils.navigation.NavigationUtils
 import ayds.lisboa.songinfo.utils.view.ImageLoader

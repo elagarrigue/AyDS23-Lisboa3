@@ -1,4 +1,4 @@
-package ayds.lisboa.songinfo.moredetails.presenter
+package ayds.lisboa.songinfo.moredetails.presentation
 
 import ayds.lisboa.songinfo.moredetails.domain.ArtistInfo
 

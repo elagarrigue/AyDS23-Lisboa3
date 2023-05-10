@@ -23,8 +23,7 @@ internal class ArtistInfoHelperImpl(private val htmlHelper: HtmlHelper): ArtistI
 
     private fun ArtistInfo.LastFmArtistInfo.formatBioContent(artistName: String): String {
         val dbSaved = if (isLocallyStored) DB_SAVED_SYMBOL else ""
-        val bioContentFormatted =
-            if (bioContent.isEmpty()) NO_RESULTS else htmlHelper.jsonTextToHtml(bioContent, artistName)
+        val bioContentFormatted = if (bioContent.isEmpty()) NO_RESULTS else htmlHelper.getHtmlText(bioContent, artistName)
 
         return dbSaved + bioContentFormatted
     }

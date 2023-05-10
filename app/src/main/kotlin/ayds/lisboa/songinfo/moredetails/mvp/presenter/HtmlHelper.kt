@@ -7,12 +7,12 @@ private const val HTML_FONT = "<font face=\"arial\">"
 private const val HTML_FINALS = "</font></div></html>"
 
 interface HtmlHelper {
-    fun jsonTextToHtml(text: String, term: String): String
+    fun getHtmlText(text: String, term: String): String
 }
 
 class HtmlHelperImpl: HtmlHelper {
 
-    override fun jsonTextToHtml(text: String, term: String): String {
+    override fun getHtmlText(text: String, term: String): String {
         val builder = StringBuilder()
         val textWithBold = getBoldHtmlText(text, term)
 

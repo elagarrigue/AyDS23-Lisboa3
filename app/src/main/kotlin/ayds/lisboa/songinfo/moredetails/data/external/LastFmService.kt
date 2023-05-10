@@ -1,7 +1,7 @@
-package ayds.lisboa.songinfo.moredetails.mvp.data.external
+package ayds.lisboa.songinfo.moredetails.data.external
 
 import retrofit2.Response
-import ayds.lisboa.songinfo.moredetails.mvp.domain.ArtistInfo.LastFmArtistInfo
+import ayds.lisboa.songinfo.moredetails.domain.ArtistInfo.LastFmArtistInfo
 
 interface LastFmService {
     fun getArtistInfo(artistName: String): LastFmArtistInfo?

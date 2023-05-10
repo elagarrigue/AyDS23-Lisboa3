@@ -1,9 +1,9 @@
-package ayds.lisboa.songinfo.moredetails.mvp.data.external
+package ayds.lisboa.songinfo.moredetails.data.external
 
-import ayds.lisboa.songinfo.moredetails.mvp.domain.ArtistInfo
+import ayds.lisboa.songinfo.moredetails.domain.ArtistInfo
 import com.google.gson.Gson
 import com.google.gson.JsonObject
-import ayds.lisboa.songinfo.moredetails.mvp.domain.ArtistInfo.LastFmArtistInfo
+import ayds.lisboa.songinfo.moredetails.domain.ArtistInfo.LastFmArtistInfo
 
 private const val JSON_ARTIST = "artist"
 private const val JSON_BIO = "bio"

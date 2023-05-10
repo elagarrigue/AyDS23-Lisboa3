@@ -1,7 +1,7 @@
-package ayds.lisboa.songinfo.moredetails.mvp.presenter
+package ayds.lisboa.songinfo.moredetails.presenter
 
-import ayds.lisboa.songinfo.moredetails.mvp.domain.ArtistInfo
-import ayds.lisboa.songinfo.moredetails.mvp.domain.ArtistInfoRepository
+import ayds.lisboa.songinfo.moredetails.domain.ArtistInfo
+import ayds.lisboa.songinfo.moredetails.domain.ArtistInfoRepository
 import ayds.observer.Observable
 import ayds.observer.Subject
 
@@ -12,7 +12,8 @@ interface OtherInfoPresenter {
 }
 
 internal class OtherInfoPresenterImpl(private val artistInfoRepository: ArtistInfoRepository,
-                                      private val artistInfoHelper: ArtistInfoHelper): OtherInfoPresenter {
+                                      private val artistInfoHelper: ArtistInfoHelper
+): OtherInfoPresenter {
 
     private val onActionSubject = Subject<OtherInfoUiState>()
     override val uiEventObservable = onActionSubject

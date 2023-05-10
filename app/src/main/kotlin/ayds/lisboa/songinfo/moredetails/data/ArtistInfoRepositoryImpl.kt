@@ -1,11 +1,11 @@
-package ayds.lisboa.songinfo.moredetails.mvp.data
+package ayds.lisboa.songinfo.moredetails.data
 
-import ayds.lisboa.songinfo.moredetails.mvp.domain.ArtistInfo
-import ayds.lisboa.songinfo.moredetails.mvp.domain.ArtistInfo.LastFmArtistInfo
-import ayds.lisboa.songinfo.moredetails.mvp.domain.ArtistInfo.EmptyArtistInfo
-import ayds.lisboa.songinfo.moredetails.mvp.data.local.LastFmLocalStorage
-import ayds.lisboa.songinfo.moredetails.mvp.data.external.LastFmService
-import ayds.lisboa.songinfo.moredetails.mvp.domain.ArtistInfoRepository
+import ayds.lisboa.songinfo.moredetails.domain.ArtistInfo
+import ayds.lisboa.songinfo.moredetails.domain.ArtistInfo.LastFmArtistInfo
+import ayds.lisboa.songinfo.moredetails.domain.ArtistInfo.EmptyArtistInfo
+import ayds.lisboa.songinfo.moredetails.data.local.LastFmLocalStorage
+import ayds.lisboa.songinfo.moredetails.data.external.LastFmService
+import ayds.lisboa.songinfo.moredetails.domain.ArtistInfoRepository
 
 internal class ArtistInfoRepositoryImpl(
     private val lastFMLocalStorage: LastFmLocalStorage,

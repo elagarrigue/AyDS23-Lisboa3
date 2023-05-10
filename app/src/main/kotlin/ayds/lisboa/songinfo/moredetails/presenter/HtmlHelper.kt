@@ -1,4 +1,4 @@
-package ayds.lisboa.songinfo.moredetails.mvp.presenter
+package ayds.lisboa.songinfo.moredetails.presenter
 
 import java.util.Locale
 

@@ -1,6 +1,6 @@
-package ayds.lisboa.songinfo.moredetails.mvp.presenter
+package ayds.lisboa.songinfo.moredetails.presenter
 
-import ayds.lisboa.songinfo.moredetails.mvp.domain.ArtistInfo
+import ayds.lisboa.songinfo.moredetails.domain.ArtistInfo
 
 interface ArtistInfoHelper {
     fun getArtistInfoText(artistName: String, artistInfo: ArtistInfo): String

@@ -18,7 +18,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".moredetails.mvp.presenter.OtherInfoView"
+        <activity android:name=".moredetails.presenter.OtherInfoView"
            android:theme="@style/Theme.AppCompat.NoActionBar"/>
     </application>
 

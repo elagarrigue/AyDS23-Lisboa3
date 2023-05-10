@@ -1,4 +1,4 @@
-package ayds.lisboa.songinfo.moredetails.mvp.domain
+package ayds.lisboa.songinfo.moredetails.domain
 
 sealed class ArtistInfo {
     data class LastFmArtistInfo (

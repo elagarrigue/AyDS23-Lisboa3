@@ -1,13 +1,10 @@
-package ayds.lisboa.songinfo.moredetails.fulllogic.view
+package ayds.lisboa.songinfo.moredetails.mvp.presenter
 
-import ayds.lisboa.songinfo.moredetails.fulllogic.domain.ArtistInfo
+import ayds.lisboa.songinfo.moredetails.mvp.domain.ArtistInfo
 
 interface ArtistInfoHelper {
-
     fun getArtistInfoText(artistName: String, artistInfo: ArtistInfo): String
-
     fun getArtistInfoUrl(artistInfo: ArtistInfo): String
-
 }
 
 private const val DB_SAVED_SYMBOL = "[*]"

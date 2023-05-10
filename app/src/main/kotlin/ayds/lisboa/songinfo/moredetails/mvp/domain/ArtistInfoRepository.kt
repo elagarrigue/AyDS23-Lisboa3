@@ -1,4 +1,4 @@
-package ayds.lisboa.songinfo.moredetails.fulllogic.domain
+package ayds.lisboa.songinfo.moredetails.mvp.domain
 
 interface ArtistInfoRepository {
     fun getArtistInfo(artistName:String): ArtistInfo

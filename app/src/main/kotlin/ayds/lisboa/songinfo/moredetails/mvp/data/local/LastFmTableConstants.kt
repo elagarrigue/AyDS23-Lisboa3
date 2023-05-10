@@ -1,4 +1,4 @@
-package ayds.lisboa.songinfo.moredetails.fulllogic.data.local
+package ayds.lisboa.songinfo.moredetails.mvp.data.local
 
 const val ID = "id"
 const val ARTIST = "artist"

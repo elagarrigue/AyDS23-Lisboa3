@@ -1,10 +1,10 @@
-package ayds.lisboa.songinfo.moredetails.fulllogic.data.local
+package ayds.lisboa.songinfo.moredetails.mvp.data.local
 
 import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
-import ayds.lisboa.songinfo.moredetails.fulllogic.domain.ArtistInfo.LastFmArtistInfo
+import ayds.lisboa.songinfo.moredetails.mvp.domain.ArtistInfo.LastFmArtistInfo
 
 interface LastFmLocalStorage {
     fun saveArtist(artistName: String, artistInfo: LastFmArtistInfo)

@@ -24,9 +24,6 @@ import retrofit2.converter.scalars.ScalarsConverterFactory
 private const val LAST_FM_API_BASE_URL = "https://ws.audioscrobbler.com/2.0/"
 
 object MoreDetailsInjector {
-    private lateinit var artistInfoHelper: ArtistInfoHelper
-    private lateinit var htmlHelper: HtmlHelper
-
     private lateinit var cursorToLastFMArtistMapper: CursorToLastFMArtistMapper
     private lateinit var lastFmLocalStorage: LastFmLocalStorageImpl
 
@@ -35,15 +32,17 @@ object MoreDetailsInjector {
     private lateinit var lastFmToArtistInfoResolver: LastFmToArtistInfoResolver
     private lateinit var lastFmService: LastFmService
 
+    private lateinit var artistInfoHelper: ArtistInfoHelper
+    private lateinit var htmlHelper: HtmlHelper
     private lateinit var artistInfoRepository: ArtistInfoRepository
 
     private lateinit var otherInfoPresenter: OtherInfoPresenter
 
     fun init(otherInfoView: OtherInfoView) {
-        initArtistInfoHelper()
         initLastFmLocalStorage(otherInfoView)
         initLastFmService()
         initArtistInfoRepository()
+        initArtistInfoHelper()
         initOtherInfoPresenter()
     }
 
@@ -55,8 +54,7 @@ object MoreDetailsInjector {
 
     private fun initLastFmLocalStorage(otherInfoView: OtherInfoView){
         cursorToLastFMArtistMapper = CursorToLastFMArtistMapperImpl()
-        lastFmLocalStorage =
-            LastFmLocalStorageImpl(otherInfoView as Context, cursorToLastFMArtistMapper)
+        lastFmLocalStorage = LastFmLocalStorageImpl(otherInfoView as Context, cursorToLastFMArtistMapper)
     }
 
     private fun initLastFmService() {

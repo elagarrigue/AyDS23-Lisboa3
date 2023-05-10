@@ -13,11 +13,7 @@ import ayds.lisboa.songinfo.utils.navigation.NavigationUtils
 import ayds.lisboa.songinfo.utils.view.ImageLoader
 import ayds.observer.Observer
 
-interface OtherInfoView{
-    fun getArtistName():String
-}
-
-class OtherInfoViewActivity : AppCompatActivity(), OtherInfoView {
+class OtherInfoView: AppCompatActivity() {
     private val navigationUtils: NavigationUtils = UtilsInjector.navigationUtils
     private val imageLoader: ImageLoader = UtilsInjector.imageLoader
 
@@ -35,30 +31,18 @@ class OtherInfoViewActivity : AppCompatActivity(), OtherInfoView {
         super.onCreate(savedInstanceState)
         initContentView()
         initModule()
-        subscribeToPresenter()
         initProperties()
+        subscribeToPresenter()
         open()
     }
 
-    private fun open() {
-        presenter.fetch(getArtistName())
-    }
-
-    override fun getArtistName(): String {
+    private fun getArtistName(): String {
         return intent.getStringExtra(ARTIST_NAME_EXTRA).toString()
     }
 
     private fun initModule() {
         MoreDetailsInjector.init(this)
     }
-
-    private fun subscribeToPresenter() {
-        presenter = MoreDetailsInjector.getPresenter()
-        presenter.uiEventObservable.subscribe(observer)
-    }
-
-    private val observer: Observer<OtherInfoUiState> =
-        Observer { value -> updateView(value) }
 
     private fun initContentView() {
         setContentView(R.layout.activity_other_info)
@@ -70,6 +54,14 @@ class OtherInfoViewActivity : AppCompatActivity(), OtherInfoView {
         openUrlButton = findViewById(R.id.openUrlButton)
 
     }
+
+    private fun subscribeToPresenter() {
+        presenter = MoreDetailsInjector.getPresenter()
+        presenter.uiEventObservable.subscribe(observer)
+    }
+
+    private val observer: Observer<OtherInfoUiState> =
+        Observer { value -> updateView(value) }
 
     private fun updateView(uiState: OtherInfoUiState) {
         runOnUiThread {
@@ -89,6 +81,10 @@ class OtherInfoViewActivity : AppCompatActivity(), OtherInfoView {
 
     private fun setUrl(artistInfoUrl: String) {
         openUrlButton.setOnClickListener { navigationUtils.openExternalUrl(this, artistInfoUrl) }
+    }
+
+    private fun open() {
+        presenter.fetch(getArtistName())
     }
 
 }

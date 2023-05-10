@@ -7,6 +7,7 @@ import ayds.observer.Subject
 
 interface OtherInfoPresenter {
     val uiEventObservable: Observable<OtherInfoUiState>
+
     fun fetch(artistName: String)
 }
 

@@ -1,6 +1,5 @@
 package ayds.lisboa.songinfo.moredetails.data.external
 
-import ayds.lisboa.songinfo.moredetails.domain.entities.ArtistInfo
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import ayds.lisboa.songinfo.moredetails.domain.entities.ArtistInfo.LastFmArtistInfo
@@ -18,7 +17,7 @@ internal class LastFmToArtistInfoResolverImpl: LastFmToArtistInfoResolver {
     override fun getArtistInfoFromExternalData(serviceData: String?): LastFmArtistInfo? =
         try {
             serviceData?.getArtist()?.let { item ->
-                ArtistInfo.LastFmArtistInfo(
+                LastFmArtistInfo(
                     item.getBioContent(),
                     item.getUrl()
                 )

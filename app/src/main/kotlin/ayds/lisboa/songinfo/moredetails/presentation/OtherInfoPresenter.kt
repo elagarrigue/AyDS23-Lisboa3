@@ -1,7 +1,7 @@
 package ayds.lisboa.songinfo.moredetails.presentation
 
-import ayds.lisboa.songinfo.moredetails.domain.ArtistInfo
-import ayds.lisboa.songinfo.moredetails.domain.ArtistInfoRepository
+import ayds.lisboa.songinfo.moredetails.domain.entities.ArtistInfo
+import ayds.lisboa.songinfo.moredetails.domain.repository.ArtistInfoRepository
 import ayds.observer.Observable
 import ayds.observer.Subject
 

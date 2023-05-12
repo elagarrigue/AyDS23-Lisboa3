@@ -10,7 +10,7 @@ import ayds.lisboa.songinfo.moredetails.data.external.LastFmToArtistInfoResolver
 import ayds.lisboa.songinfo.moredetails.data.local.CursorToLastFMArtistMapper
 import ayds.lisboa.songinfo.moredetails.data.local.CursorToLastFMArtistMapperImpl
 import ayds.lisboa.songinfo.moredetails.data.local.LastFmLocalStorageImpl
-import ayds.lisboa.songinfo.moredetails.domain.ArtistInfoRepository
+import ayds.lisboa.songinfo.moredetails.domain.repository.ArtistInfoRepository
 import ayds.lisboa.songinfo.moredetails.presentation.ArtistInfoHelper
 import ayds.lisboa.songinfo.moredetails.presentation.ArtistInfoHelperImpl
 import ayds.lisboa.songinfo.moredetails.presentation.HtmlHelper

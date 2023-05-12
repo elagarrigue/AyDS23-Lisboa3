@@ -49,7 +49,7 @@ class OtherInfoView: AppCompatActivity() {
     }
 
     private fun initProperties() {
-        artistInfoTextView = findViewById(R.id.textPane2)
+        artistInfoTextView = findViewById(R.id.otherInfoTextView)
         imageView = findViewById(R.id.imageView)
         openUrlButton = findViewById(R.id.openUrlButton)
 

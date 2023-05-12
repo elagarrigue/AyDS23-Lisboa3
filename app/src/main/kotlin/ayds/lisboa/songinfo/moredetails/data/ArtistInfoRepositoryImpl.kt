@@ -1,11 +1,11 @@
 package ayds.lisboa.songinfo.moredetails.data
 
-import ayds.lisboa.songinfo.moredetails.domain.ArtistInfo
-import ayds.lisboa.songinfo.moredetails.domain.ArtistInfo.LastFmArtistInfo
-import ayds.lisboa.songinfo.moredetails.domain.ArtistInfo.EmptyArtistInfo
+import ayds.lisboa.songinfo.moredetails.domain.entities.ArtistInfo
+import ayds.lisboa.songinfo.moredetails.domain.entities.ArtistInfo.LastFmArtistInfo
+import ayds.lisboa.songinfo.moredetails.domain.entities.ArtistInfo.EmptyArtistInfo
 import ayds.lisboa.songinfo.moredetails.data.local.LastFmLocalStorage
 import ayds.lisboa.songinfo.moredetails.data.external.LastFmService
-import ayds.lisboa.songinfo.moredetails.domain.ArtistInfoRepository
+import ayds.lisboa.songinfo.moredetails.domain.repository.ArtistInfoRepository
 
 internal class ArtistInfoRepositoryImpl(
     private val lastFMLocalStorage: LastFmLocalStorage,
@@ -20,7 +20,7 @@ internal class ArtistInfoRepositoryImpl(
             else -> {
                 try {
                     artistInfo = lastFMService.getArtistInfo(artistName)
-                    (artistInfo as? LastFmArtistInfo)?.let {
+                    artistInfo?.let {
                         saveArtistInfoDB(artistName, artistInfo)
                     }
                 } catch (ioException: Exception) {

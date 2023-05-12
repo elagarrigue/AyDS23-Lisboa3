@@ -10,7 +10,7 @@ interface HtmlHelper {
     fun getHtmlText(text: String, term: String): String
 }
 
-class HtmlHelperImpl: HtmlHelper {
+internal class HtmlHelperImpl: HtmlHelper {
 
     override fun getHtmlText(text: String, term: String): String {
         val builder = StringBuilder()

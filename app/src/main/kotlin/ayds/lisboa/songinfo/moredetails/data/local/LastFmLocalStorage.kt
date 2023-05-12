@@ -4,7 +4,7 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
-import ayds.lisboa.songinfo.moredetails.domain.ArtistInfo.LastFmArtistInfo
+import ayds.lisboa.songinfo.moredetails.domain.entities.ArtistInfo.LastFmArtistInfo
 
 interface LastFmLocalStorage {
     fun saveArtist(artistName: String, artistInfo: LastFmArtistInfo)

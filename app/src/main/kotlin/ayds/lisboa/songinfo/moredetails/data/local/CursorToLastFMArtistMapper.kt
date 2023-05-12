@@ -1,8 +1,8 @@
 package ayds.lisboa.songinfo.moredetails.data.local
 
 import android.database.Cursor
-import ayds.lisboa.songinfo.moredetails.domain.ArtistInfo
-import ayds.lisboa.songinfo.moredetails.domain.ArtistInfo.LastFmArtistInfo
+import ayds.lisboa.songinfo.moredetails.domain.entities.ArtistInfo
+import ayds.lisboa.songinfo.moredetails.domain.entities.ArtistInfo.LastFmArtistInfo
 import java.sql.SQLException
 
 interface CursorToLastFMArtistMapper{

@@ -1,14 +1,15 @@
 package ayds.lisboa.songinfo.home.view
 
 import ayds.lisboa.songinfo.home.model.entities.Song
-import ayds.lisboa.songinfo.home.model.entities.SpotifySong
+import ayds.lisboa.songinfo.home.model.entities.Song.SpotifySong
 import io.mockk.mockk
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class SongDescriptionHelperTest {
 
-    private val songDescriptionHelper by lazy { SongDescriptionHelperImpl() }
+    private val dateCalculatorFactory: DateCalculatorFactory= DateCalculatorFactoryImpl
+    private val songDescriptionHelper by lazy { SongDescriptionHelperImpl(dateCalculatorFactory) }
 
     @Test
     fun `given a local song it should return the description`() {
@@ -18,7 +19,7 @@ class SongDescriptionHelperTest {
             "Stone Temple Pilots",
             "Core",
             "1992-01-01",
-            "year",
+            "day",
             "url",
             "url",
             true,
@@ -30,7 +31,7 @@ class SongDescriptionHelperTest {
             "Song: Plush [*]\n" +
                 "Artist: Stone Temple Pilots\n" +
                 "Album: Core\n" +
-                "Year: 1992"
+                "Release date: 01/01/1992"
 
         assertEquals(expected, result)
     }
@@ -43,7 +44,7 @@ class SongDescriptionHelperTest {
             "Stone Temple Pilots",
             "Core",
             "1992-01-01",
-            "year",
+            "day",
             "url",
             "url",
             false,
@@ -55,7 +56,7 @@ class SongDescriptionHelperTest {
             "Song: Plush \n" +
                 "Artist: Stone Temple Pilots\n" +
                 "Album: Core\n" +
-                "Year: 1992"
+                "Release date: 01/01/1992"
 
         assertEquals(expected, result)
     }

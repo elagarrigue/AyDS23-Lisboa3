@@ -11,6 +11,7 @@ import ayds.observer.Observable
 import ayds.observer.Subject
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.spyk
 import io.mockk.verify
 import org.junit.Assert.assertEquals
 import org.junit.Before
@@ -19,17 +20,20 @@ import org.junit.Test
 class OtherInfoPresenterTest {
     private val moreDetailsInjector =MoreDetailsInjector
     private val otherInfoView: OtherInfoView = mockk()
-    private lateinit var otherInfoPresenter: OtherInfoPresenter
+    private val artistInfoRepository: ArtistInfoRepository = mockk(relaxUnitFun = true)
+    private val artistInfoHelper: ArtistInfoHelper= mockk(relaxUnitFun = true)
+
+    private val otherInfoPresenter = spyk(OtherInfoPresenterImpl(artistInfoRepository,artistInfoHelper))
+
 
     @Before
     fun setup() {
         moreDetailsInjector.init(otherInfoView)
-        otherInfoPresenter = moreDetailsInjector.getPresenter()
     }
 
     @Test
     fun `on fetch should notify view with uiState`() {
-
+        otherInfoPresenter.fetch("artist")
         verify { otherInfoPresenter.fetch("artist") }
     }
 

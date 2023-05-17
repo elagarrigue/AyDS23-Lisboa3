@@ -34,7 +34,7 @@ internal class ArtistInfoRepositoryTest {
     }
 
     @Test
-    fun `given existing artist in db should return artist info`(){
+    fun `given existing artist from db should return artist info`(){
         val artistInfo = LastFmArtistInfo("bioContent", "url")
 
         every { lastFmLocalStorage.getArtistInfo("artistName") } returns artistInfo
@@ -46,7 +46,7 @@ internal class ArtistInfoRepositoryTest {
     }
 
     @Test
-    fun `given non existing artist in service should return artist info`(){
+    fun `given existing artist from service should get the artist info and store it`(){
         val artistInfo = LastFmArtistInfo("bioContent", "url", false)
 
         every { lastFmLocalStorage.getArtistInfo("artistName") } returns null

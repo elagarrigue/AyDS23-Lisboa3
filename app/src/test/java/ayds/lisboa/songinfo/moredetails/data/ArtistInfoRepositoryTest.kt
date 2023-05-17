@@ -46,7 +46,7 @@ internal class ArtistInfoRepositoryTest {
     }
 
     @Test
-    fun `given non existing artist shou`(){
+    fun `given non existing artist in service should return artist info`(){
         val artistInfo = LastFmArtistInfo("bioContent", "url", false)
 
         every { lastFmLocalStorage.getArtistInfo("artistName") } returns null
@@ -60,7 +60,7 @@ internal class ArtistInfoRepositoryTest {
     }
 
     @Test
-    fun `given service exception should return empty song`() {
+    fun `given service exception should return empty artist info`() {
         every { lastFmLocalStorage.getArtistInfo("artistName") } returns null
         every { lastFmService.getArtistInfo("artistName") } throws mockk<Exception>()
 

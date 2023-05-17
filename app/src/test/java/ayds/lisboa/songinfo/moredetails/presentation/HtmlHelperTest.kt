@@ -1,23 +1,20 @@
-import ayds.lisboa.songinfo.moredetails.presentation.HtmlHelper
-import ayds.lisboa.songinfo.moredetails.presentation.HtmlHelperImpl
+package ayds.lisboa.songinfo.moredetails.presentation
+
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class HtmlHelperImplTest {
 
-    private val htmlHelper: HtmlHelper by lazy {
-        HtmlHelperImpl()
-    }
     @Test
     fun `getHtmlText should return the correct HTML text`() {
 
-        val text = "Esto es una frase de testing"
-        val term = "frase"
-
-        val expectedText = """<html><div width=400><font face="arial">Esto es una frase de testing</font></div></html>""".trimIndent()
+        val htmlHelper: HtmlHelper = HtmlHelperImpl()
+        val text = "Hello world Lisbon 3"
+        val term = "world"
+        val expectedHtmlText = "<html><div width=400><font face=\"arial\">Hello <b>WORLD</b> Lisbon 3</font></div></html>"
 
         val result = htmlHelper.getHtmlText(text, term)
 
-        assertEquals(expectedText, result)
+        assertEquals(expectedHtmlText, result)
     }
 }

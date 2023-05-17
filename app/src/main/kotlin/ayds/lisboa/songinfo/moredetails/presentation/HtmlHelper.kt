@@ -33,12 +33,13 @@ internal class HtmlHelperImpl: HtmlHelper {
         val startBoldLabel = "<b>"
         val finishBoldLabel = "</b>"
 
-        text.replace(singleQuote, space)
-        text.replace(lineBreakJson, lineBreakHTML)
-        text.replace((caseInsensitive + term).toRegex(),
+        var modifiedText = text.replace(singleQuote, space)
+        modifiedText = modifiedText.replace(lineBreakJson, lineBreakHTML)
+        modifiedText = modifiedText.replace((caseInsensitive + term).toRegex(),
             startBoldLabel + term.uppercase(Locale.getDefault()) + finishBoldLabel)
 
-        return text
+        return modifiedText
     }
+
 
 }

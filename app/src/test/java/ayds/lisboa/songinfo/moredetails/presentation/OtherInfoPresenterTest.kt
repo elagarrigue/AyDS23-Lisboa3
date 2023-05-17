@@ -13,7 +13,7 @@ internal class OtherInfoPresenterTest {
     private val otherInfoPresenter = OtherInfoPresenterImpl(artistInfoRepository,artistInfoHelper)
 
     @Test
-    fun `on fetch should notify view with uiState`() {
+    fun `on fetch should notify subscribers with otherInfoUiState`() {
         val artistInfo:ArtistInfo = mockk()
         val bio = ""
         val url = ""

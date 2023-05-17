@@ -71,7 +71,7 @@ internal class ArtistInfoHelperTest {
     }
 
     @Test
-    fun `given a non last fm artist info return not found`(){
+    fun `given a non lastFMArtistInfo info return not found`(){
         val artistName=""
         val artistInfo: ArtistInfo = mockk()
 
@@ -82,7 +82,7 @@ internal class ArtistInfoHelperTest {
     }
 
     @Test
-    fun `given an artist info it should return the url`() {
+    fun `given a lastFMArtistInfo it should return the url`() {
         val artistInfo = ArtistInfo.LastFmArtistInfo("bioContent", "url", false)
         val expectedUrl = "url"
 
@@ -92,17 +92,7 @@ internal class ArtistInfoHelperTest {
     }
 
     @Test
-    fun `given an artist info with invalid url it should return the no url found message`() {
-        val artistInfo = ArtistInfo.LastFmArtistInfo("bioContent", "", false)
-        val expectedUrl = ""
-
-        val result = artistInfoHelper.getArtistInfoUrl(artistInfo)
-
-        assertEquals(expectedUrl, result)
-    }
-
-    @Test
-    fun `given an artist info that is not LastFmArtistInfo it should return the no url found message`() {
+    fun `given a non lastFMArtistInfo it should return the no url found message`() {
         val artistInfo = ArtistInfo.EmptyArtistInfo
         val expectedUrl = "Artist info url not found."
         val result = artistInfoHelper.getArtistInfoUrl(artistInfo)

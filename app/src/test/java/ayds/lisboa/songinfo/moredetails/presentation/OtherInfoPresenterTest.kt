@@ -7,7 +7,7 @@ import io.mockk.mockk
 import io.mockk.verify
 import org.junit.Test
 
-class OtherInfoPresenterTest {
+internal class OtherInfoPresenterTest {
     private val artistInfoRepository: ArtistInfoRepository = mockk()
     private val artistInfoHelper: ArtistInfoHelper= mockk()
     private val otherInfoPresenter = OtherInfoPresenterImpl(artistInfoRepository,artistInfoHelper)

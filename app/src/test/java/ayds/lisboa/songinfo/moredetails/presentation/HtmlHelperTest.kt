@@ -3,7 +3,7 @@ package ayds.lisboa.songinfo.moredetails.presentation
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
-class HtmlHelperImplTest {
+internal class HtmlHelperTest {
 
     @Test
     fun `getHtmlText should return the correct HTML text`() {

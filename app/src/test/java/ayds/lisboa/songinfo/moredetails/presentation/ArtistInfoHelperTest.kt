@@ -20,7 +20,7 @@ internal class ArtistInfoHelperTest {
             "url",
             false
         )
-        every { htmlHelper.getHtmlText(any(), any()) } returns "Formatted bio"
+        every { htmlHelper.getHtmlText("bioContent", "") } returns "Formatted bio"
         val result = artistInfoHelper.getArtistInfoText(artistName, artistInfo)
         assertEquals("Formatted bio", result)
     }

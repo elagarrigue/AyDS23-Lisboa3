@@ -17,13 +17,14 @@ internal class OtherInfoPresenterTest {
         val artistInfo:ArtistInfo = mockk()
         val bio = ""
         val url = ""
-        every { artistInfoRepository.getArtistInfo("artist") } returns artistInfo
-        every { artistInfoHelper.getArtistInfoText("artist",artistInfo) } returns bio
-        every { artistInfoHelper.getArtistInfoUrl(artistInfo) } returns url
         val otherInfoUiStateTester: (OtherInfoUiState) -> Unit = mockk(relaxed = true)
         otherInfoPresenter.uiEventObservable.subscribe {
             otherInfoUiStateTester(it)
         }
+
+        every { artistInfoRepository.getArtistInfo("artist") } returns artistInfo
+        every { artistInfoHelper.getArtistInfoText("artist",artistInfo) } returns bio
+        every { artistInfoHelper.getArtistInfoUrl(artistInfo) } returns url
         val otherInfoUiState = OtherInfoUiState(
             artistInfoBioContent = bio,
             artistInfoUrl = url
@@ -31,7 +32,6 @@ internal class OtherInfoPresenterTest {
         otherInfoPresenter.fetch("artist")
 
         verify { otherInfoUiStateTester(otherInfoUiState) }
-
     }
 
 }

@@ -1,0 +1,3 @@
+[submodule "libs/LastFmData"]
+	path = libs/LastFmData
+	url = https://github.com/NahuelMaika/Lisboa3-SubModuleLastFmData

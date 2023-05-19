@@ -21,10 +21,10 @@ internal class ArtistInfoRepositoryImpl(
                 try {
                     artistInfo = lastFMService.getArtistInfo(artistName)
                     artistInfo?.let {
-                        saveArtistInfoDB(artistName, artistInfo)
+                        saveArtistInfoDB(artistName, it)
                     }
                 } catch (ioException: Exception) {
-                    ioException.printStackTrace()
+                    artistInfo = null
                 }
             }
         }

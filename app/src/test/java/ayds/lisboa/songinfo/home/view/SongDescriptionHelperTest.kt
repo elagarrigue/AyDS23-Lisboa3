@@ -2,13 +2,15 @@ package ayds.lisboa.songinfo.home.view
 
 import ayds.lisboa.songinfo.home.model.entities.Song
 import ayds.lisboa.songinfo.home.model.entities.Song.SpotifySong
+import io.mockk.every
 import io.mockk.mockk
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class SongDescriptionHelperTest {
 
-    private val dateCalculatorFactory: DateCalculatorFactory= DateCalculatorFactoryImpl
+    private val dateCalculator = mockk<DateCalculator>()
+    private val dateCalculatorFactory = mockk<DateCalculatorFactory>()
     private val songDescriptionHelper by lazy { SongDescriptionHelperImpl(dateCalculatorFactory) }
 
     @Test
@@ -24,6 +26,8 @@ class SongDescriptionHelperTest {
             "url",
             true,
         )
+        every { dateCalculatorFactory.get("1992-01-01", "day") } returns dateCalculator
+        every { dateCalculator.getDate() } returns "01/01/1992"
 
         val result = songDescriptionHelper.getSongDescriptionText(song)
 
@@ -49,6 +53,8 @@ class SongDescriptionHelperTest {
             "url",
             false,
         )
+        every { dateCalculatorFactory.get("1992-01-01", "day") } returns dateCalculator
+        every { dateCalculator.getDate() } returns "01/01/1992"
 
         val result = songDescriptionHelper.getSongDescriptionText(song)
 

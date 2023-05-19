@@ -1,6 +1,6 @@
 package ayds.lisboa.songinfo.moredetails.data
 
-import ayds.lisboa.songinfo.moredetails.data.external.LastFmService
+import ayds.lisboa3.submodule.lastFm.external.LastFmService
 import ayds.lisboa.songinfo.moredetails.data.local.LastFmLocalStorage
 import ayds.lisboa.songinfo.moredetails.domain.entities.ArtistInfo
 import ayds.lisboa.songinfo.moredetails.domain.entities.ArtistInfo.LastFmArtistInfo

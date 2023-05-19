@@ -2,11 +2,11 @@ package ayds.lisboa.songinfo.moredetails.dependencyinyector
 
 import android.content.Context
 import ayds.lisboa.songinfo.moredetails.data.ArtistInfoRepositoryImpl
-import ayds.lisboa.songinfo.moredetails.data.external.LastFmApi
-import ayds.lisboa.songinfo.moredetails.data.external.LastFmService
-import ayds.lisboa.songinfo.moredetails.data.external.LastFmServiceImpl
-import ayds.lisboa.songinfo.moredetails.data.external.LastFmToArtistInfoResolver
-import ayds.lisboa.songinfo.moredetails.data.external.LastFmToArtistInfoResolverImpl
+import ayds.lisboa3.submodule.lastFm.external.LastFmApi
+import ayds.lisboa3.submodule.lastFm.external.LastFmService
+import ayds.lisboa3.submodule.lastFm.external.LastFmServiceImpl
+import ayds.lisboa3.submodule.lastFm.external.LastFmToArtistInfoResolver
+import ayds.lisboa3.submodule.lastFm.external.LastFmToArtistInfoResolverImpl
 import ayds.lisboa.songinfo.moredetails.data.local.CursorToLastFMArtistMapper
 import ayds.lisboa.songinfo.moredetails.data.local.CursorToLastFMArtistMapperImpl
 import ayds.lisboa.songinfo.moredetails.data.local.LastFmLocalStorageImpl

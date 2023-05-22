@@ -2,8 +2,8 @@ package ayds.lisboa.songinfo.moredetails.data
 
 import ayds.lisboa3.submodule.lastFm.external.LastFmService
 import ayds.lisboa.songinfo.moredetails.data.local.LastFmLocalStorage
-import ayds.lisboa.songinfo.moredetails.domain.entities.ArtistInfo
-import ayds.lisboa.songinfo.moredetails.domain.entities.ArtistInfo.LastFmArtistInfo
+import ayds.lisboa.songinfo.moredetails.domain.entities.Card
+import ayds.lisboa.songinfo.moredetails.domain.entities.Card.ArtistCard
 import ayds.lisboa.songinfo.moredetails.domain.repository.ArtistInfoRepository
 import io.mockk.every
 import io.mockk.mockk
@@ -14,7 +14,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.lang.Exception
 
-internal class ArtistInfoRepositoryTest {
+internal class CardRepositoryTest {
 
     private val lastFmLocalStorage: LastFmLocalStorage = mockk(relaxUnitFun = true)
     private val lastFmService: LastFmService = mockk(relaxUnitFun = true)
@@ -25,18 +25,18 @@ internal class ArtistInfoRepositoryTest {
 
     @Test
     fun `given non existing artist should return emptyArtistInfo`(){
-        every { lastFmLocalStorage.getArtistInfo("artistName") } returns null
+        every { lastFmLocalStorage.getArtistCard("artistName") } returns null
         every { lastFmService.getArtistInfo("artistName") } returns null
 
         val result = artistInfoRepository.getArtistInfo("artistName")
 
-        assertEquals(result, ArtistInfo.EmptyArtistInfo)
+        assertEquals(result, Card.EmptyCard)
     }
 
     @Test
     fun `given existing artist from db should return artistInfo`(){
-        val artistInfo = LastFmArtistInfo("bioContent", "url")
-        every { lastFmLocalStorage.getArtistInfo("artistName") } returns artistInfo
+        val artistInfo = ArtistCard("bioContent", "url")
+        every { lastFmLocalStorage.getArtistCard("artistName") } returns artistInfo
 
         val result = artistInfoRepository.getArtistInfo("artistName")
 
@@ -46,25 +46,25 @@ internal class ArtistInfoRepositoryTest {
 
     @Test
     fun `given existing artist from service should get the artistInfo and store it`(){
-        val artistInfo = LastFmArtistInfo("bioContent", "url", false)
-        every { lastFmLocalStorage.getArtistInfo("artistName") } returns null
+        val artistInfo = ArtistCard("bioContent", "url", false)
+        every { lastFmLocalStorage.getArtistCard("artistName") } returns null
         every { lastFmService.getArtistInfo("artistName") } returns artistInfo
 
         val result = artistInfoRepository.getArtistInfo("artistName")
 
         assertEquals(artistInfo, result)
         assertFalse(artistInfo.isLocallyStored)
-        verify { lastFmLocalStorage.saveArtist("artistName", artistInfo) }
+        verify { lastFmLocalStorage.saveArtistCard("artistName", artistInfo) }
     }
 
     @Test
     fun `given service exception should return emptyArtistInfo`() {
-        every { lastFmLocalStorage.getArtistInfo("artistName") } returns null
+        every { lastFmLocalStorage.getArtistCard("artistName") } returns null
         every { lastFmService.getArtistInfo("artistName") } throws mockk<Exception>()
 
         val result = artistInfoRepository.getArtistInfo("artistName")
 
-        assertEquals(ArtistInfo.EmptyArtistInfo, result)
+        assertEquals(Card.EmptyCard, result)
     }
 
 }

@@ -65,22 +65,22 @@ class OtherInfoView: AppCompatActivity() {
 
     private fun updateView(uiState: OtherInfoUiState) {
         runOnUiThread {
-            setDefaultImage(uiState.lastFmDefaultImage)
-            setBioContent(uiState.artistInfoBioContent)
-            setUrl(uiState.artistInfoUrl)
+            setDescription(uiState.artistCardDescription)
+            setInfoUrl(uiState.artistCardInfoUrl)
+            setSourceLogo(uiState.artistCardSourceLogo)
         }
     }
 
-    private fun setDefaultImage(lastFmDefaultImage: String) {
-        imageLoader.loadImageIntoView(lastFmDefaultImage, imageView)
-    }
-
-    private fun setBioContent(artistInfoBioContent: String) {
+    private fun setDescription(artistInfoBioContent: String) {
         artistInfoTextView.text = HtmlCompat.fromHtml(artistInfoBioContent, HtmlCompat.FROM_HTML_MODE_LEGACY)
     }
 
-    private fun setUrl(artistInfoUrl: String) {
+    private fun setInfoUrl(artistInfoUrl: String) {
         openUrlButton.setOnClickListener { navigationUtils.openExternalUrl(this, artistInfoUrl) }
+    }
+
+    private fun setSourceLogo(artistCardSourceLogo: String) {
+        imageLoader.loadImageIntoView(artistCardSourceLogo, imageView)
     }
 
     private fun open() {

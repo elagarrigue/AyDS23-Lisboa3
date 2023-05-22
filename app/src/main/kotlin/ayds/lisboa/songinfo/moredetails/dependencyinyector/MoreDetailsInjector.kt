@@ -2,12 +2,12 @@ package ayds.lisboa.songinfo.moredetails.dependencyinyector
 
 import android.content.Context
 import ayds.lisboa.songinfo.moredetails.data.ArtistInfoRepositoryImpl
-import ayds.lisboa.songinfo.moredetails.data.local.CursorToLastFMArtistMapper
-import ayds.lisboa.songinfo.moredetails.data.local.CursorToLastFMArtistMapperImpl
+import ayds.lisboa.songinfo.moredetails.data.local.CursorToArtistCardMapper
+import ayds.lisboa.songinfo.moredetails.data.local.CursorToArtistCardMapperImpl
 import ayds.lisboa.songinfo.moredetails.data.local.LastFmLocalStorageImpl
 import ayds.lisboa.songinfo.moredetails.domain.repository.ArtistInfoRepository
-import ayds.lisboa.songinfo.moredetails.presentation.ArtistInfoHelper
-import ayds.lisboa.songinfo.moredetails.presentation.ArtistInfoHelperImpl
+import ayds.lisboa.songinfo.moredetails.presentation.ArtistCardHelper
+import ayds.lisboa.songinfo.moredetails.presentation.ArtistCardHelperImpl
 import ayds.lisboa.songinfo.moredetails.presentation.HtmlHelper
 import ayds.lisboa.songinfo.moredetails.presentation.HtmlHelperImpl
 import ayds.lisboa.songinfo.moredetails.presentation.OtherInfoPresenter
@@ -17,12 +17,12 @@ import ayds.lisboa3.submodule.lastFm.external.LastFmInjector
 import ayds.lisboa3.submodule.lastFm.external.LastFmService
 
 object MoreDetailsInjector {
-    private lateinit var cursorToLastFMArtistMapper: CursorToLastFMArtistMapper
+    private lateinit var cursorToArtistCardMapper: CursorToArtistCardMapper
     private lateinit var lastFmLocalStorage: LastFmLocalStorageImpl
 
     private lateinit var lastFmService: LastFmService
 
-    private lateinit var artistInfoHelper: ArtistInfoHelper
+    private lateinit var artistCardHelper: ArtistCardHelper
     private lateinit var htmlHelper: HtmlHelper
     private lateinit var artistInfoRepository: ArtistInfoRepository
 
@@ -38,13 +38,13 @@ object MoreDetailsInjector {
 
     private fun initArtistInfoHelper() {
         htmlHelper = HtmlHelperImpl()
-        artistInfoHelper = ArtistInfoHelperImpl(htmlHelper)
+        artistCardHelper = ArtistCardHelperImpl(htmlHelper)
 
     }
 
     private fun initLastFmLocalStorage(otherInfoView: OtherInfoView){
-        cursorToLastFMArtistMapper = CursorToLastFMArtistMapperImpl()
-        lastFmLocalStorage = LastFmLocalStorageImpl(otherInfoView as Context, cursorToLastFMArtistMapper)
+        cursorToArtistCardMapper = CursorToArtistCardMapperImpl()
+        lastFmLocalStorage = LastFmLocalStorageImpl(otherInfoView as Context, cursorToArtistCardMapper)
     }
 
     private fun initLastFmService() {
@@ -56,7 +56,7 @@ object MoreDetailsInjector {
     }
 
     private fun initOtherInfoPresenter(){
-        otherInfoPresenter = OtherInfoPresenterImpl(artistInfoRepository, artistInfoHelper)
+        otherInfoPresenter = OtherInfoPresenterImpl(artistInfoRepository, artistCardHelper)
     }
 
     fun getPresenter() = otherInfoPresenter

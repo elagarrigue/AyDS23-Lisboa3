@@ -2,11 +2,6 @@ package ayds.lisboa.songinfo.moredetails.dependencyinyector
 
 import android.content.Context
 import ayds.lisboa.songinfo.moredetails.data.ArtistInfoRepositoryImpl
-import ayds.lisboa3.submodule.lastFm.external.LastFmApi
-import ayds.lisboa3.submodule.lastFm.external.LastFmService
-import ayds.lisboa3.submodule.lastFm.external.LastFmServiceImpl
-import ayds.lisboa3.submodule.lastFm.external.LastFmToArtistInfoResolver
-import ayds.lisboa3.submodule.lastFm.external.LastFmToArtistInfoResolverImpl
 import ayds.lisboa.songinfo.moredetails.data.local.CursorToLastFMArtistMapper
 import ayds.lisboa.songinfo.moredetails.data.local.CursorToLastFMArtistMapperImpl
 import ayds.lisboa.songinfo.moredetails.data.local.LastFmLocalStorageImpl
@@ -18,18 +13,13 @@ import ayds.lisboa.songinfo.moredetails.presentation.HtmlHelperImpl
 import ayds.lisboa.songinfo.moredetails.presentation.OtherInfoPresenter
 import ayds.lisboa.songinfo.moredetails.presentation.OtherInfoPresenterImpl
 import ayds.lisboa.songinfo.moredetails.presentation.OtherInfoView
-import retrofit2.Retrofit
-import retrofit2.converter.scalars.ScalarsConverterFactory
-
-private const val LAST_FM_API_BASE_URL = "https://ws.audioscrobbler.com/2.0/"
+import ayds.lisboa3.submodule.lastFm.external.LastFmInjector
+import ayds.lisboa3.submodule.lastFm.external.LastFmService
 
 object MoreDetailsInjector {
     private lateinit var cursorToLastFMArtistMapper: CursorToLastFMArtistMapper
     private lateinit var lastFmLocalStorage: LastFmLocalStorageImpl
 
-    private lateinit var retrofit: Retrofit
-    private lateinit var lastFmApi: LastFmApi
-    private lateinit var lastFmToArtistInfoResolver: LastFmToArtistInfoResolver
     private lateinit var lastFmService: LastFmService
 
     private lateinit var artistInfoHelper: ArtistInfoHelper
@@ -58,23 +48,7 @@ object MoreDetailsInjector {
     }
 
     private fun initLastFmService() {
-        retrofit = getRetrofit()
-        lastFmApi = getLastFmApi(retrofit)
-        lastFmToArtistInfoResolver = LastFmToArtistInfoResolverImpl()
-        lastFmService = LastFmServiceImpl(lastFmApi, lastFmToArtistInfoResolver)
-    }
-
-    private fun getRetrofit(): Retrofit {
-        val retrofitBuilder = Retrofit.Builder()
-
-        retrofitBuilder.baseUrl(LAST_FM_API_BASE_URL)
-        retrofitBuilder.addConverterFactory(ScalarsConverterFactory.create())
-
-        return retrofitBuilder.build()
-    }
-
-    private fun getLastFmApi(retrofit: Retrofit): LastFmApi {
-        return retrofit.create(LastFmApi::class.java)
+        lastFmService = LastFmInjector.getService()
     }
 
     private fun initArtistInfoRepository() {

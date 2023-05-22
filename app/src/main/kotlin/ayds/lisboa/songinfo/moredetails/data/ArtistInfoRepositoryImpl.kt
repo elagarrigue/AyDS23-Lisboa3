@@ -38,7 +38,7 @@ internal class ArtistInfoRepositoryImpl(
         lastFMLocalStorage.saveArtist(artistName, artistInfo)
     }
 
-    private fun adaptLastFmArtistInfo(artistInfo: ayds.lisboa3.submodule.lastFm.LastFmArtistInfo?) =
+    private fun adaptLastFmArtistInfo(artistInfo: ayds.lisboa3.submodule.lastFm.external.LastFmArtistInfo?) =
         artistInfo?.let { LastFmArtistInfo(it.bioContent, it.url) }
 
 }

@@ -20,21 +20,21 @@ internal class OtherInfoPresenterImpl(private val artistInfoRepository: ArtistIn
 
     override fun fetch(artistName: String){
         Thread {
-            getArtistInfoOnUpdateView(artistName)
+            getArtistCards(artistName)
         }.start()
     }
 
-    private fun getArtistInfoOnUpdateView(artistName: String) {
-        val artistInfo = artistInfoRepository.getArtistInfo(artistName)
-        val uiState = getUiState(artistName, artistInfo)
+    private fun getArtistCards(artistName: String) {
+        val artistCards = artistInfoRepository.getArtistInfo(artistName)
+        val uiState = getUiState(artistName, artistCards.first())
         uiEventObservable.notify(uiState)
     }
 
-    private fun getUiState(artistName: String, card: Card): OtherInfoUiState {
+    private fun getUiState(artistName: String, artistCard: Card): OtherInfoUiState {
         return OtherInfoUiState(
-            artistCardDescription = artistCardHelper.getArtistCardDescription(artistName, card),
-            artistCardInfoUrl = artistCardHelper.getArtistCardInfoUrl(card),
-            artistCardSourceLogo =  artistCardHelper.getArtistCardSourceLogo(card)
+            artistCardDescription = artistCardHelper.getArtistCardDescription(artistName, artistCard),
+            artistCardInfoUrl = artistCardHelper.getArtistCardInfoUrl(artistCard),
+            artistCardSourceLogo =  artistCardHelper.getArtistCardSourceLogo(artistCard)
         )
     }
 

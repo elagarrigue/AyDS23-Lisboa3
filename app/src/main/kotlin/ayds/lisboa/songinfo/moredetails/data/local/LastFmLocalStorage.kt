@@ -4,11 +4,11 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
-import ayds.lisboa.songinfo.moredetails.domain.entities.Card.ArtistCard
+import ayds.lisboa.songinfo.moredetails.domain.entities.Card
 
 interface LastFmLocalStorage {
-    fun saveArtistCard(artistName: String, artistCard: ArtistCard)
-    fun getArtistCard(artistName: String): ArtistCard?
+    fun saveArtistCard(artistName: String, artistCard: Card)
+    fun getArtistCards(artistName: String): List<Card>
 }
 
 internal class LastFmLocalStorageImpl (
@@ -32,13 +32,13 @@ internal class LastFmLocalStorageImpl (
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {}
 
-    override fun saveArtistCard(artistName: String, artistCard: ArtistCard) {
+    override fun saveArtistCard(artistName: String, artistCard: Card) {
         val artistValues = getArtistValues(artistName, artistCard)
 
         this.writableDatabase.insert(TABLE_ARTISTS, null, artistValues)
     }
 
-    private fun getArtistValues(artistName: String, artistCard: ArtistCard): ContentValues {
+    private fun getArtistValues(artistName: String, artistCard: Card): ContentValues {
         val values = ContentValues().apply {
             put(ARTIST, artistName)
             put(DESCRIPTION, artistCard.description)
@@ -50,7 +50,7 @@ internal class LastFmLocalStorageImpl (
         return values
     }
 
-    override fun getArtistCard(artistName: String): ArtistCard? {
+    override fun getArtistCards(artistName: String): List<Card> {
         val artistValues = arrayOf(artistName)
         val cursor = this.readableDatabase.query(
             TABLE_ARTISTS,
@@ -61,11 +61,17 @@ internal class LastFmLocalStorageImpl (
             null,
             RESULT_SET_ORDER
         )
-        val artistCard = cursorToArtistCardMapper.map(cursor)
+        val artistCards = mutableListOf<Card>()
+
+        while (cursor.moveToNext()) {
+            val artistCard = cursorToArtistCardMapper.map(cursor)
+            artistCard?.let { artistCards.add(it)}
+
+        }
 
         cursor.close()
 
-        return artistCard
+        return artistCards
     }
 
 }

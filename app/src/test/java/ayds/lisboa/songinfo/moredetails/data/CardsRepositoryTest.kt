@@ -2,8 +2,8 @@ package ayds.lisboa.songinfo.moredetails.data
 
 import ayds.lisboa3.submodule.lastFm.external.LastFmService
 import ayds.lisboa.songinfo.moredetails.data.local.LastFmLocalStorage
-import ayds.lisboa.songinfo.moredetails.domain.entities.Card
-import ayds.lisboa.songinfo.moredetails.domain.entities.Card.ArtistCard
+import ayds.lisboa.songinfo.moredetails.domain.entities.Cards
+import ayds.lisboa.songinfo.moredetails.domain.entities.Cards.Card
 import ayds.lisboa.songinfo.moredetails.domain.repository.ArtistInfoRepository
 import io.mockk.every
 import io.mockk.mockk
@@ -14,7 +14,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.lang.Exception
 
-internal class CardRepositoryTest {
+internal class CardsRepositoryTest {
 
     private val lastFmLocalStorage: LastFmLocalStorage = mockk(relaxUnitFun = true)
     private val lastFmService: LastFmService = mockk(relaxUnitFun = true)
@@ -30,12 +30,12 @@ internal class CardRepositoryTest {
 
         val result = artistInfoRepository.getArtistInfo("artistName")
 
-        assertEquals(result, Card.EmptyCard)
+        assertEquals(result, Cards.EmptyCards)
     }
 
     @Test
     fun `given existing artist from db should return artistInfo`(){
-        val artistInfo = ArtistCard("bioContent", "url")
+        val artistInfo = Card("bioContent", "url")
         every { lastFmLocalStorage.getArtistCard("artistName") } returns artistInfo
 
         val result = artistInfoRepository.getArtistInfo("artistName")
@@ -46,7 +46,7 @@ internal class CardRepositoryTest {
 
     @Test
     fun `given existing artist from service should get the artistInfo and store it`(){
-        val artistInfo = ArtistCard("bioContent", "url", false)
+        val artistInfo = Card("bioContent", "url", false)
         every { lastFmLocalStorage.getArtistCard("artistName") } returns null
         every { lastFmService.getArtistInfo("artistName") } returns artistInfo
 
@@ -64,7 +64,7 @@ internal class CardRepositoryTest {
 
         val result = artistInfoRepository.getArtistInfo("artistName")
 
-        assertEquals(Card.EmptyCard, result)
+        assertEquals(Cards.EmptyCards, result)
     }
 
 }

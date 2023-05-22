@@ -1,6 +1,6 @@
 package ayds.lisboa.songinfo.moredetails.presentation
 
-import ayds.lisboa.songinfo.moredetails.domain.entities.Card
+import ayds.lisboa.songinfo.moredetails.domain.entities.Cards
 import ayds.lisboa.songinfo.moredetails.domain.repository.ArtistInfoRepository
 import io.mockk.every
 import io.mockk.mockk
@@ -14,7 +14,7 @@ internal class OtherInfoPresenterTest {
 
     @Test
     fun `on fetch should notify subscribers with otherInfoUiState`() {
-        val card:Card = mockk()
+        val cards:Cards = mockk()
         val bio = ""
         val url = ""
         val otherInfoUiStateTester: (OtherInfoUiState) -> Unit = mockk(relaxed = true)
@@ -22,9 +22,9 @@ internal class OtherInfoPresenterTest {
             otherInfoUiStateTester(it)
         }
 
-        every { artistInfoRepository.getArtistInfo("artist") } returns card
-        every { artistCardHelper.getArtistCardDescription("artist",card) } returns bio
-        every { artistCardHelper.getArtistCardInfoUrl(card) } returns url
+        every { artistInfoRepository.getArtistInfo("artist") } returns cards
+        every { artistCardHelper.getArtistCardDescription("artist",cards) } returns bio
+        every { artistCardHelper.getArtistCardInfoUrl(cards) } returns url
         val otherInfoUiState = OtherInfoUiState(
             artistCardDescription = bio,
             artistCardInfoUrl = url

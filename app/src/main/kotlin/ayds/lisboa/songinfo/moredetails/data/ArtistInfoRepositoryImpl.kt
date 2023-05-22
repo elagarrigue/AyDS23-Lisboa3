@@ -1,9 +1,7 @@
 package ayds.lisboa.songinfo.moredetails.data
 
-import ayds.lisboa.songinfo.moredetails.domain.entities.Card
-import ayds.lisboa.songinfo.moredetails.domain.entities.Card.ArtistCard
-import ayds.lisboa.songinfo.moredetails.domain.entities.Card.EmptyCard
 import ayds.lisboa.songinfo.moredetails.data.local.LastFmLocalStorage
+import ayds.lisboa.songinfo.moredetails.domain.entities.Card
 import ayds.lisboa3.submodule.lastFm.external.LastFmService
 import ayds.lisboa.songinfo.moredetails.domain.repository.ArtistInfoRepository
 import ayds.lisboa3.submodule.lastFm.external.LastFmArtistInfo
@@ -15,33 +13,35 @@ internal class ArtistInfoRepositoryImpl(
     private val lastFmService: LastFmService
 ) : ArtistInfoRepository {
 
-    override fun getArtistInfo(artistName: String): Card {
-        var artistCard = lastFmLocalStorage.getArtistCard(artistName)
+    override fun getArtistInfo(artistName: String): List<Card> {
+        val artistCards = lastFmLocalStorage.getArtistCards(artistName).toMutableList()
 
         when {
-            artistCard != null -> markArtistInfoAsLocal(artistCard)
+            artistCards.isNotEmpty() -> markArtistCardsAsLocal(artistCards)
             else -> {
                 try {
                     val lastFmArtistInfo = lastFmService.getArtistInfo(artistName)
-                    artistCard = adaptLastFmArtistInfoToCard(lastFmArtistInfo)
-                    artistCard?.let{saveArtistInfoDB(artistName, it)}
+                    val lastFmCard = adaptLastFmArtistInfoToCard(lastFmArtistInfo)
+                    lastFmCard?.let { artistCards.add(it) }
+                    saveCards(artistName, artistCards)
                 } catch (ioException: Exception) {
-                    artistCard = null
+                    artistCards.clear()
                 }
             }
         }
 
-        return artistCard ?: EmptyCard
+        return artistCards
     }
 
-    private fun markArtistInfoAsLocal(artistInfo: ArtistCard) {
-        artistInfo.isLocallyStored = true
-    }
-
-    private fun saveArtistInfoDB(artistName: String, artistInfo: ArtistCard) {
-        lastFmLocalStorage.saveArtistCard(artistName, artistInfo)
+    private fun markArtistCardsAsLocal(artistCards: List<Card>) {
+        artistCards.forEach { it.isLocallyStored = true}
     }
 
     private fun adaptLastFmArtistInfoToCard(lastFmArtistInfo: LastFmArtistInfo?) =
-        lastFmArtistInfo?.let { ArtistCard(it.bioContent, it.url, 1, LAST_FM_DEFAULT_IMAGE) }
+        lastFmArtistInfo?.let { Card(it.bioContent, it.url, 1, LAST_FM_DEFAULT_IMAGE) }
+
+    private fun saveCards(artistName: String, artistCards: List<Card>) {
+        artistCards.forEach { lastFmLocalStorage.saveArtistCard(artistName, it) }
+    }
+
 }

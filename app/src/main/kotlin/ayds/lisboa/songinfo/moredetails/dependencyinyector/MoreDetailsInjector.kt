@@ -12,8 +12,8 @@ import ayds.lisboa.songinfo.moredetails.presentation.HtmlHelperImpl
 import ayds.lisboa.songinfo.moredetails.presentation.OtherInfoPresenter
 import ayds.lisboa.songinfo.moredetails.presentation.OtherInfoPresenterImpl
 import ayds.lisboa.songinfo.moredetails.presentation.OtherInfoView
-import ayds.lisboa3.submodule.lastFm.external.LastFmInjector
-import ayds.lisboa3.submodule.lastFm.external.LastFmService
+import ayds.lisboa3.submodule.lastFm.LastFmInjector
+import ayds.lisboa3.submodule.lastFm.LastFmService
 import ayds.lisboa.songinfo.moredetails.data.external.proxy.ProxyLastFm
 import ayds.lisboa.songinfo.moredetails.data.external.proxy.ProxyLastFmImpl
 import ayds.lisboa.songinfo.moredetails.data.external.proxy.ProxyNewYorkTimes

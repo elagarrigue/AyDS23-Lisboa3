@@ -2,8 +2,8 @@ package ayds.lisboa.songinfo.moredetails.data.external.proxy
 
 import ayds.lisboa.songinfo.moredetails.domain.entities.Card
 import ayds.lisboa.songinfo.moredetails.domain.entities.Source
-import ayds.lisboa3.submodule.lastFm.external.LastFmArtistInfo
-import ayds.lisboa3.submodule.lastFm.external.LastFmService
+import ayds.lisboa3.submodule.lastFm.LastFmArtistInfo
+import ayds.lisboa3.submodule.lastFm.LastFmService
 
 const val WIKIPEDIA_DEFAULT_IMAGE = "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Lastfm_logo.svg/320px-Lastfm_logo.svg.png"
 

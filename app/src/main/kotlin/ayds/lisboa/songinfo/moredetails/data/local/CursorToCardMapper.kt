@@ -5,11 +5,11 @@ import ayds.lisboa.songinfo.moredetails.domain.entities.Card
 import ayds.lisboa.songinfo.moredetails.domain.entities.Source
 import java.sql.SQLException
 
-interface CursorToArtistCardMapper {
+interface CursorToCardMapper {
     fun map(cursor: Cursor): Card?
 }
 
-internal class CursorToArtistCardMapperImpl : CursorToArtistCardMapper {
+internal class CursorToCardMapperImpl : CursorToCardMapper {
 
     override fun map(cursor: Cursor): Card? =
         try {

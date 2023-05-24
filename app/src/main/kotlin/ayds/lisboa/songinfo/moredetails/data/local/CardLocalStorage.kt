@@ -7,16 +7,16 @@ import android.database.sqlite.SQLiteOpenHelper
 import ayds.lisboa.songinfo.moredetails.domain.entities.Card
 import ayds.lisboa.songinfo.moredetails.domain.entities.Source
 
-interface LastFmLocalStorage {
+interface CardLocalStorage {
     fun saveArtistCard(artistName: String, artistCard: Card)
     fun getArtistCards(artistName: String): List<Card>
 }
 
-internal class LastFmLocalStorageImpl (
+internal class CardLocalStorageImpl (
     context: Context,
-    private val cursorToArtistCardMapper: CursorToArtistCardMapper,
+    private val cursorToCardMapper: CursorToCardMapper
 ) : SQLiteOpenHelper(context, DB_NAME, null, 1),
-    LastFmLocalStorage {
+    CardLocalStorage {
 
     private val projection = arrayOf(
         ID,
@@ -65,7 +65,7 @@ internal class LastFmLocalStorageImpl (
         val artistCards = mutableListOf<Card>()
 
         while (cursor.moveToNext()) {
-            val artistCard = cursorToArtistCardMapper.map(cursor)
+            val artistCard = cursorToCardMapper.map(cursor)
             artistCard?.let { artistCards.add(it)}
 
         }

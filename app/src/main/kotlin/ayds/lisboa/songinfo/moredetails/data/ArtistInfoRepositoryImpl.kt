@@ -1,29 +1,27 @@
 package ayds.lisboa.songinfo.moredetails.data
 
-import ayds.lisboa.songinfo.moredetails.data.local.LastFmLocalStorage
+import ayds.lisboa.songinfo.moredetails.data.external.Broker
+import ayds.lisboa.songinfo.moredetails.data.local.CardLocalStorage
 import ayds.lisboa.songinfo.moredetails.domain.entities.Card
 import ayds.lisboa.songinfo.moredetails.domain.entities.Source
-import ayds.lisboa3.submodule.lastFm.external.LastFmService
 import ayds.lisboa.songinfo.moredetails.domain.repository.ArtistInfoRepository
 import ayds.lisboa3.submodule.lastFm.external.LastFmArtistInfo
 
 const val LAST_FM_DEFAULT_IMAGE = "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Lastfm_logo.svg/320px-Lastfm_logo.svg.png"
 
 internal class ArtistInfoRepositoryImpl(
-    private val lastFmLocalStorage: LastFmLocalStorage,
-    private val lastFmService: LastFmService
+    private val cardLocalStorage: CardLocalStorage,
+    private val broker: Broker
 ) : ArtistInfoRepository {
 
     override fun getArtistInfo(artistName: String): List<Card> {
-        val artistCards = lastFmLocalStorage.getArtistCards(artistName).toMutableList()
+        var artistCards = cardLocalStorage.getArtistCards(artistName).toMutableList()
 
         when {
             artistCards.isNotEmpty() -> markArtistCardsAsLocal(artistCards)
             else -> {
                 try {
-                    val lastFmArtistInfo = lastFmService.getArtistInfo(artistName)
-                    val lastFmCard = adaptLastFmArtistInfoToCard(lastFmArtistInfo)
-                    lastFmCard?.let { artistCards.add(it) }
+                    artistCards = broker.getCards(artistName).toMutableList()
                     saveCards(artistName, artistCards)
                 } catch (ioException: Exception) {
                     artistCards.clear()
@@ -38,11 +36,8 @@ internal class ArtistInfoRepositoryImpl(
         artistCards.forEach { it.isLocallyStored = true}
     }
 
-    private fun adaptLastFmArtistInfoToCard(lastFmArtistInfo: LastFmArtistInfo?) =
-        lastFmArtistInfo?.let { Card(it.bioContent, it.url, Source.LastFm, LAST_FM_DEFAULT_IMAGE) }
-
     private fun saveCards(artistName: String, artistCards: List<Card>) {
-        artistCards.forEach { lastFmLocalStorage.saveArtistCard(artistName, it) }
+        artistCards.forEach { cardLocalStorage.saveArtistCard(artistName, it) }
     }
 
 }

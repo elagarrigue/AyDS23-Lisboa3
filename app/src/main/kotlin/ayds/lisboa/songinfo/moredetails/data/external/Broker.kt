@@ -1,7 +1,6 @@
 package ayds.lisboa.songinfo.moredetails.data.external
 
 import ayds.lisboa.songinfo.moredetails.domain.entities.Card
-
 import ayds.lisboa.songinfo.moredetails.data.external.proxy.ProxyLastFm
 import ayds.lisboa.songinfo.moredetails.data.external.proxy.ProxyNewYorkTimes
 import ayds.lisboa.songinfo.moredetails.data.external.proxy.ProxyWikipedia
@@ -15,10 +14,12 @@ internal class BrokerImpl(private val proxyLastFm: ProxyLastFm,
 :Broker {
 
     override fun getCards(artistName: String): List<Card> {
-        val cards: List<Card> = emptyList()
-        cards.toMutableList().add(proxyLastFm.getCard(artistName))
-        //cards.toMutableList().add(proxyNewYorkTimes.getCard(artistName))
-        //cards.toMutableList().add(proxyWikipedia.getCard(artistName))
+        val cards: MutableList<Card> = mutableListOf()
+
+        cards.add(proxyLastFm.getCard(artistName))
+        cards.add(proxyNewYorkTimes.getCard(artistName))
+        cards.add(proxyWikipedia.getCard(artistName))
+
         return cards
     }
 }

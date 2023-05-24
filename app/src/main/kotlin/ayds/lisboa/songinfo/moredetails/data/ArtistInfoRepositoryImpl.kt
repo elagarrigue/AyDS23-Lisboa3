@@ -3,11 +3,7 @@ package ayds.lisboa.songinfo.moredetails.data
 import ayds.lisboa.songinfo.moredetails.data.external.Broker
 import ayds.lisboa.songinfo.moredetails.data.local.CardLocalStorage
 import ayds.lisboa.songinfo.moredetails.domain.entities.Card
-import ayds.lisboa.songinfo.moredetails.domain.entities.Source
 import ayds.lisboa.songinfo.moredetails.domain.repository.ArtistInfoRepository
-import ayds.lisboa3.submodule.lastFm.external.LastFmArtistInfo
-
-const val LAST_FM_DEFAULT_IMAGE = "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Lastfm_logo.svg/320px-Lastfm_logo.svg.png"
 
 internal class ArtistInfoRepositoryImpl(
     private val cardLocalStorage: CardLocalStorage,

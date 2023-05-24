@@ -30,58 +30,52 @@ object MoreDetailsInjector {
     private lateinit var cardLocalStorage: CardLocalStorage
 
     private lateinit var lastFmService: LastFmService
+    private lateinit var newYorkTimesService: LastFmService
+    private lateinit var wikipediaService: LastFmService
 
     private lateinit var proxyLastFm: ProxyLastFm
     private lateinit var proxyNewYorkTimes: ProxyNewYorkTimes
     private lateinit var proxyWikipedia: ProxyWikipedia
-
     private lateinit var broker: Broker
+
+    private lateinit var artistInfoRepository: ArtistInfoRepository
 
     private lateinit var artistCardHelper: ArtistCardHelper
     private lateinit var htmlHelper: HtmlHelper
-    private lateinit var artistInfoRepository: ArtistInfoRepository
-
     private lateinit var otherInfoPresenter: OtherInfoPresenter
 
     fun init(otherInfoView: OtherInfoView) {
-        initLastFmLocalStorage(otherInfoView)
-        initLastFmService()
-        initProxy()
+        initLocalStorage(otherInfoView)
+        initExternalServices()
         initBroker()
-        initArtistInfoRepository()
-        initArtistInfoHelper()
-        initOtherInfoPresenter()
+        initRepository()
+        initPresenter()
     }
 
-    private fun initArtistInfoHelper() {
-        htmlHelper = HtmlHelperImpl()
-        artistCardHelper = ArtistCardHelperImpl(htmlHelper)
-
-    }
-
-    private fun initLastFmLocalStorage(otherInfoView: OtherInfoView){
+    private fun initLocalStorage(otherInfoView: OtherInfoView){
         cursorToCardMapper = CursorToCardMapperImpl()
         cardLocalStorage = CardLocalStorageImpl(otherInfoView as Context, cursorToCardMapper)
     }
 
-    private fun initLastFmService() {
+    private fun initExternalServices() {
         lastFmService = LastFmInjector.getService()
-    }
-
-    private fun initProxy(){
-        proxyLastFm = ProxyLastFmImpl(lastFmService)
-        proxyNewYorkTimes = ProxyNewYorkTimesImpl(lastFmService)
-        proxyWikipedia = ProxyWikipediaImpl(lastFmService)
+        newYorkTimesService = LastFmInjector.getService()
+        wikipediaService = LastFmInjector.getService()
     }
 
     private fun initBroker(){
+        proxyLastFm = ProxyLastFmImpl(lastFmService)
+        proxyNewYorkTimes = ProxyNewYorkTimesImpl(lastFmService)
+        proxyWikipedia = ProxyWikipediaImpl(lastFmService)
         broker = BrokerImpl(proxyLastFm, proxyNewYorkTimes, proxyWikipedia)
     }
-    private fun initArtistInfoRepository() {
+    private fun initRepository() {
         artistInfoRepository = ArtistInfoRepositoryImpl(cardLocalStorage, broker)
     }
 
-    private fun initOtherInfoPresenter(){
+    private fun initPresenter(){
+        htmlHelper = HtmlHelperImpl()
+        artistCardHelper = ArtistCardHelperImpl(htmlHelper)
         otherInfoPresenter = OtherInfoPresenterImpl(artistInfoRepository, artistCardHelper)
     }
 

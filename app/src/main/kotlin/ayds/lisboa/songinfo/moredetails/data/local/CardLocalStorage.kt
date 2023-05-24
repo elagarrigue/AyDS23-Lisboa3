@@ -5,6 +5,7 @@ import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import ayds.lisboa.songinfo.moredetails.domain.entities.Card
+import ayds.lisboa.songinfo.moredetails.domain.entities.Source
 
 interface LastFmLocalStorage {
     fun saveArtistCard(artistName: String, artistCard: Card)
@@ -43,7 +44,7 @@ internal class LastFmLocalStorageImpl (
             put(ARTIST, artistName)
             put(DESCRIPTION, artistCard.description)
             put(INFO_URL, artistCard.infoUrl)
-            put(SOURCE, artistCard.source)
+            put(SOURCE, artistCard.source.name)
             put(SOURCE_LOGO, artistCard.sourceLogo)
         }
 

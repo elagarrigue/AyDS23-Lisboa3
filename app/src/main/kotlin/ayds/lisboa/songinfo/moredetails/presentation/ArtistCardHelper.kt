@@ -5,6 +5,7 @@ import ayds.lisboa.songinfo.moredetails.domain.entities.Card
 interface ArtistCardHelper {
     fun getArtistCardDescription(artistName: String, artistCard: Card): String
     fun getArtistCardInfoUrl(artistCard: Card): String
+    fun getArtistCardSource(artistCard: Card): String
     fun getArtistCardSourceLogo(artistCard: Card): String
 }
 
@@ -26,6 +27,10 @@ internal class ArtistCardHelperImpl(private val htmlHelper: HtmlHelper): ArtistC
 
     override fun getArtistCardInfoUrl(artistCard: Card): String {
         return artistCard.infoUrl
+    }
+
+    override fun getArtistCardSource(artistCard: Card): String {
+        return artistCard.source.name
     }
 
     override fun getArtistCardSourceLogo(artistCard: Card): String {

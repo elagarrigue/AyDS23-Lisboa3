@@ -2,6 +2,7 @@ package ayds.lisboa.songinfo.moredetails.data
 
 import ayds.lisboa.songinfo.moredetails.data.local.LastFmLocalStorage
 import ayds.lisboa.songinfo.moredetails.domain.entities.Card
+import ayds.lisboa.songinfo.moredetails.domain.entities.Source
 import ayds.lisboa3.submodule.lastFm.external.LastFmService
 import ayds.lisboa.songinfo.moredetails.domain.repository.ArtistInfoRepository
 import ayds.lisboa3.submodule.lastFm.external.LastFmArtistInfo
@@ -38,7 +39,7 @@ internal class ArtistInfoRepositoryImpl(
     }
 
     private fun adaptLastFmArtistInfoToCard(lastFmArtistInfo: LastFmArtistInfo?) =
-        lastFmArtistInfo?.let { Card(it.bioContent, it.url, 1, LAST_FM_DEFAULT_IMAGE) }
+        lastFmArtistInfo?.let { Card(it.bioContent, it.url, Source.LastFm, LAST_FM_DEFAULT_IMAGE) }
 
     private fun saveCards(artistName: String, artistCards: List<Card>) {
         artistCards.forEach { lastFmLocalStorage.saveArtistCard(artistName, it) }

@@ -18,6 +18,6 @@ internal class ProxyNewYorkTimesImpl(private val newYorkTimesService: LastFmServ
 
     private fun adaptNewYorkTimesToCard(lastFmArtistInfo: LastFmArtistInfo?) =
         lastFmArtistInfo?.let {
-            Card(lastFmArtistInfo.bioContent, lastFmArtistInfo.url, Source.LastFm, NEW_YORK_TIMES_DEFAULT_IMAGE)
+            Card(lastFmArtistInfo.bioContent, lastFmArtistInfo.url, Source.NewYorkTimes, NEW_YORK_TIMES_DEFAULT_IMAGE)
         }
 }

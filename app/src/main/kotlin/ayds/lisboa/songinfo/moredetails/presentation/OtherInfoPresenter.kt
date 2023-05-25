@@ -6,7 +6,7 @@ import ayds.observer.Observable
 import ayds.observer.Subject
 
 interface OtherInfoPresenter {
-    val uiEventObservable: Observable<OtherInfoUiState>
+    val uiEventObservable: Observable<List<OtherInfoUiState>>
 
     fun fetch(artistName: String)
 }
@@ -15,7 +15,7 @@ internal class OtherInfoPresenterImpl(private val artistInfoRepository: ArtistIn
                                       private val artistCardHelper: ArtistCardHelper
 ): OtherInfoPresenter {
 
-    private val onActionSubject = Subject<OtherInfoUiState>()
+    private val onActionSubject = Subject<List<OtherInfoUiState>>()
     override val uiEventObservable = onActionSubject
 
     override fun fetch(artistName: String){
@@ -26,16 +26,20 @@ internal class OtherInfoPresenterImpl(private val artistInfoRepository: ArtistIn
 
     private fun getArtistCards(artistName: String) {
         val artistCards = artistInfoRepository.getArtistInfo(artistName)
-        val uiState = getUiState(artistName, artistCards.first())
-        uiEventObservable.notify(uiState)
+        val uiStates = getUiStates(artistName, artistCards)
+        uiEventObservable.notify(uiStates)
     }
 
-    private fun getUiState(artistName: String, artistCard: Card): OtherInfoUiState {
-        return OtherInfoUiState(
-            artistCardDescription = artistCardHelper.getArtistCardDescription(artistName, artistCard),
-            artistCardInfoUrl = artistCardHelper.getArtistCardInfoUrl(artistCard),
-            artistCardSourceLogo =  artistCardHelper.getArtistCardSourceLogo(artistCard)
-        )
+    private fun getUiStates(artistName: String, artistCards: List<Card>): List<OtherInfoUiState> {
+        val uiStates: MutableList<OtherInfoUiState> = mutableListOf()
+        artistCards.forEach{
+            uiStates.add(OtherInfoUiState(
+                artistCardDescription = artistCardHelper.getArtistCardDescription(artistName,it),
+                artistCardInfoUrl = artistCardHelper.getArtistCardInfoUrl(it),
+                artistCardSourceLogo =  artistCardHelper.getArtistCardSourceLogo(it)
+            ))
+        }
+        return uiStates
     }
 
 }

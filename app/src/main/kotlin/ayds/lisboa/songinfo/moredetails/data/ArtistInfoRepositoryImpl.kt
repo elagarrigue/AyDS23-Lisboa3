@@ -11,16 +11,16 @@ internal class ArtistInfoRepositoryImpl(
 ) : ArtistInfoRepository {
 
     override fun getArtistInfo(artistName: String): List<Card> {
-        var artistCards = cardLocalStorage.getArtistCards(artistName).toMutableList()
+        var artistCards = cardLocalStorage.getArtistCards(artistName)
 
         when {
             artistCards.isNotEmpty() -> markArtistCardsAsLocal(artistCards)
             else -> {
                 try {
-                    artistCards = broker.getCards(artistName).toMutableList()
+                    artistCards = broker.getCards(artistName)
                     saveCards(artistName, artistCards)
                 } catch (ioException: Exception) {
-                    artistCards.clear()
+                    emptyList<Card>()
                 }
             }
         }

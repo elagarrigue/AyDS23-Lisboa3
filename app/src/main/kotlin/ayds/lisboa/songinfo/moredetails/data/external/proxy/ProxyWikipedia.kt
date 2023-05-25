@@ -13,11 +13,14 @@ interface ProxyWikipedia {
 internal class ProxyWikipediaImpl(private val wikipediaService: LastFmService) : ProxyWikipedia {
     override fun getCard(artistName: String): Card {
         val wikipedia = wikipediaService.getArtistInfo(artistName)
-        return adaptWikipediaToCard(wikipedia) ?: Card(source = Source.Wikipedia)
+        return adaptWikipediaToCard(wikipedia) ?: Card(source = Source.Wikipedia, sourceLogo = WIKIPEDIA_DEFAULT_IMAGE)
     }
 
     private fun adaptWikipediaToCard(wikipedia: LastFmArtistInfo?) =
         wikipedia?.let {
-            Card(wikipedia.bioContent, wikipedia.url, Source.Wikipedia, WIKIPEDIA_DEFAULT_IMAGE)
+            Card(description = wikipedia.bioContent,
+                infoUrl = wikipedia.url,
+                source = Source.Wikipedia,
+                sourceLogo = WIKIPEDIA_DEFAULT_IMAGE)
         }
 }

@@ -13,11 +13,14 @@ interface ProxyNewYorkTimes{
 internal class ProxyNewYorkTimesImpl(private val newYorkTimesService: LastFmService): ProxyNewYorkTimes{
     override fun getCard(artistName: String): Card {
         val newYorkTimes = newYorkTimesService.getArtistInfo(artistName)
-        return adaptNewYorkTimesToCard(newYorkTimes) ?: Card(source = Source.LastFm)
+        return adaptNewYorkTimesToCard(newYorkTimes) ?: Card(source = Source.NewYorkTimes, sourceLogo = NEW_YORK_TIMES_DEFAULT_IMAGE)
     }
 
     private fun adaptNewYorkTimesToCard(lastFmArtistInfo: LastFmArtistInfo?) =
         lastFmArtistInfo?.let {
-            Card(lastFmArtistInfo.bioContent, lastFmArtistInfo.url, Source.NewYorkTimes, NEW_YORK_TIMES_DEFAULT_IMAGE)
+            Card(description = lastFmArtistInfo.bioContent,
+                infoUrl = lastFmArtistInfo.url,
+                source = Source.NewYorkTimes,
+                sourceLogo = NEW_YORK_TIMES_DEFAULT_IMAGE)
         }
 }

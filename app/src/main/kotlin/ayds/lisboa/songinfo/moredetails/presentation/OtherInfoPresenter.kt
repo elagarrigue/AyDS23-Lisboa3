@@ -6,7 +6,7 @@ import ayds.observer.Observable
 import ayds.observer.Subject
 
 interface OtherInfoPresenter {
-    val uiEventObservable: Observable<List<OtherInfoUiState>>
+    val uiEventObservable: Observable<OtherInfoUiState>
 
     fun fetch(artistName: String)
 }
@@ -15,7 +15,7 @@ internal class OtherInfoPresenterImpl(private val artistInfoRepository: ArtistIn
                                       private val artistCardHelper: ArtistCardHelper
 ): OtherInfoPresenter {
 
-    private val onActionSubject = Subject<List<OtherInfoUiState>>()
+    private val onActionSubject = Subject<OtherInfoUiState>()
     override val uiEventObservable = onActionSubject
 
     override fun fetch(artistName: String){
@@ -26,20 +26,15 @@ internal class OtherInfoPresenterImpl(private val artistInfoRepository: ArtistIn
 
     private fun getArtistCards(artistName: String) {
         val artistCards = artistInfoRepository.getArtistInfo(artistName)
-        val uiStates = getUiStates(artistName, artistCards)
-        uiEventObservable.notify(uiStates)
+        val uiState = getUiState(artistName, artistCards)
+        uiEventObservable.notify(uiState)
     }
 
-    private fun getUiStates(artistName: String, artistCards: List<Card>): List<OtherInfoUiState> {
-        val uiStates: MutableList<OtherInfoUiState> = mutableListOf()
-        artistCards.forEach{
-            uiStates.add(OtherInfoUiState(
-                artistCardDescription = artistCardHelper.getArtistCardDescription(artistName,it),
-                artistCardInfoUrl = artistCardHelper.getArtistCardInfoUrl(it),
-                artistCardSourceLogo =  artistCardHelper.getArtistCardSourceLogo(it)
-            ))
-        }
-        return uiStates
+    private fun getUiState(artistName: String, artistCards: List<Card>): OtherInfoUiState {
+        return OtherInfoUiState(
+            lastFmCard = artistCardHelper.getLastFmCard(artistName, artistCards),
+            newYorkTimesCard = artistCardHelper.getNewYorkTimesCard(artistName, artistCards),
+            wikipediaCard = artistCardHelper.getWikipediaCard(artistName, artistCards)
+        )
     }
-
 }

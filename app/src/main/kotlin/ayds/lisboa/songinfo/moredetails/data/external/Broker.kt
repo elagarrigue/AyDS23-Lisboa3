@@ -17,8 +17,8 @@ internal class BrokerImpl(private val proxyLastFm: ProxyLastFm,
         val cards: MutableList<Card> = mutableListOf()
 
         cards.add(proxyLastFm.getCard(artistName))
-        cards.add(proxyNewYorkTimes.getCard(artistName))
         cards.add(proxyWikipedia.getCard(artistName))
+        cards.add(proxyNewYorkTimes.getCard(artistName))
 
         return cards
     }

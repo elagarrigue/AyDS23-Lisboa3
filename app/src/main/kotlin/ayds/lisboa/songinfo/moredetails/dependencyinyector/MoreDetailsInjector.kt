@@ -24,14 +24,18 @@ import ayds.lisboa.songinfo.moredetails.data.local.CardLocalStorage
 import ayds.lisboa.songinfo.moredetails.data.local.CardLocalStorageImpl
 import ayds.lisboa.songinfo.moredetails.data.local.CursorToCardMapper
 import ayds.lisboa.songinfo.moredetails.data.local.CursorToCardMapperImpl
+import ayds.winchester.artistinfo.external.WikipediaInjector
+import ayds.winchester.artistinfo.external.WikipediaService
+import com.test.artist.external.NYTimesArtistService
+import com.test.artist.external.artists.NYTimesArtistInjector
 
 object MoreDetailsInjector {
     private lateinit var cursorToCardMapper: CursorToCardMapper
     private lateinit var cardLocalStorage: CardLocalStorage
 
     private lateinit var lastFmService: LastFmService
-    private lateinit var newYorkTimesService: LastFmService
-    private lateinit var wikipediaService: LastFmService
+    private lateinit var newYorkTimesService: NYTimesArtistService
+    private lateinit var wikipediaService: WikipediaService
 
     private lateinit var proxyLastFm: ProxyLastFm
     private lateinit var proxyNewYorkTimes: ProxyNewYorkTimes
@@ -59,14 +63,14 @@ object MoreDetailsInjector {
 
     private fun initExternalServices() {
         lastFmService = LastFmInjector.getService()
-        newYorkTimesService = LastFmInjector.getService()
-        wikipediaService = LastFmInjector.getService()
+        newYorkTimesService = NYTimesArtistInjector.nyTimesArtistService
+        wikipediaService = WikipediaInjector.getWikipediaService()
     }
 
     private fun initBroker(){
         proxyLastFm = ProxyLastFmImpl(lastFmService)
-        proxyNewYorkTimes = ProxyNewYorkTimesImpl(lastFmService)
-        proxyWikipedia = ProxyWikipediaImpl(lastFmService)
+        proxyNewYorkTimes = ProxyNewYorkTimesImpl(newYorkTimesService)
+        proxyWikipedia = ProxyWikipediaImpl(wikipediaService)
         broker = BrokerImpl(proxyLastFm, proxyNewYorkTimes, proxyWikipedia)
     }
     private fun initRepository() {

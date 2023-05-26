@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -30,20 +31,44 @@
                 android:id="@+id/scrollViewLastFm"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:layout_constraintBottom_toTopOf="@id/openUrlButtonLastFm"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/imageViewLastFm">
 
-                <TextView
-                    android:id="@+id/otherInfoTextViewLastFm"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="16dp"
-                    android:autoLink="web"
-                    android:linksClickable="true" />
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/otherInfoTextViewLastFm"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:autoLink="web"
+                        android:linksClickable="true"
+                        android:padding="16dp"
+                        android:textSize="16sp"
+                        />
+
+                </LinearLayout>
 
             </ScrollView>
+
+            <TextView
+                android:id="@+id/sourceTextViewLastFm"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Source: LastFM"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/scrollViewLastFm"
+                app:layout_constraintBottom_toTopOf="@id/openUrlButtonLastFm"
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginLeft="16dp"
+                android:textColor="#FFFFFF"
+                android:textStyle="bold"
+                />
 
             <Button
                 android:id="@+id/openUrlButtonLastFm"
@@ -79,20 +104,42 @@
                 android:id="@+id/scrollViewNewYorkTimes"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:layout_constraintBottom_toTopOf="@id/openUrlButtonNewYorkTimes"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/imageViewNewYorkTimes">
 
-                <TextView
-                    android:id="@+id/otherInfoTextViewNewYorkTimes"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="16dp"
-                    android:autoLink="web"
-                    android:linksClickable="true" />
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/otherInfoTextViewNewYorkTimes"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="16dp"
+                        android:autoLink="web"
+                        android:linksClickable="true" />
+
+                </LinearLayout>
 
             </ScrollView>
+
+            <TextView
+                android:id="@+id/sourceTextViewNewYorkTimes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Source: LastFM"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/scrollViewNewYorkTimes"
+                app:layout_constraintBottom_toTopOf="@id/openUrlButtonNewYorkTimes"
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginLeft="16dp"
+                android:textColor="#FFFFFF"
+                android:textStyle="bold"
+                />
 
             <Button
                 android:id="@+id/openUrlButtonNewYorkTimes"
@@ -128,20 +175,42 @@
                 android:id="@+id/scrollViewWikipedia"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:layout_constraintBottom_toTopOf="@id/openUrlButtonWikipedia"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/imageViewWikipedia">
 
-                <TextView
-                    android:id="@+id/otherInfoTextViewWikipedia"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="16dp"
-                    android:autoLink="web"
-                    android:linksClickable="true" />
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/otherInfoTextViewWikipedia"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="16dp"
+                        android:autoLink="web"
+                        android:linksClickable="true" />
+
+                </LinearLayout>
 
             </ScrollView>
+
+            <TextView
+                android:id="@+id/sourceTextViewWikipedia"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Source: LastFM"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/scrollViewWikipedia"
+                app:layout_constraintBottom_toTopOf="@id/openUrlButtonWikipedia"
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginLeft="16dp"
+                android:textColor="#FFFFFF"
+                android:textStyle="bold"
+                />
 
             <Button
                 android:id="@+id/openUrlButtonWikipedia"
@@ -157,4 +226,5 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </LinearLayout>
+
 </ScrollView>

@@ -18,16 +18,19 @@ class OtherInfoView: AppCompatActivity() {
     private val navigationUtils: NavigationUtils = UtilsInjector.navigationUtils
     private val imageLoader: ImageLoader = UtilsInjector.imageLoader
 
-    private lateinit var textViewLastFm: TextView
+    private lateinit var descriptionTextViewLastFm: TextView
     private lateinit var imageViewLastFm: ImageView
+    private lateinit var sourceTextViewLastFm: TextView
     private lateinit var openUrlButtonLastFm: View
 
-    private lateinit var textViewNewYorTimes: TextView
+    private lateinit var descriptionTextViewNewYorkTimes: TextView
     private lateinit var imageViewNewYorkTimes: ImageView
+    private lateinit var sourceTextViewNewYorkTimes: TextView
     private lateinit var openUrlButtonNewYorkTimes: View
 
-    private lateinit var textViewWikipedia: TextView
+    private lateinit var descriptionTextViewWikipedia: TextView
     private lateinit var imageViewWikipedia: ImageView
+    private lateinit var sourceTextViewWikipedia: TextView
     private lateinit var openUrlButtonWikipedia: View
 
     private lateinit var presenter: OtherInfoPresenter
@@ -58,16 +61,19 @@ class OtherInfoView: AppCompatActivity() {
     }
 
     private fun initProperties() {
-        textViewLastFm = findViewById(R.id.otherInfoTextViewLastFm)
+        descriptionTextViewLastFm = findViewById(R.id.otherInfoTextViewLastFm)
         imageViewLastFm = findViewById(R.id.imageViewLastFm)
+        sourceTextViewLastFm = findViewById(R.id.sourceTextViewLastFm)
         openUrlButtonLastFm = findViewById(R.id.openUrlButtonLastFm)
 
-        textViewNewYorTimes = findViewById(R.id.otherInfoTextViewNewYorkTimes)
+        descriptionTextViewNewYorkTimes = findViewById(R.id.otherInfoTextViewNewYorkTimes)
         imageViewNewYorkTimes = findViewById(R.id.imageViewNewYorkTimes)
+        sourceTextViewNewYorkTimes = findViewById(R.id.sourceTextViewNewYorkTimes)
         openUrlButtonNewYorkTimes = findViewById(R.id.openUrlButtonNewYorkTimes)
 
-        textViewWikipedia = findViewById(R.id.otherInfoTextViewWikipedia)
+        descriptionTextViewWikipedia = findViewById(R.id.otherInfoTextViewWikipedia)
         imageViewWikipedia = findViewById(R.id.imageViewWikipedia)
+        sourceTextViewWikipedia = findViewById(R.id.sourceTextViewWikipedia)
         openUrlButtonWikipedia = findViewById(R.id.openUrlButtonWikipedia)
     }
 
@@ -88,20 +94,23 @@ class OtherInfoView: AppCompatActivity() {
     }
 
     private fun setLastFmCard(lastFmCard: Card) {
-        textViewLastFm.text = HtmlCompat.fromHtml(lastFmCard.description, HtmlCompat.FROM_HTML_MODE_LEGACY)
+        descriptionTextViewLastFm.text = HtmlCompat.fromHtml(lastFmCard.description, HtmlCompat.FROM_HTML_MODE_LEGACY)
         openUrlButtonLastFm.setOnClickListener { navigationUtils.openExternalUrl(this, lastFmCard.infoUrl) }
+        sourceTextViewLastFm.text = lastFmCard.source.name
         imageLoader.loadImageIntoView(lastFmCard.sourceLogo, imageViewLastFm)
     }
 
     private fun setNewYorkTimesCard(newYorkTimesCard: Card) {
-        textViewNewYorTimes.text = HtmlCompat.fromHtml(newYorkTimesCard.description, HtmlCompat.FROM_HTML_MODE_LEGACY)
+        descriptionTextViewNewYorkTimes.text = HtmlCompat.fromHtml(newYorkTimesCard.description, HtmlCompat.FROM_HTML_MODE_LEGACY)
         openUrlButtonNewYorkTimes.setOnClickListener { navigationUtils.openExternalUrl(this, newYorkTimesCard.infoUrl) }
+        sourceTextViewNewYorkTimes.text = newYorkTimesCard.source.name
         imageLoader.loadImageIntoView(newYorkTimesCard.sourceLogo, imageViewNewYorkTimes)
     }
 
     private fun setWikipediaCard(wikipediaCard: Card) {
-        textViewWikipedia.text = HtmlCompat.fromHtml(wikipediaCard.description, HtmlCompat.FROM_HTML_MODE_LEGACY)
+        descriptionTextViewWikipedia.text = HtmlCompat.fromHtml(wikipediaCard.description, HtmlCompat.FROM_HTML_MODE_LEGACY)
         openUrlButtonWikipedia.setOnClickListener { navigationUtils.openExternalUrl(this, wikipediaCard.infoUrl) }
+        sourceTextViewWikipedia.text = wikipediaCard.source.name
         imageLoader.loadImageIntoView(wikipediaCard.sourceLogo, imageViewWikipedia)
     }
 

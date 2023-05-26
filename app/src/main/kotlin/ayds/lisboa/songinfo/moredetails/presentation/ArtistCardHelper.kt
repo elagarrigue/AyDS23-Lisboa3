@@ -1,7 +1,6 @@
 package ayds.lisboa.songinfo.moredetails.presentation
 
 import ayds.lisboa.songinfo.moredetails.domain.entities.Card
-import ayds.lisboa.songinfo.moredetails.domain.entities.Source
 
 interface ArtistCardHelper {
     fun getLastFmCard(artistName: String, artistCards: List<Card>): Card
@@ -14,32 +13,32 @@ private const val NO_RESULTS = "No Results"
 
 internal class ArtistCardHelperImpl(private val htmlHelper: HtmlHelper): ArtistCardHelper {
     override fun getLastFmCard(artistName: String, artistCards: List<Card>): Card {
-        val lastFmCard = artistCards.find { it.source == Source.LastFm }
+        val lastFmCard = artistCards.component1()
 
-        lastFmCard?.let {it.description = it.formatDescription(artistName)}
+        lastFmCard.description = formatDescription(lastFmCard, artistName)
 
-        return lastFmCard ?: Card(source = Source.LastFm)
+        return lastFmCard
     }
 
     override fun getNewYorkTimesCard(artistName: String, artistCards: List<Card>): Card {
-        val newYorkTimesCard = artistCards.find { it.source == Source.NewYorkTimes }
+        val newYorkTimesCard = artistCards.component2()
 
-        newYorkTimesCard?.let {it.description = it.formatDescription(artistName)}
+        newYorkTimesCard.description = formatDescription(newYorkTimesCard, artistName)
 
-        return newYorkTimesCard ?: Card(source = Source.NewYorkTimes)
+        return newYorkTimesCard
     }
 
     override fun getWikipediaCard(artistName: String, artistCards: List<Card>): Card {
-        val wikipediaCard = artistCards.find { it.source == Source.Wikipedia }
+        val wikipediaCard = artistCards.component3()
 
-        wikipediaCard?.let {it.description = it.formatDescription(artistName)}
+        wikipediaCard.description = formatDescription(wikipediaCard, artistName)
 
-        return wikipediaCard ?: Card(source = Source.Wikipedia)
+        return wikipediaCard
     }
 
-    private fun Card.formatDescription(artistName: String): String {
-        val dbSaved = if (isLocallyStored) DB_SAVED_SYMBOL else ""
-        val descriptionFormatted = if (description.isEmpty()) NO_RESULTS else htmlHelper.getHtmlText(description, artistName)
+    private fun formatDescription(card: Card, artistName: String): String {
+        val dbSaved = if (card.isLocallyStored) DB_SAVED_SYMBOL else ""
+        val descriptionFormatted = if (card.description.isEmpty()) NO_RESULTS else htmlHelper.getHtmlText(card.description, artistName)
 
         return dbSaved + descriptionFormatted
     }

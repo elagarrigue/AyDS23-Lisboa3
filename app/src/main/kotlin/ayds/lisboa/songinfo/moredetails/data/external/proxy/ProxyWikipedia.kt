@@ -17,8 +17,8 @@ internal class ProxyWikipediaImpl(private val wikipediaService: WikipediaService
 
     private fun adaptWikipediaToCard(wikipedia: WikipediaArtistInfo?) =
         wikipedia?.let {
-            Card(description = wikipedia.artistInfo,
-                infoUrl = wikipedia.wikipediaUrl,
+            Card(description = it.artistInfo,
+                infoUrl = it.wikipediaUrl,
                 source = Source.Wikipedia,
                 sourceLogo = WIKIPEDIA_DEFAULT_IMAGE)
         }

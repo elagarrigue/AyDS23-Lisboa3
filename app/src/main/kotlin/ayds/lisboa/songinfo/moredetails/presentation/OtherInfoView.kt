@@ -3,8 +3,10 @@ package ayds.lisboa.songinfo.moredetails.presentation
 import android.os.Bundle
 import android.view.View
 import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.text.HtmlCompat
 import ayds.lisboa.songinfo.R
 import ayds.lisboa.songinfo.moredetails.dependencyinyector.MoreDetailsInjector
@@ -18,20 +20,25 @@ class OtherInfoView: AppCompatActivity() {
     private val navigationUtils: NavigationUtils = UtilsInjector.navigationUtils
     private val imageLoader: ImageLoader = UtilsInjector.imageLoader
 
+    private lateinit var layoutLastFm: ConstraintLayout
     private lateinit var descriptionTextViewLastFm: TextView
     private lateinit var imageViewLastFm: ImageView
     private lateinit var sourceTextViewLastFm: TextView
     private lateinit var openUrlButtonLastFm: View
 
+    private lateinit var layoutNewYorkTimes: ConstraintLayout
     private lateinit var descriptionTextViewNewYorkTimes: TextView
     private lateinit var imageViewNewYorkTimes: ImageView
     private lateinit var sourceTextViewNewYorkTimes: TextView
     private lateinit var openUrlButtonNewYorkTimes: View
 
+    private lateinit var layoutWikipedia: ConstraintLayout
     private lateinit var descriptionTextViewWikipedia: TextView
     private lateinit var imageViewWikipedia: ImageView
     private lateinit var sourceTextViewWikipedia: TextView
     private lateinit var openUrlButtonWikipedia: View
+
+    private lateinit var loadingProgressBar: ProgressBar
 
     private lateinit var presenter: OtherInfoPresenter
 
@@ -45,6 +52,7 @@ class OtherInfoView: AppCompatActivity() {
         initModule()
         initProperties()
         subscribeToPresenter()
+        showCards(false)
         open()
     }
 
@@ -61,16 +69,21 @@ class OtherInfoView: AppCompatActivity() {
     }
 
     private fun initProperties() {
+        loadingProgressBar = findViewById(R.id.loadingProgressBar)
+
+        layoutLastFm = findViewById(R.id.layoutLastFm)
         descriptionTextViewLastFm = findViewById(R.id.otherInfoTextViewLastFm)
         imageViewLastFm = findViewById(R.id.imageViewLastFm)
         sourceTextViewLastFm = findViewById(R.id.sourceTextViewLastFm)
         openUrlButtonLastFm = findViewById(R.id.openUrlButtonLastFm)
 
+        layoutNewYorkTimes = findViewById(R.id.layoutNewYorkTimes)
         descriptionTextViewNewYorkTimes = findViewById(R.id.otherInfoTextViewNewYorkTimes)
         imageViewNewYorkTimes = findViewById(R.id.imageViewNewYorkTimes)
         sourceTextViewNewYorkTimes = findViewById(R.id.sourceTextViewNewYorkTimes)
         openUrlButtonNewYorkTimes = findViewById(R.id.openUrlButtonNewYorkTimes)
 
+        layoutWikipedia = findViewById(R.id.layoutWikipedia)
         descriptionTextViewWikipedia = findViewById(R.id.otherInfoTextViewWikipedia)
         imageViewWikipedia = findViewById(R.id.imageViewWikipedia)
         sourceTextViewWikipedia = findViewById(R.id.sourceTextViewWikipedia)
@@ -87,10 +100,23 @@ class OtherInfoView: AppCompatActivity() {
 
     private fun updateView(uiState: OtherInfoUiState) {
         runOnUiThread {
+            showLoading(true)
             setLastFmCard(uiState.lastFmCard)
             setNewYorkTimesCard(uiState.newYorkTimesCard)
             setWikipediaCard(uiState.wikipediaCard)
+            showLoading(false)
+            showCards(true)
         }
+    }
+
+    private fun showCards(isVisible: Boolean) {
+        layoutLastFm.visibility = if (isVisible) View.VISIBLE else View.GONE
+        layoutNewYorkTimes.visibility = if (isVisible) View.VISIBLE else View.GONE
+        layoutWikipedia.visibility = if (isVisible) View.VISIBLE else View.GONE
+    }
+
+    private fun showLoading(isLoading: Boolean) {
+        loadingProgressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
     }
 
     private fun setLastFmCard(lastFmCard: Card) {

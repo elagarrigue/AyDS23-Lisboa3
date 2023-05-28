@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -10,8 +9,16 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
+        <!-- Loading -->
+        <ProgressBar
+            android:id="@+id/loadingProgressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center" />
+
         <!-- Card: LastFm -->
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/layoutLastFm"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="16dp">
@@ -85,6 +92,7 @@
 
         <!-- Card: New York Times -->
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/layoutNewYorkTimes"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="16dp">
@@ -130,7 +138,7 @@
                 android:id="@+id/sourceTextViewNewYorkTimes"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Source: LastFM"
+                android:text="Source: NewYorkTimes"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/scrollViewNewYorkTimes"
                 app:layout_constraintBottom_toTopOf="@id/openUrlButtonNewYorkTimes"
@@ -156,6 +164,7 @@
 
         <!-- Card: Wikipedia -->
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/layoutWikipedia"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="16dp">
@@ -201,7 +210,7 @@
                 android:id="@+id/sourceTextViewWikipedia"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Source: LastFM"
+                android:text="Source: Wikipedia"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/scrollViewWikipedia"
                 app:layout_constraintBottom_toTopOf="@id/openUrlButtonWikipedia"

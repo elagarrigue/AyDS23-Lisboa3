@@ -3,6 +3,7 @@ package ayds.lisboa.songinfo.moredetails.data
 import ayds.lisboa.songinfo.moredetails.data.external.Broker
 import ayds.lisboa.songinfo.moredetails.data.local.CardLocalStorage
 import ayds.lisboa.songinfo.moredetails.domain.entities.Card
+import ayds.lisboa.songinfo.moredetails.domain.entities.Card.ArtistCard
 import ayds.lisboa.songinfo.moredetails.domain.repository.ArtistInfoRepository
 
 internal class ArtistInfoRepositoryImpl(
@@ -18,7 +19,7 @@ internal class ArtistInfoRepositoryImpl(
             else -> {
                 try {
                     artistCards = broker.getCards(artistName)
-                    saveCards(artistName, artistCards)
+                    saveArtistCards(artistName, artistCards)
                 } catch (ioException: Exception) {
                     emptyList<Card>()
                 }
@@ -30,14 +31,18 @@ internal class ArtistInfoRepositoryImpl(
 
     private fun markArtistCardsAsLocal(artistCards: List<Card>) {
         artistCards.forEach { card ->
-            if (card is Card.RegularCard) {
+            if (card is ArtistCard) {
                 card.isLocallyStored = true
             }
         }
     }
 
-    private fun saveCards(artistName: String, artistCards: List<Card>) {
-        artistCards.forEach { cardLocalStorage.saveArtistCard(artistName, it) }
+    private fun saveArtistCards(artistName: String, artistCards: List<Card>) {
+        artistCards.forEach { card ->
+            if (card is ArtistCard) {
+                cardLocalStorage.saveArtistCard(artistName, card)
+            }
+        }
     }
 
 }

@@ -17,4 +17,4 @@ const val CREATE_ARTIST_INFO_TABLE: String =
             "$DESCRIPTION string, " +
             "$INFO_URL string, " +
             "$SOURCE string, " +
-            "$SOURCE_LOGO string)"
+            "$SOURCE_LOGO int)"

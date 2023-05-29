@@ -1,9 +1,7 @@
 package ayds.lisboa.songinfo.moredetails.presentation
 
-import ayds.lisboa.songinfo.moredetails.domain.entities.Card
+import ayds.lisboa.songinfo.moredetails.domain.entities.Card.ArtistCard
 
 data class OtherInfoUiState(
-    val lastFmCard: Card,
-    val newYorkTimesCard: Card,
-    val wikipediaCard: Card
+    val artistCards: List<ArtistCard>
 )

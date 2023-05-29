@@ -26,15 +26,7 @@ internal class OtherInfoPresenterImpl(private val artistInfoRepository: ArtistIn
 
     private fun getArtistCards(artistName: String) {
         val artistCards = artistInfoRepository.getArtistInfo(artistName)
-        val uiState = getUiState(artistName, artistCards)
+        val uiState = OtherInfoUiState(artistCards = artistCardHelper.getArtistCards(artistName, artistCards))
         uiEventObservable.notify(uiState)
-    }
-
-    private fun getUiState(artistName: String, artistCards: List<Card>): OtherInfoUiState {
-        return OtherInfoUiState(
-            lastFmCard = artistCardHelper.getLastFmCard(artistName, artistCards),
-            newYorkTimesCard = artistCardHelper.getNewYorkTimesCard(artistName, artistCards),
-            wikipediaCard = artistCardHelper.getWikipediaCard(artistName, artistCards)
-        )
     }
 }

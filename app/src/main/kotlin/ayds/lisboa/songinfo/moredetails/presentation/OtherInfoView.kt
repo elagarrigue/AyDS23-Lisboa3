@@ -10,7 +10,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.text.HtmlCompat
 import ayds.lisboa.songinfo.R
 import ayds.lisboa.songinfo.moredetails.dependencyinyector.MoreDetailsInjector
-import ayds.lisboa.songinfo.moredetails.domain.entities.Card
+import ayds.lisboa.songinfo.moredetails.domain.entities.Card.ArtistCard
 import ayds.lisboa.songinfo.utils.UtilsInjector
 import ayds.lisboa.songinfo.utils.navigation.NavigationUtils
 import ayds.lisboa.songinfo.utils.view.ImageLoader
@@ -101,9 +101,9 @@ class OtherInfoView: AppCompatActivity() {
     private fun updateView(uiState: OtherInfoUiState) {
         runOnUiThread {
             showLoading(true)
-            setLastFmCard(uiState.lastFmCard)
-            setNewYorkTimesCard(uiState.newYorkTimesCard)
-            setWikipediaCard(uiState.wikipediaCard)
+            setLastFmCard(uiState.artistCards[0])
+            setNewYorkTimesCard(uiState.artistCards[1])
+            setWikipediaCard(uiState.artistCards[2])
             showLoading(false)
             showCards(true)
         }
@@ -119,24 +119,24 @@ class OtherInfoView: AppCompatActivity() {
         loadingProgressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
     }
 
-    private fun setLastFmCard(lastFmCard: Card) {
+    private fun setLastFmCard(lastFmCard: ArtistCard) {
         descriptionTextViewLastFm.text = HtmlCompat.fromHtml(lastFmCard.description, HtmlCompat.FROM_HTML_MODE_LEGACY)
         openUrlButtonLastFm.setOnClickListener { navigationUtils.openExternalUrl(this, lastFmCard.infoUrl) }
-        sourceTextViewLastFm.text = lastFmCard.source.name
+        sourceTextViewLastFm.text = "Source: LastFm"
         imageLoader.loadImageIntoView(lastFmCard.sourceLogo, imageViewLastFm)
     }
 
-    private fun setNewYorkTimesCard(newYorkTimesCard: Card) {
+    private fun setNewYorkTimesCard(newYorkTimesCard: ArtistCard) {
         descriptionTextViewNewYorkTimes.text = HtmlCompat.fromHtml(newYorkTimesCard.description, HtmlCompat.FROM_HTML_MODE_LEGACY)
         openUrlButtonNewYorkTimes.setOnClickListener { navigationUtils.openExternalUrl(this, newYorkTimesCard.infoUrl) }
-        sourceTextViewNewYorkTimes.text = newYorkTimesCard.source.name
+        sourceTextViewNewYorkTimes.text = "Source: NewYorkTimes"
         imageLoader.loadImageIntoView(newYorkTimesCard.sourceLogo, imageViewNewYorkTimes)
     }
 
-    private fun setWikipediaCard(wikipediaCard: Card) {
+    private fun setWikipediaCard(wikipediaCard: ArtistCard) {
         descriptionTextViewWikipedia.text = HtmlCompat.fromHtml(wikipediaCard.description, HtmlCompat.FROM_HTML_MODE_LEGACY)
         openUrlButtonWikipedia.setOnClickListener { navigationUtils.openExternalUrl(this, wikipediaCard.infoUrl) }
-        sourceTextViewWikipedia.text = wikipediaCard.source.name
+        sourceTextViewWikipedia.text = "Source: Wikipedia"
         imageLoader.loadImageIntoView(wikipediaCard.sourceLogo, imageViewWikipedia)
     }
 

@@ -5,10 +5,10 @@ import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import ayds.lisboa.songinfo.moredetails.domain.entities.Card
-import ayds.lisboa.songinfo.moredetails.domain.entities.Source
+import ayds.lisboa.songinfo.moredetails.domain.entities.Card.ArtistCard
 
 interface CardLocalStorage {
-    fun saveArtistCard(artistName: String, artistCard: Card)
+    fun saveArtistCard(artistName: String, artistCard: ArtistCard)
     fun getArtistCards(artistName: String): List<Card>
 }
 
@@ -33,28 +33,26 @@ internal class CardLocalStorageImpl (
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {}
 
-    override fun saveArtistCard(artistName: String, artistCard: Card) {
+    override fun saveArtistCard(artistName: String, artistCard: ArtistCard) {
         val artistValues = getArtistValues(artistName, artistCard)
 
         this.writableDatabase.insert(TABLE_ARTISTS, null, artistValues)
     }
 
-    private fun getArtistValues(artistName: String, artistCard: Card): ContentValues {
+    private fun getArtistValues(artistName: String, artistCard: ArtistCard): ContentValues {
         val values = ContentValues().apply {
-            if (artistCard is Card.RegularCard) {
-                put(ARTIST, artistName)
-                put(DESCRIPTION, artistCard.description)
-                put(INFO_URL, artistCard.infoUrl)
-                put(SOURCE, artistCard.source.name)
-                put(SOURCE_LOGO, artistCard.sourceLogo)
-            }
+            put(ARTIST, artistName)
+            put(DESCRIPTION, artistCard.description)
+            put(INFO_URL, artistCard.infoUrl)
+            put(SOURCE, artistCard.source)
+            put(SOURCE_LOGO, artistCard.sourceLogo)
         }
 
         return values
     }
 
 
-    override fun getArtistCards(artistName: String): List<Card> {
+    override fun getArtistCards(artistName: String): List<ArtistCard> {
         val artistValues = arrayOf(artistName)
         val cursor = this.readableDatabase.query(
             TABLE_ARTISTS,
@@ -65,12 +63,11 @@ internal class CardLocalStorageImpl (
             null,
             RESULT_SET_ORDER
         )
-        val artistCards = mutableListOf<Card>()
+        val artistCards = mutableListOf<ArtistCard>()
 
         while (cursor.moveToNext()) {
             val artistCard = cursorToCardMapper.map(cursor)
             artistCard?.let { artistCards.add(it)}
-
         }
 
         cursor.close()

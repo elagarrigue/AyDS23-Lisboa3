@@ -1,19 +1,20 @@
 package ayds.lisboa.songinfo.moredetails.domain.entities
 
 sealed class Card {
-    data class RegularCard(
+    data class ArtistCard(
         var description: String = "",
         var infoUrl: String = "",
-        var source: Source,
+        var source: Int,
         var sourceLogo: String = "",
         var isLocallyStored: Boolean = false
     ) : Card()
     object EmptyCard : Card()
 }
 
-
 enum class Source {
     LastFm,
     Wikipedia,
-    NewYorkTimes
+    NewYorkTimes;
+
+    val position: Int get() = this.ordinal
 }

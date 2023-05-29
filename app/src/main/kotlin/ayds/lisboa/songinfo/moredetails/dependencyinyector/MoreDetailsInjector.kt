@@ -15,9 +15,9 @@ import ayds.lisboa.songinfo.moredetails.presentation.OtherInfoPresenterImpl
 import ayds.lisboa.songinfo.moredetails.presentation.OtherInfoView
 import ayds.lisboa3.submodule.lastFm.LastFmInjector
 import ayds.lisboa3.submodule.lastFm.LastFmService
-import ayds.lisboa.songinfo.moredetails.data.external.proxy.ProxyLastFm
-import ayds.lisboa.songinfo.moredetails.data.external.proxy.ProxyNewYorkTimes
-import ayds.lisboa.songinfo.moredetails.data.external.proxy.ProxyWikipedia
+import ayds.lisboa.songinfo.moredetails.data.external.ProxyLastFm
+import ayds.lisboa.songinfo.moredetails.data.external.ProxyNewYorkTimes
+import ayds.lisboa.songinfo.moredetails.data.external.ProxyWikipedia
 import ayds.lisboa.songinfo.moredetails.data.local.CardLocalStorage
 import ayds.lisboa.songinfo.moredetails.data.local.CardLocalStorageImpl
 import ayds.lisboa.songinfo.moredetails.data.local.CursorToCardMapper
@@ -38,7 +38,6 @@ object MoreDetailsInjector {
     private lateinit var proxyLastFm: ProxyInterface
     private lateinit var proxyNewYorkTimes: ProxyInterface
     private lateinit var proxyWikipedia: ProxyInterface
-    private var proxyList: MutableList<ProxyInterface> = mutableListOf()
     private lateinit var broker: Broker
 
     private lateinit var artistInfoRepository: ArtistInfoRepository
@@ -70,12 +69,7 @@ object MoreDetailsInjector {
         proxyLastFm = ProxyLastFm(lastFmService)
         proxyNewYorkTimes = ProxyNewYorkTimes(newYorkTimesService)
         proxyWikipedia = ProxyWikipedia(wikipediaService)
-
-        proxyList.add(proxyLastFm)
-        proxyList.add(proxyNewYorkTimes)
-        proxyList.add(proxyWikipedia)
-
-        broker = BrokerImpl(proxyList)
+        broker = BrokerImpl(listOf(proxyLastFm, proxyNewYorkTimes, proxyWikipedia))
     }
     private fun initRepository() {
         artistInfoRepository = ArtistInfoRepositoryImpl(cardLocalStorage, broker)

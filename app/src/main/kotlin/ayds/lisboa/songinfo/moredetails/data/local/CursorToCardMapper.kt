@@ -14,16 +14,26 @@ internal class CursorToCardMapperImpl : CursorToCardMapper {
     override fun map(cursor: Cursor): Card? =
         try {
             with(cursor) {
-                    Card(
+                val source = Source.valueOf(getString(getColumnIndexOrThrow(SOURCE)))
+
+                if (!isNull(getColumnIndexOrThrow(DESCRIPTION)) &&
+                    !isNull(getColumnIndexOrThrow(INFO_URL)) &&
+                    !isNull(getColumnIndexOrThrow(SOURCE_LOGO))
+                ) {
+                    Card.RegularCard(
                         description = getString(getColumnIndexOrThrow(DESCRIPTION)),
                         infoUrl = getString(getColumnIndexOrThrow(INFO_URL)),
-                        source = Source.valueOf(getString(getColumnIndexOrThrow(SOURCE))),
+                        source = source,
                         sourceLogo = getString(getColumnIndexOrThrow(SOURCE_LOGO))
                     )
+                } else {
+                    null
+                }
             }
         } catch (e: SQLException) {
             e.printStackTrace()
             null
         }
+
 }
 

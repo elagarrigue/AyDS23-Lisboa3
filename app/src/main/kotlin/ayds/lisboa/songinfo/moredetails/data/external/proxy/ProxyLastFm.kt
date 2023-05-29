@@ -10,14 +10,19 @@ import ayds.lisboa3.submodule.lastFm.LastFmService
 internal class ProxyLastFm(private val lastFmService: LastFmService) : ProxyInterface{
     override fun getCard(artistName: String): Card {
         val lastFmArtistInfo = lastFmService.getArtistInfo(artistName)
-        return adaptLastFmArtistInfoToCard(lastFmArtistInfo) ?: Card(source = Source.LastFm, sourceLogo = LAST_FM_DEFAULT_IMAGE)
+        return adaptLastFmArtistInfoToCard(lastFmArtistInfo) ?: Card.EmptyCard
     }
 
-    private fun adaptLastFmArtistInfoToCard(lastFmArtistInfo: LastFmArtistInfo?) =
-        lastFmArtistInfo?.let {
-            Card(description = it.bioContent,
+
+    private fun adaptLastFmArtistInfoToCard(lastFmArtistInfo: LastFmArtistInfo?): Card? {
+        return lastFmArtistInfo?.let {
+            Card.RegularCard(
+                description = it.bioContent,
                 infoUrl = it.url,
                 source = Source.LastFm,
-                sourceLogo = LAST_FM_DEFAULT_IMAGE)
-        }
+                sourceLogo = LAST_FM_DEFAULT_IMAGE
+            )
+        } ?: Card.EmptyCard
+    }
+
 }

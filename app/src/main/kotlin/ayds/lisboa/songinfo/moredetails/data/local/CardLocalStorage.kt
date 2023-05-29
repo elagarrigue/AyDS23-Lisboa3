@@ -41,15 +41,18 @@ internal class CardLocalStorageImpl (
 
     private fun getArtistValues(artistName: String, artistCard: Card): ContentValues {
         val values = ContentValues().apply {
-            put(ARTIST, artistName)
-            put(DESCRIPTION, artistCard.description)
-            put(INFO_URL, artistCard.infoUrl)
-            put(SOURCE, artistCard.source.name)
-            put(SOURCE_LOGO, artistCard.sourceLogo)
+            if (artistCard is Card.RegularCard) {
+                put(ARTIST, artistName)
+                put(DESCRIPTION, artistCard.description)
+                put(INFO_URL, artistCard.infoUrl)
+                put(SOURCE, artistCard.source.name)
+                put(SOURCE_LOGO, artistCard.sourceLogo)
+            }
         }
 
         return values
     }
+
 
     override fun getArtistCards(artistName: String): List<Card> {
         val artistValues = arrayOf(artistName)

@@ -10,14 +10,19 @@ const val WIKIPEDIA_DEFAULT_IMAGE = "https://upload.wikimedia.org/wikipedia/comm
 internal class ProxyWikipedia(private val wikipediaService: WikipediaService) : ProxyInterface{
     override fun getCard(artistName: String): Card {
         val wikipedia = wikipediaService.getArtist(artistName)
-        return adaptWikipediaToCard(wikipedia) ?: Card(source = Source.Wikipedia, sourceLogo = WIKIPEDIA_DEFAULT_IMAGE)
+        return adaptWikipediaToCard(wikipedia) ?: Card.EmptyCard
     }
 
-    private fun adaptWikipediaToCard(wikipedia: WikipediaArtistInfo?) =
-        wikipedia?.let {
-            Card(description = it.artistInfo,
+
+    private fun adaptWikipediaToCard(wikipedia: WikipediaArtistInfo?): Card? {
+        return wikipedia?.let {
+            Card.RegularCard(
+                description = it.artistInfo,
                 infoUrl = it.wikipediaUrl,
                 source = Source.Wikipedia,
-                sourceLogo = WIKIPEDIA_DEFAULT_IMAGE)
-        }
+                sourceLogo = WIKIPEDIA_DEFAULT_IMAGE
+            )
+        } ?: Card.EmptyCard
+    }
+
 }

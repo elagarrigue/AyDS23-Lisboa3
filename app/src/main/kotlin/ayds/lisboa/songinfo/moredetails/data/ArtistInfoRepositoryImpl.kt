@@ -29,7 +29,11 @@ internal class ArtistInfoRepositoryImpl(
     }
 
     private fun markArtistCardsAsLocal(artistCards: List<Card>) {
-        artistCards.forEach { it.isLocallyStored = true}
+        artistCards.forEach { card ->
+            if (card is Card.RegularCard) {
+                card.isLocallyStored = true
+            }
+        }
     }
 
     private fun saveCards(artistName: String, artistCards: List<Card>) {

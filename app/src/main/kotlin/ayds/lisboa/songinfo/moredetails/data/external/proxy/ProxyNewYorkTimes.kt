@@ -11,14 +11,19 @@ const val NEW_YORK_TIMES_DEFAULT_IMAGE = "https://upload.wikimedia.org/wikipedia
 internal class ProxyNewYorkTimes(private val newYorkTimesService: NYTimesArtistService): ProxyInterface{
     override fun getCard(artistName: String): Card {
         val newYorkTimes = newYorkTimesService.getArtist(artistName)
-        return adaptNewYorkTimesToCard(newYorkTimes) ?: Card(source = Source.NewYorkTimes, sourceLogo = NEW_YORK_TIMES_DEFAULT_IMAGE)
+        return adaptNewYorkTimesToCard(newYorkTimes) ?: Card.EmptyCard
     }
 
-    private fun adaptNewYorkTimesToCard(nyTimesArtistInfo: NYTimesArtist?) =
-        nyTimesArtistInfo?.let {
-            Card(description = it.info.toString(),
+
+    private fun adaptNewYorkTimesToCard(nyTimesArtistInfo: NYTimesArtist?): Card? {
+        return nyTimesArtistInfo?.let {
+            Card.RegularCard(
+                description = it.info.toString(),
                 infoUrl = it.url.toString(),
                 source = Source.NewYorkTimes,
-                sourceLogo = NEW_YORK_TIMES_DEFAULT_IMAGE)
-        }
+                sourceLogo = NEW_YORK_TIMES_DEFAULT_IMAGE
+            )
+        } ?: Card.EmptyCard
+    }
+
 }

@@ -1,12 +1,16 @@
 package ayds.lisboa.songinfo.moredetails.domain.entities
 
-data class Card (
-    var description: String = "",
-    var infoUrl: String = "",
-    var source: Source,
-    var sourceLogo: String = "",
-    var isLocallyStored: Boolean = false
-)
+sealed class Card {
+    data class RegularCard(
+        var description: String = "",
+        var infoUrl: String = "",
+        var source: Source,
+        var sourceLogo: String = "",
+        var isLocallyStored: Boolean = false
+    ) : Card()
+    object EmptyCard : Card()
+}
+
 
 enum class Source {
     LastFm,

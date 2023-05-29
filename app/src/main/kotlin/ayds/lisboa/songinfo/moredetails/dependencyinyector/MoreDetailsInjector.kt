@@ -35,10 +35,10 @@ object MoreDetailsInjector {
     private lateinit var newYorkTimesService: NYTimesArtistService
     private lateinit var wikipediaService: WikipediaService
 
-    private lateinit var proxyLastFm: ProxyLastFm
-    private lateinit var proxyNewYorkTimes: ProxyNewYorkTimes
-    private lateinit var proxyWikipedia: ProxyWikipedia
-    private lateinit var proxyList: MutableList<ProxyInterface>
+    private lateinit var proxyLastFm: ProxyInterface
+    private lateinit var proxyNewYorkTimes: ProxyInterface
+    private lateinit var proxyWikipedia: ProxyInterface
+    private var proxyList: MutableList<ProxyInterface> = mutableListOf()
     private lateinit var broker: Broker
 
     private lateinit var artistInfoRepository: ArtistInfoRepository
@@ -70,9 +70,11 @@ object MoreDetailsInjector {
         proxyLastFm = ProxyLastFm(lastFmService)
         proxyNewYorkTimes = ProxyNewYorkTimes(newYorkTimesService)
         proxyWikipedia = ProxyWikipedia(wikipediaService)
+
         proxyList.add(proxyLastFm)
         proxyList.add(proxyNewYorkTimes)
         proxyList.add(proxyWikipedia)
+
         broker = BrokerImpl(proxyList)
     }
     private fun initRepository() {

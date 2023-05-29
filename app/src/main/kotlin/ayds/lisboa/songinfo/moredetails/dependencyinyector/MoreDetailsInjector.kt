@@ -4,6 +4,7 @@ import android.content.Context
 import ayds.lisboa.songinfo.moredetails.data.ArtistInfoRepositoryImpl
 import ayds.lisboa.songinfo.moredetails.data.external.Broker
 import ayds.lisboa.songinfo.moredetails.data.external.BrokerImpl
+import ayds.lisboa.songinfo.moredetails.data.external.ProxyInterface
 import ayds.lisboa.songinfo.moredetails.domain.repository.ArtistInfoRepository
 import ayds.lisboa.songinfo.moredetails.presentation.ArtistCardHelper
 import ayds.lisboa.songinfo.moredetails.presentation.ArtistCardHelperImpl
@@ -15,11 +16,8 @@ import ayds.lisboa.songinfo.moredetails.presentation.OtherInfoView
 import ayds.lisboa3.submodule.lastFm.LastFmInjector
 import ayds.lisboa3.submodule.lastFm.LastFmService
 import ayds.lisboa.songinfo.moredetails.data.external.proxy.ProxyLastFm
-import ayds.lisboa.songinfo.moredetails.data.external.proxy.ProxyLastFmImpl
 import ayds.lisboa.songinfo.moredetails.data.external.proxy.ProxyNewYorkTimes
-import ayds.lisboa.songinfo.moredetails.data.external.proxy.ProxyNewYorkTimesImpl
 import ayds.lisboa.songinfo.moredetails.data.external.proxy.ProxyWikipedia
-import ayds.lisboa.songinfo.moredetails.data.external.proxy.ProxyWikipediaImpl
 import ayds.lisboa.songinfo.moredetails.data.local.CardLocalStorage
 import ayds.lisboa.songinfo.moredetails.data.local.CardLocalStorageImpl
 import ayds.lisboa.songinfo.moredetails.data.local.CursorToCardMapper
@@ -40,6 +38,7 @@ object MoreDetailsInjector {
     private lateinit var proxyLastFm: ProxyLastFm
     private lateinit var proxyNewYorkTimes: ProxyNewYorkTimes
     private lateinit var proxyWikipedia: ProxyWikipedia
+    private lateinit var proxyList: MutableList<ProxyInterface>
     private lateinit var broker: Broker
 
     private lateinit var artistInfoRepository: ArtistInfoRepository
@@ -68,10 +67,13 @@ object MoreDetailsInjector {
     }
 
     private fun initBroker(){
-        proxyLastFm = ProxyLastFmImpl(lastFmService)
-        proxyNewYorkTimes = ProxyNewYorkTimesImpl(newYorkTimesService)
-        proxyWikipedia = ProxyWikipediaImpl(wikipediaService)
-        broker = BrokerImpl(proxyLastFm, proxyNewYorkTimes, proxyWikipedia)
+        proxyLastFm = ProxyLastFm(lastFmService)
+        proxyNewYorkTimes = ProxyNewYorkTimes(newYorkTimesService)
+        proxyWikipedia = ProxyWikipedia(wikipediaService)
+        proxyList.add(proxyLastFm)
+        proxyList.add(proxyNewYorkTimes)
+        proxyList.add(proxyWikipedia)
+        broker = BrokerImpl(proxyList)
     }
     private fun initRepository() {
         artistInfoRepository = ArtistInfoRepositoryImpl(cardLocalStorage, broker)

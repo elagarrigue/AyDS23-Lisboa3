@@ -2,9 +2,9 @@ package ayds.lisboa.songinfo.moredetails.dependencyinyector
 
 import android.content.Context
 import ayds.lisboa.songinfo.moredetails.data.ArtistInfoRepositoryImpl
-import ayds.lisboa.songinfo.moredetails.data.external.Broker
-import ayds.lisboa.songinfo.moredetails.data.external.BrokerImpl
-import ayds.lisboa.songinfo.moredetails.data.external.ProxyInterface
+import ayds.lisboa.songinfo.moredetails.data.external.broker.Broker
+import ayds.lisboa.songinfo.moredetails.data.external.broker.BrokerImpl
+import ayds.lisboa.songinfo.moredetails.data.external.proxy.ProxyInterface
 import ayds.lisboa.songinfo.moredetails.domain.repository.ArtistInfoRepository
 import ayds.lisboa.songinfo.moredetails.presentation.ArtistCardHelper
 import ayds.lisboa.songinfo.moredetails.presentation.ArtistCardHelperImpl
@@ -15,9 +15,9 @@ import ayds.lisboa.songinfo.moredetails.presentation.OtherInfoPresenterImpl
 import ayds.lisboa.songinfo.moredetails.presentation.OtherInfoView
 import ayds.lisboa3.submodule.lastFm.LastFmInjector
 import ayds.lisboa3.submodule.lastFm.LastFmService
-import ayds.lisboa.songinfo.moredetails.data.external.ProxyLastFm
-import ayds.lisboa.songinfo.moredetails.data.external.ProxyNewYorkTimes
-import ayds.lisboa.songinfo.moredetails.data.external.ProxyWikipedia
+import ayds.lisboa.songinfo.moredetails.data.external.proxy.ProxyLastFm
+import ayds.lisboa.songinfo.moredetails.data.external.proxy.ProxyNewYorkTimes
+import ayds.lisboa.songinfo.moredetails.data.external.proxy.ProxyWikipedia
 import ayds.lisboa.songinfo.moredetails.data.local.CardLocalStorage
 import ayds.lisboa.songinfo.moredetails.data.local.CardLocalStorageImpl
 import ayds.lisboa.songinfo.moredetails.data.local.CursorToCardMapper

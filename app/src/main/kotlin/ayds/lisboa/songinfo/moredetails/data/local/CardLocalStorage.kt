@@ -9,7 +9,7 @@ import ayds.lisboa.songinfo.moredetails.domain.entities.Card.ArtistCard
 
 interface CardLocalStorage {
     fun saveArtistCard(artistName: String, artistCard: ArtistCard)
-    fun getArtistCards(artistName: String): List<Card>
+    fun getArtistCards(artistName: String): List<ArtistCard>
 }
 
 internal class CardLocalStorageImpl (
@@ -44,7 +44,7 @@ internal class CardLocalStorageImpl (
             put(ARTIST, artistName)
             put(DESCRIPTION, artistCard.description)
             put(INFO_URL, artistCard.infoUrl)
-            put(SOURCE, artistCard.source)
+            put(SOURCE, artistCard.source.ordinal)
             put(SOURCE_LOGO, artistCard.sourceLogo)
         }
 

@@ -4,7 +4,7 @@ sealed class Card {
     data class ArtistCard(
         var description: String = "",
         var infoUrl: String = "",
-        var source: Int,
+        var source: Source,
         var sourceLogo: String = "",
         var isLocallyStored: Boolean = false
     ) : Card()
@@ -15,6 +15,4 @@ enum class Source {
     LastFm,
     Wikipedia,
     NewYorkTimes;
-
-    val position: Int get() = this.ordinal
 }

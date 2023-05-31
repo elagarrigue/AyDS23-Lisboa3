@@ -25,7 +25,7 @@ internal class OtherInfoPresenterImpl(private val artistInfoRepository: ArtistIn
 
     private fun getArtistCards(artistName: String) {
         val artistCards = artistInfoRepository.getArtistInfo(artistName)
-        val uiState = OtherInfoUiState(artistCards = artistCardHelper.getArtistCards(artistName, artistCards))
+        val uiState = OtherInfoUiState(artistCardHelper.getArtistCards(artistName, artistCards))
         uiEventObservable.notify(uiState)
     }
 }

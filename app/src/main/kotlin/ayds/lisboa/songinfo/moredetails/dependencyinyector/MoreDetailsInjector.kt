@@ -22,10 +22,12 @@ import ayds.lisboa.songinfo.moredetails.data.local.CardLocalStorage
 import ayds.lisboa.songinfo.moredetails.data.local.CardLocalStorageImpl
 import ayds.lisboa.songinfo.moredetails.data.local.CursorToCardMapper
 import ayds.lisboa.songinfo.moredetails.data.local.CursorToCardMapperImpl
+import ayds.lisboa.songinfo.moredetails.presentation.SourceFactory
+import ayds.lisboa.songinfo.moredetails.presentation.SourceFactoryImpl
+import ayds.newYork4.artist.external.NYTimesArtistService
+import ayds.newYork4.artist.external.artists.NYTimesArtistInjector
 import ayds.winchester.artistinfo.external.WikipediaInjector
 import ayds.winchester.artistinfo.external.WikipediaService
-import com.test.artist.external.NYTimesArtistService
-import com.test.artist.external.artists.NYTimesArtistInjector
 
 object MoreDetailsInjector {
     private lateinit var cursorToCardMapper: CursorToCardMapper
@@ -44,6 +46,7 @@ object MoreDetailsInjector {
 
     private lateinit var artistCardHelper: ArtistCardHelper
     private lateinit var htmlHelper: HtmlHelper
+    private lateinit var sourceFactory: SourceFactory
     private lateinit var otherInfoPresenter: OtherInfoPresenter
 
     fun init(otherInfoView: OtherInfoView) {
@@ -77,7 +80,8 @@ object MoreDetailsInjector {
 
     private fun initPresenter(){
         htmlHelper = HtmlHelperImpl()
-        artistCardHelper = ArtistCardHelperImpl(htmlHelper)
+        sourceFactory = SourceFactoryImpl
+        artistCardHelper = ArtistCardHelperImpl(htmlHelper, sourceFactory)
         otherInfoPresenter = OtherInfoPresenterImpl(artistInfoRepository, artistCardHelper)
     }
 

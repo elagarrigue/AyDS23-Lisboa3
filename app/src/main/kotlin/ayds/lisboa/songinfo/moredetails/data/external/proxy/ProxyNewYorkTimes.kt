@@ -2,10 +2,10 @@ package ayds.lisboa.songinfo.moredetails.data.external.proxy
 
 import ayds.lisboa.songinfo.moredetails.domain.entities.Card
 import ayds.lisboa.songinfo.moredetails.domain.entities.Source
-import com.test.artist.external.NYTimesArtistService
-import com.test.artist.external.entities.Artist
+import ayds.newYork4.artist.external.NYTimesArtistService
+import ayds.newYork4.artist.external.entities.Artist
+import ayds.newYork4.artist.external.entities.NY_TIMES_LOGO_URL
 
-const val NEW_YORK_TIMES_DEFAULT_IMAGE = "https://upload.wikimedia.org/wikipedia/commons/thumb/5/58/NewYorkTimes.svg/640px-NewYorkTimes.svg.png"
 
 internal class ProxyNewYorkTimes(private val newYorkTimesService: NYTimesArtistService):
     ProxyInterface {
@@ -27,7 +27,7 @@ internal class ProxyNewYorkTimes(private val newYorkTimesService: NYTimesArtistS
                 description = it.info.toString(),
                 infoUrl = it.url.toString(),
                 source = Source.NewYorkTimes,
-                sourceLogo = NEW_YORK_TIMES_DEFAULT_IMAGE
+                sourceLogo = NY_TIMES_LOGO_URL
             )
         }
     }

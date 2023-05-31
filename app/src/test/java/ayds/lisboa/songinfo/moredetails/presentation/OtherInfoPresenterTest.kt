@@ -1,6 +1,6 @@
 package ayds.lisboa.songinfo.moredetails.presentation
 
-import ayds.lisboa.songinfo.moredetails.domain.entities.Cards
+import ayds.lisboa.songinfo.moredetails.domain.entities.ArtistInfo
 import ayds.lisboa.songinfo.moredetails.domain.repository.ArtistInfoRepository
 import io.mockk.every
 import io.mockk.mockk
@@ -9,12 +9,12 @@ import org.junit.Test
 
 internal class OtherInfoPresenterTest {
     private val artistInfoRepository: ArtistInfoRepository = mockk()
-    private val artistCardHelper: ArtistCardHelper= mockk()
-    private val otherInfoPresenter = OtherInfoPresenterImpl(artistInfoRepository,artistCardHelper)
+    private val artistInfoHelper: ArtistInfoHelper= mockk()
+    private val otherInfoPresenter = OtherInfoPresenterImpl(artistInfoRepository,artistInfoHelper)
 
     @Test
     fun `on fetch should notify subscribers with otherInfoUiState`() {
-        val cards:Cards = mockk()
+        val artistInfo:ArtistInfo = mockk()
         val bio = ""
         val url = ""
         val otherInfoUiStateTester: (OtherInfoUiState) -> Unit = mockk(relaxed = true)
@@ -22,12 +22,12 @@ internal class OtherInfoPresenterTest {
             otherInfoUiStateTester(it)
         }
 
-        every { artistInfoRepository.getArtistInfo("artist") } returns cards
-        every { artistCardHelper.getArtistCardDescription("artist",cards) } returns bio
-        every { artistCardHelper.getArtistCardInfoUrl(cards) } returns url
+        every { artistInfoRepository.getArtistInfo("artist") } returns artistInfo
+        every { artistInfoHelper.getArtistInfoText("artist",artistInfo) } returns bio
+        every { artistInfoHelper.getArtistInfoUrl(artistInfo) } returns url
         val otherInfoUiState = OtherInfoUiState(
-            artistCardDescription = bio,
-            artistCardInfoUrl = url
+            artistInfoBioContent = bio,
+            artistInfoUrl = url
         )
         otherInfoPresenter.fetch("artist")
 

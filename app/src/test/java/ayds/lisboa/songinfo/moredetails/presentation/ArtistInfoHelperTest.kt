@@ -1,28 +1,28 @@
 package ayds.lisboa.songinfo.moredetails.presentation
 
-import ayds.lisboa.songinfo.moredetails.domain.entities.Cards
+import ayds.lisboa.songinfo.moredetails.domain.entities.ArtistInfo
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
-internal class CardsHelperTest {
+internal class ArtistInfoHelperTest {
 
     private val htmlHelper = mockk<HtmlHelper>()
-    private val artistInfoHelper by lazy {ArtistCardHelperImpl(htmlHelper)}
+    private val artistInfoHelper by lazy {ArtistInfoHelperImpl(htmlHelper)}
 
 
     @Test
     fun `given an artistName and a lastFMArtistInfo with not empty bio and locallyStored it should return the right formatted text`() {
         val artistName = ""
-        val cards: Cards = Cards.Card(
+        val artistInfo: ArtistInfo = ArtistInfo.LastFmArtistInfo(
             "bioContent",
             "url",
             true
         )
 
         every { htmlHelper.getHtmlText("bioContent", "") } returns "Formatted bio"
-        val result = artistInfoHelper.getArtistCardDescription(artistName, cards)
+        val result = artistInfoHelper.getArtistInfoText(artistName, artistInfo)
 
         assertEquals("[*]Formatted bio", result)
     }
@@ -30,14 +30,14 @@ internal class CardsHelperTest {
     @Test
     fun `given an artistName and a lastFMArtistInfo with not empty bio and not locallyStored it should return the right formatted text`() {
         val artistName = ""
-        val cards: Cards = Cards.Card(
+        val artistInfo: ArtistInfo = ArtistInfo.LastFmArtistInfo(
             "bioContent",
             "url",
             false
         )
 
         every { htmlHelper.getHtmlText("bioContent", "") } returns "Formatted bio"
-        val result = artistInfoHelper.getArtistCardDescription(artistName, cards)
+        val result = artistInfoHelper.getArtistInfoText(artistName, artistInfo)
 
         assertEquals("Formatted bio", result)
     }
@@ -45,13 +45,13 @@ internal class CardsHelperTest {
     @Test
     fun `given an artistName and a lastFMArtistInfo with empty bio and locallyStored it should return the right formatted text`() {
         val artistName = ""
-        val cards: Cards = Cards.Card(
+        val artistInfo: ArtistInfo = ArtistInfo.LastFmArtistInfo(
             "",
             "url",
             true
         )
 
-        val result = artistInfoHelper.getArtistCardDescription(artistName, cards)
+        val result = artistInfoHelper.getArtistInfoText(artistName, artistInfo)
 
         assertEquals("[*]No Results", result)
     }
@@ -59,13 +59,13 @@ internal class CardsHelperTest {
     @Test
     fun `given an artistName and a lastFMArtistInfo with empty bio and not locallyStored it should return the right formatted text`() {
         val artistName = ""
-        val cards: Cards = Cards.Card(
+        val artistInfo: ArtistInfo = ArtistInfo.LastFmArtistInfo(
             "",
             "url",
             false
         )
 
-        val result = artistInfoHelper.getArtistCardDescription(artistName, cards)
+        val result = artistInfoHelper.getArtistInfoText(artistName, artistInfo)
 
         assertEquals("No Results", result)
     }
@@ -73,9 +73,9 @@ internal class CardsHelperTest {
     @Test
     fun `given a non lastFMArtistInfo info return not found`(){
         val artistName=""
-        val cards: Cards = mockk()
+        val artistInfo: ArtistInfo = mockk()
 
-        val result = artistInfoHelper.getArtistCardDescription(artistName,cards)
+        val result = artistInfoHelper.getArtistInfoText(artistName,artistInfo)
         val expected = "Artist info not found."
 
         assertEquals(expected, result)
@@ -83,19 +83,19 @@ internal class CardsHelperTest {
 
     @Test
     fun `given a lastFMArtistInfo it should return the url`() {
-        val cards = Cards.Card("bioContent", "url", false)
+        val artistInfo = ArtistInfo.LastFmArtistInfo("bioContent", "url", false)
         val expectedUrl = "url"
 
-        val result = artistInfoHelper.getArtistCardInfoUrl(cards)
+        val result = artistInfoHelper.getArtistInfoUrl(artistInfo)
 
         assertEquals(expectedUrl, result)
     }
 
     @Test
     fun `given a non lastFMArtistInfo it should return the no url found message`() {
-        val cards = Cards.EmptyCards
+        val artistInfo = ArtistInfo.EmptyArtistInfo
         val expectedUrl = "Artist info url not found."
-        val result = artistInfoHelper.getArtistCardInfoUrl(cards)
+        val result = artistInfoHelper.getArtistInfoUrl(artistInfo)
 
         assertEquals(expectedUrl, result)
     }

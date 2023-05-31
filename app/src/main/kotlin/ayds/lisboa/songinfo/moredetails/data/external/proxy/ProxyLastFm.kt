@@ -21,12 +21,16 @@ internal class ProxyLastFm(private val lastFmService: LastFmService) : ProxyInte
 
     private fun adaptLastFmArtistInfoToCard(lastFmArtistInfo: LastFmArtistInfo?): Card.ArtistCard? {
         return lastFmArtistInfo?.let {
-            Card.ArtistCard(
-                description = it.bioContent,
-                infoUrl = it.url,
-                source = Source.LastFm,
-                sourceLogo = LAST_FM_DEFAULT_IMAGE
-            )
+            if (it.bioContent.isNotEmpty()) {
+                Card.ArtistCard(
+                    description = it.bioContent,
+                    infoUrl = it.url,
+                    source = Source.LastFm,
+                    sourceLogo = LAST_FM_DEFAULT_IMAGE
+                )
+            } else {
+                null
+            }
         }
     }
 }

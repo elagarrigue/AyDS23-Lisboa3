@@ -7,6 +7,7 @@ import ayds.lisboa.songinfo.moredetails.domain.entities.Card.ArtistCard
 interface Broker{
     fun getCards(artistName: String):List<ArtistCard>
 }
+
 internal class BrokerImpl(private val proxyList: List<ProxyInterface>): Broker {
 
     override fun getCards(artistName: String): List<ArtistCard> {

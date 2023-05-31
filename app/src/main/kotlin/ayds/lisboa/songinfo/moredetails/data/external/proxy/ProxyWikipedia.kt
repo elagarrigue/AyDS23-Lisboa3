@@ -21,12 +21,16 @@ internal class ProxyWikipedia(private val wikipediaService: WikipediaService) : 
 
     private fun adaptWikipediaToCard(wikipedia: WikipediaArtistInfo?): Card.ArtistCard? {
         return wikipedia?.let {
-            Card.ArtistCard(
-                description = it.artistInfo,
-                infoUrl = it.wikipediaUrl,
-                source = Source.Wikipedia,
-                sourceLogo = DEFAULT_IMAGE
-            )
+            if (it.artistInfo.isNotEmpty()) {
+                Card.ArtistCard(
+                    description = it.artistInfo,
+                    infoUrl = it.wikipediaUrl,
+                    source = Source.Wikipedia,
+                    sourceLogo = DEFAULT_IMAGE
+                )
+            } else {
+                null
+            }
         }
     }
 

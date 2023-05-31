@@ -6,7 +6,7 @@ import ayds.winchester.artistinfo.external.DEFAULT_IMAGE
 import ayds.winchester.artistinfo.external.WikipediaArtistInfo
 import ayds.winchester.artistinfo.external.WikipediaService
 
-internal class ProxyWikipedia(private val wikipediaService: WikipediaService) : ProxyInterface {
+internal class ProxyWikipedia(private val wikipediaService: WikipediaService) : Proxy {
     override fun getCard(artistName: String): Card {
         val wikipedia = wikipediaService.getArtist(artistName)
 
@@ -33,5 +33,4 @@ internal class ProxyWikipedia(private val wikipediaService: WikipediaService) : 
             }
         }
     }
-
 }

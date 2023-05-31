@@ -5,7 +5,7 @@ data class OtherInfoUiState(
 )
 
 data class ArtistCardState(
-    val descriptionFormatted: String = "",
+    val formattedDescription: String = "",
     val infoUrl: String = "",
     val title: String = "",
     val sourceLogo: String = "",

@@ -147,7 +147,7 @@ class OtherInfoView: AppCompatActivity() {
         cardViews.forEachIndexed { index, cardView ->
             val card = artistCards.getOrNull(index)
             if (card != null) {
-                cardView.textView.text = HtmlCompat.fromHtml(card.descriptionFormatted, HtmlCompat.FROM_HTML_MODE_LEGACY)
+                cardView.textView.text = HtmlCompat.fromHtml(card.formattedDescription, HtmlCompat.FROM_HTML_MODE_LEGACY)
                 cardView.textView.setOnClickListener { navigationUtils.openExternalUrl(this, card.infoUrl) }
                 cardView.sourceTextView.text = card.title
                 imageLoader.loadImageIntoView(card.sourceLogo, cardView.imageView)

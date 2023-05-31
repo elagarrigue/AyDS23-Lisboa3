@@ -4,7 +4,7 @@ import android.content.Context
 import ayds.lisboa.songinfo.moredetails.data.ArtistInfoRepositoryImpl
 import ayds.lisboa.songinfo.moredetails.data.external.broker.Broker
 import ayds.lisboa.songinfo.moredetails.data.external.broker.BrokerImpl
-import ayds.lisboa.songinfo.moredetails.data.external.proxy.ProxyInterface
+import ayds.lisboa.songinfo.moredetails.data.external.proxy.Proxy
 import ayds.lisboa.songinfo.moredetails.domain.repository.ArtistInfoRepository
 import ayds.lisboa.songinfo.moredetails.presentation.ArtistCardHelper
 import ayds.lisboa.songinfo.moredetails.presentation.ArtistCardHelperImpl
@@ -37,9 +37,9 @@ object MoreDetailsInjector {
     private lateinit var newYorkTimesService: NYTimesArtistService
     private lateinit var wikipediaService: WikipediaService
 
-    private lateinit var proxyLastFm: ProxyInterface
-    private lateinit var proxyNewYorkTimes: ProxyInterface
-    private lateinit var proxyWikipedia: ProxyInterface
+    private lateinit var proxyLastFm: Proxy
+    private lateinit var proxyNewYorkTimes: Proxy
+    private lateinit var proxyWikipedia: Proxy
     private lateinit var broker: Broker
 
     private lateinit var artistInfoRepository: ArtistInfoRepository

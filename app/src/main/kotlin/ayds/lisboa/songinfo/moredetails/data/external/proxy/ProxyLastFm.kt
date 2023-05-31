@@ -6,7 +6,7 @@ import ayds.lisboa3.submodule.lastFm.LAST_FM_DEFAULT_IMAGE
 import ayds.lisboa3.submodule.lastFm.LastFmArtistInfo
 import ayds.lisboa3.submodule.lastFm.LastFmService
 
-internal class ProxyLastFm(private val lastFmService: LastFmService) : ProxyInterface {
+internal class ProxyLastFm(private val lastFmService: LastFmService) : Proxy {
     override fun getCard(artistName: String): Card {
         val lastFmArtistInfo = lastFmService.getArtistInfo(artistName)
 

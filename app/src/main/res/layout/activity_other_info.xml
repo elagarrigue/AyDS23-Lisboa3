@@ -16,6 +16,15 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center" />
 
+        <TextView
+            android:id="@+id/noResults"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
+            />
+
         <!-- Card 1: Service 1 -->
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/layoutCard1"

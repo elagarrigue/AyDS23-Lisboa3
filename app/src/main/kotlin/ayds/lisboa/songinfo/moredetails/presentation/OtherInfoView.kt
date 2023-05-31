@@ -15,6 +15,8 @@ import ayds.lisboa.songinfo.utils.navigation.NavigationUtils
 import ayds.lisboa.songinfo.utils.view.ImageLoader
 import ayds.observer.Observer
 
+private const val NO_RESULTS = "NO RESULTS"
+
 class OtherInfoView: AppCompatActivity() {
     private val navigationUtils: NavigationUtils = UtilsInjector.navigationUtils
     private val imageLoader: ImageLoader = UtilsInjector.imageLoader
@@ -38,6 +40,8 @@ class OtherInfoView: AppCompatActivity() {
     private lateinit var openUrlButtonCard3: View
 
     private lateinit var loadingProgressBar: ProgressBar
+
+    private lateinit var noResultsTextView: TextView
 
     private lateinit var presenter: OtherInfoPresenter
 
@@ -87,6 +91,8 @@ class OtherInfoView: AppCompatActivity() {
         imageViewCard3 = findViewById(R.id.imageViewCard3)
         sourceTextViewCard3 = findViewById(R.id.sourceTextViewCard3)
         openUrlButtonCard3 = findViewById(R.id.openUrlButtonCard3)
+
+        noResultsTextView = findViewById(R.id.noResults)
     }
 
     private fun subscribeToPresenter() {
@@ -95,12 +101,6 @@ class OtherInfoView: AppCompatActivity() {
     }
 
     private fun disableCards() {
-        /*
-        layoutCard1.visibility = if (isVisible) View.VISIBLE else View.GONE
-        layoutCard2.visibility = if (isVisible) View.VISIBLE else View.GONE
-        layoutCard3.visibility = if (isVisible) View.VISIBLE else View.GONE
-         */
-
         layoutCard1.visibility = View.GONE
         layoutCard2.visibility = View.GONE
         layoutCard3.visibility = View.GONE
@@ -116,11 +116,7 @@ class OtherInfoView: AppCompatActivity() {
     private fun updateView(uiState: OtherInfoUiState) {
         runOnUiThread {
             showLoading(true)
-
-            setCard1(uiState.artistCards[0])
-            setCard2(uiState.artistCards[1])
-            setCard3(uiState.artistCards[2])
-
+            showCards(uiState)
             showLoading(false)
         }
     }
@@ -165,6 +161,6 @@ class OtherInfoView: AppCompatActivity() {
     }
 
     private fun showNoResults() {
-        TODO("Not yet implemented")
+        noResultsTextView.text = NO_RESULTS
     }
 }

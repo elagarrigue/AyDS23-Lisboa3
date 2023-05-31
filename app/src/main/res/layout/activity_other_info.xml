@@ -21,9 +21,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:text=""
             android:textColor="#FFFFFF"
             android:textStyle="bold"
-            />
+            android:textSize="20sp" />
+
 
         <!-- Card 1: Service 1 -->
         <androidx.constraintlayout.widget.ConstraintLayout

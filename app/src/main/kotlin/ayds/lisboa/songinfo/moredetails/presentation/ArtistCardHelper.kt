@@ -1,9 +1,7 @@
 package ayds.lisboa.songinfo.moredetails.presentation
 
-import ayds.lisboa.songinfo.moredetails.domain.entities.Card
 import ayds.lisboa.songinfo.moredetails.domain.entities.Card.ArtistCard
 import ayds.lisboa.songinfo.moredetails.domain.entities.Source
-import ayds.newYork4.artist.external.entities.Artist
 
 interface ArtistCardHelper {
     fun getArtistCards(artistName: String, artistCards: List<ArtistCard>): List<ArtistCardState>
@@ -30,6 +28,7 @@ internal class ArtistCardHelperImpl(private val htmlHelper: HtmlHelper, private 
 
         return artistCardState
     }
+
     private fun formatDescription(description: String, artistName: String): String {
         val dbSaved = if (description.isNotEmpty()) DB_SAVED_SYMBOL else ""
         val descriptionFormatted = if (description.isEmpty()) NO_RESULTS else htmlHelper.getHtmlText(description, artistName)

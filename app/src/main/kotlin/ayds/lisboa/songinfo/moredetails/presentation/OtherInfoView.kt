@@ -10,7 +10,6 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.text.HtmlCompat
 import ayds.lisboa.songinfo.R
 import ayds.lisboa.songinfo.moredetails.dependencyinyector.MoreDetailsInjector
-import ayds.lisboa.songinfo.moredetails.domain.entities.Card.ArtistCard
 import ayds.lisboa.songinfo.utils.UtilsInjector
 import ayds.lisboa.songinfo.utils.navigation.NavigationUtils
 import ayds.lisboa.songinfo.utils.view.ImageLoader
@@ -20,23 +19,23 @@ class OtherInfoView: AppCompatActivity() {
     private val navigationUtils: NavigationUtils = UtilsInjector.navigationUtils
     private val imageLoader: ImageLoader = UtilsInjector.imageLoader
 
-    private lateinit var layoutLastFm: ConstraintLayout
-    private lateinit var descriptionTextViewLastFm: TextView
-    private lateinit var imageViewLastFm: ImageView
-    private lateinit var sourceTextViewLastFm: TextView
-    private lateinit var openUrlButtonLastFm: View
+    private lateinit var layoutCard1: ConstraintLayout
+    private lateinit var otherInfoTextViewCard1: TextView
+    private lateinit var imageViewCard1: ImageView
+    private lateinit var sourceTextViewCard1: TextView
+    private lateinit var openUrlButtonCard1: View
 
-    private lateinit var layoutNewYorkTimes: ConstraintLayout
-    private lateinit var descriptionTextViewNewYorkTimes: TextView
-    private lateinit var imageViewNewYorkTimes: ImageView
-    private lateinit var sourceTextViewNewYorkTimes: TextView
-    private lateinit var openUrlButtonNewYorkTimes: View
+    private lateinit var layoutCard2: ConstraintLayout
+    private lateinit var otherInfoTextViewCard2: TextView
+    private lateinit var imageViewCard2: ImageView
+    private lateinit var sourceTextViewCard2: TextView
+    private lateinit var openUrlButtonCard2: View
 
-    private lateinit var layoutWikipedia: ConstraintLayout
-    private lateinit var descriptionTextViewWikipedia: TextView
-    private lateinit var imageViewWikipedia: ImageView
-    private lateinit var sourceTextViewWikipedia: TextView
-    private lateinit var openUrlButtonWikipedia: View
+    private lateinit var layoutCard3: ConstraintLayout
+    private lateinit var otherInfoTextViewCard3: TextView
+    private lateinit var imageViewCard3: ImageView
+    private lateinit var sourceTextViewCard3: TextView
+    private lateinit var openUrlButtonCard3: View
 
     private lateinit var loadingProgressBar: ProgressBar
 
@@ -52,7 +51,7 @@ class OtherInfoView: AppCompatActivity() {
         initModule()
         initProperties()
         subscribeToPresenter()
-        showCards(false)
+        disableCards()
         open()
     }
 
@@ -71,28 +70,44 @@ class OtherInfoView: AppCompatActivity() {
     private fun initProperties() {
         loadingProgressBar = findViewById(R.id.loadingProgressBar)
 
-        layoutLastFm = findViewById(R.id.layoutLastFm)
-        descriptionTextViewLastFm = findViewById(R.id.otherInfoTextViewLastFm)
-        imageViewLastFm = findViewById(R.id.imageViewLastFm)
-        sourceTextViewLastFm = findViewById(R.id.sourceTextViewLastFm)
-        openUrlButtonLastFm = findViewById(R.id.openUrlButtonLastFm)
+        layoutCard1 = findViewById(R.id.layoutCard1)
+        otherInfoTextViewCard1 = findViewById(R.id.otherInfoTextViewCard1)
+        imageViewCard1 = findViewById(R.id.imageViewCard1)
+        sourceTextViewCard1 = findViewById(R.id.sourceTextViewCard1)
+        openUrlButtonCard1 = findViewById(R.id.openUrlButtonCard1)
 
-        layoutNewYorkTimes = findViewById(R.id.layoutNewYorkTimes)
-        descriptionTextViewNewYorkTimes = findViewById(R.id.otherInfoTextViewNewYorkTimes)
-        imageViewNewYorkTimes = findViewById(R.id.imageViewNewYorkTimes)
-        sourceTextViewNewYorkTimes = findViewById(R.id.sourceTextViewNewYorkTimes)
-        openUrlButtonNewYorkTimes = findViewById(R.id.openUrlButtonNewYorkTimes)
+        layoutCard2 = findViewById(R.id.layoutCard2)
+        otherInfoTextViewCard2 = findViewById(R.id.otherInfoTextViewCard2)
+        imageViewCard2 = findViewById(R.id.imageViewCard2)
+        sourceTextViewCard2 = findViewById(R.id.sourceTextViewCard2)
+        openUrlButtonCard2 = findViewById(R.id.openUrlButtonCard2)
 
-        layoutWikipedia = findViewById(R.id.layoutWikipedia)
-        descriptionTextViewWikipedia = findViewById(R.id.otherInfoTextViewWikipedia)
-        imageViewWikipedia = findViewById(R.id.imageViewWikipedia)
-        sourceTextViewWikipedia = findViewById(R.id.sourceTextViewWikipedia)
-        openUrlButtonWikipedia = findViewById(R.id.openUrlButtonWikipedia)
+        layoutCard3 = findViewById(R.id.layoutCard3)
+        otherInfoTextViewCard3 = findViewById(R.id.otherInfoTextViewCard3)
+        imageViewCard3 = findViewById(R.id.imageViewCard3)
+        sourceTextViewCard3 = findViewById(R.id.sourceTextViewCard3)
+        openUrlButtonCard3 = findViewById(R.id.openUrlButtonCard3)
     }
 
     private fun subscribeToPresenter() {
         presenter = MoreDetailsInjector.getPresenter()
         presenter.uiEventObservable.subscribe(observer)
+    }
+
+    private fun disableCards() {
+        /*
+        layoutCard1.visibility = if (isVisible) View.VISIBLE else View.GONE
+        layoutCard2.visibility = if (isVisible) View.VISIBLE else View.GONE
+        layoutCard3.visibility = if (isVisible) View.VISIBLE else View.GONE
+         */
+
+        layoutCard1.visibility = View.GONE
+        layoutCard2.visibility = View.GONE
+        layoutCard3.visibility = View.GONE
+    }
+
+    private fun open() {
+        presenter.fetch(getArtistName())
     }
 
     private val observer: Observer<OtherInfoUiState> =
@@ -101,46 +116,55 @@ class OtherInfoView: AppCompatActivity() {
     private fun updateView(uiState: OtherInfoUiState) {
         runOnUiThread {
             showLoading(true)
-            setLastFmCard(uiState.artistCards[0])
-            setNewYorkTimesCard(uiState.artistCards[1])
-            setWikipediaCard(uiState.artistCards[2])
-            showLoading(false)
-            showCards(true)
-        }
-    }
 
-    private fun showCards(isVisible: Boolean) {
-        layoutLastFm.visibility = if (isVisible) View.VISIBLE else View.GONE
-        layoutNewYorkTimes.visibility = if (isVisible) View.VISIBLE else View.GONE
-        layoutWikipedia.visibility = if (isVisible) View.VISIBLE else View.GONE
+            setCard1(uiState.artistCards[0])
+            setCard2(uiState.artistCards[1])
+            setCard3(uiState.artistCards[2])
+
+            showLoading(false)
+        }
     }
 
     private fun showLoading(isLoading: Boolean) {
         loadingProgressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
     }
 
-    private fun setLastFmCard(lastFmCard: ArtistCard) {
-        descriptionTextViewLastFm.text = HtmlCompat.fromHtml(lastFmCard.description, HtmlCompat.FROM_HTML_MODE_LEGACY)
-        openUrlButtonLastFm.setOnClickListener { navigationUtils.openExternalUrl(this, lastFmCard.infoUrl) }
-        sourceTextViewLastFm.text = "Source: LastFm"
-        imageLoader.loadImageIntoView(lastFmCard.sourceLogo, imageViewLastFm)
+    private fun showCards(uiState: OtherInfoUiState) {
+        val artistCards = uiState.artistCards
+
+        when(artistCards.size) {
+            1 -> {setCard1(artistCards[0])}
+            2 -> {setCard1(artistCards[0]); setCard2(artistCards[1])}
+            3 -> {setCard1(artistCards[0]); setCard2(artistCards[1]); setCard3(artistCards[2])}
+            else -> showNoResults()
+        }
     }
 
-    private fun setNewYorkTimesCard(newYorkTimesCard: ArtistCard) {
-        descriptionTextViewNewYorkTimes.text = HtmlCompat.fromHtml(newYorkTimesCard.description, HtmlCompat.FROM_HTML_MODE_LEGACY)
-        openUrlButtonNewYorkTimes.setOnClickListener { navigationUtils.openExternalUrl(this, newYorkTimesCard.infoUrl) }
-        sourceTextViewNewYorkTimes.text = "Source: NewYorkTimes"
-        imageLoader.loadImageIntoView(newYorkTimesCard.sourceLogo, imageViewNewYorkTimes)
+    private fun setCard1(card: ArtistCardState) {
+        otherInfoTextViewCard1.text = HtmlCompat.fromHtml(card.descriptionFormatted, HtmlCompat.FROM_HTML_MODE_LEGACY)
+        openUrlButtonCard1.setOnClickListener { navigationUtils.openExternalUrl(this, card.infoUrl) }
+        sourceTextViewCard1.text = card.title
+        imageLoader.loadImageIntoView(card.sourceLogo, imageViewCard1)
+        layoutCard1.visibility = View.VISIBLE
     }
 
-    private fun setWikipediaCard(wikipediaCard: ArtistCard) {
-        descriptionTextViewWikipedia.text = HtmlCompat.fromHtml(wikipediaCard.description, HtmlCompat.FROM_HTML_MODE_LEGACY)
-        openUrlButtonWikipedia.setOnClickListener { navigationUtils.openExternalUrl(this, wikipediaCard.infoUrl) }
-        sourceTextViewWikipedia.text = "Source: Wikipedia"
-        imageLoader.loadImageIntoView(wikipediaCard.sourceLogo, imageViewWikipedia)
+    private fun setCard2(card: ArtistCardState) {
+        otherInfoTextViewCard2.text = HtmlCompat.fromHtml(card.descriptionFormatted, HtmlCompat.FROM_HTML_MODE_LEGACY)
+        openUrlButtonCard2.setOnClickListener { navigationUtils.openExternalUrl(this, card.infoUrl) }
+        sourceTextViewCard2.text = card.title
+        imageLoader.loadImageIntoView(card.sourceLogo, imageViewCard2)
+        layoutCard2.visibility = View.VISIBLE
     }
 
-    private fun open() {
-        presenter.fetch(getArtistName())
+    private fun setCard3(card: ArtistCardState) {
+        otherInfoTextViewCard3.text = HtmlCompat.fromHtml(card.descriptionFormatted, HtmlCompat.FROM_HTML_MODE_LEGACY)
+        openUrlButtonCard3.setOnClickListener { navigationUtils.openExternalUrl(this, card.infoUrl) }
+        sourceTextViewCard3.text = card.title
+        imageLoader.loadImageIntoView(card.sourceLogo, imageViewCard3)
+        layoutCard3.visibility = View.VISIBLE
+    }
+
+    private fun showNoResults() {
+        TODO("Not yet implemented")
     }
 }

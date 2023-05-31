@@ -1,5 +1,6 @@
 package ayds.lisboa.songinfo.moredetails.presentation
 
+import android.util.Log
 import ayds.lisboa.songinfo.moredetails.domain.repository.ArtistInfoRepository
 import ayds.observer.Observable
 import ayds.observer.Subject

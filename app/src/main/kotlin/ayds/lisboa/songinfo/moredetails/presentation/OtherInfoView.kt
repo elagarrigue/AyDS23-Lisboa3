@@ -125,39 +125,42 @@ class OtherInfoView: AppCompatActivity() {
         loadingProgressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
     }
 
+    private data class CardViews(
+        val layout: ConstraintLayout,
+        val textView: TextView,
+        val imageView: ImageView,
+        val sourceTextView: TextView,
+        val openUrlButton: View
+    )
+
     private fun showCards(uiState: OtherInfoUiState) {
         val artistCards = uiState.artistCards
 
-        when(artistCards.size) {
-            1 -> {setCard1(artistCards[0])}
-            2 -> {setCard1(artistCards[0]); setCard2(artistCards[1])}
-            3 -> {setCard1(artistCards[0]); setCard2(artistCards[1]); setCard3(artistCards[2])}
-            else -> showNoResults()
+        val cardViews = listOf(
+            CardViews(layoutCard1, otherInfoTextViewCard1, imageViewCard1, sourceTextViewCard1, openUrlButtonCard1),
+            CardViews(layoutCard2, otherInfoTextViewCard2, imageViewCard2, sourceTextViewCard2, openUrlButtonCard2),
+            CardViews(layoutCard3, otherInfoTextViewCard3, imageViewCard3, sourceTextViewCard3, openUrlButtonCard3)
+        )
+
+        var hasCards = false
+
+        cardViews.forEachIndexed { index, cardView ->
+            val card = artistCards.getOrNull(index)
+            if (card != null) {
+                cardView.textView.text = HtmlCompat.fromHtml(card.descriptionFormatted, HtmlCompat.FROM_HTML_MODE_LEGACY)
+                cardView.textView.setOnClickListener { navigationUtils.openExternalUrl(this, card.infoUrl) }
+                cardView.sourceTextView.text = card.title
+                imageLoader.loadImageIntoView(card.sourceLogo, cardView.imageView)
+                cardView.layout.visibility = View.VISIBLE
+                hasCards = true
+            } else {
+                cardView.layout.visibility = View.GONE
+            }
         }
-    }
 
-    private fun setCard1(card: ArtistCardState) {
-        otherInfoTextViewCard1.text = HtmlCompat.fromHtml(card.descriptionFormatted, HtmlCompat.FROM_HTML_MODE_LEGACY)
-        openUrlButtonCard1.setOnClickListener { navigationUtils.openExternalUrl(this, card.infoUrl) }
-        sourceTextViewCard1.text = card.title
-        imageLoader.loadImageIntoView(card.sourceLogo, imageViewCard1)
-        layoutCard1.visibility = View.VISIBLE
-    }
-
-    private fun setCard2(card: ArtistCardState) {
-        otherInfoTextViewCard2.text = HtmlCompat.fromHtml(card.descriptionFormatted, HtmlCompat.FROM_HTML_MODE_LEGACY)
-        openUrlButtonCard2.setOnClickListener { navigationUtils.openExternalUrl(this, card.infoUrl) }
-        sourceTextViewCard2.text = card.title
-        imageLoader.loadImageIntoView(card.sourceLogo, imageViewCard2)
-        layoutCard2.visibility = View.VISIBLE
-    }
-
-    private fun setCard3(card: ArtistCardState) {
-        otherInfoTextViewCard3.text = HtmlCompat.fromHtml(card.descriptionFormatted, HtmlCompat.FROM_HTML_MODE_LEGACY)
-        openUrlButtonCard3.setOnClickListener { navigationUtils.openExternalUrl(this, card.infoUrl) }
-        sourceTextViewCard3.text = card.title
-        imageLoader.loadImageIntoView(card.sourceLogo, imageViewCard3)
-        layoutCard3.visibility = View.VISIBLE
+        if (!hasCards) {
+            showNoResults()
+        }
     }
 
     private fun showNoResults() {

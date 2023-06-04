@@ -1,11 +1,11 @@
 package ayds.lisboa.songinfo.moredetails.dependencyinyector
 
 import android.content.Context
-import ayds.lisboa.songinfo.moredetails.data.ArtistInfoRepositoryImpl
-import ayds.lisboa.songinfo.moredetails.data.external.broker.Broker
-import ayds.lisboa.songinfo.moredetails.data.external.broker.BrokerImpl
-import ayds.lisboa.songinfo.moredetails.data.external.proxy.Proxy
-import ayds.lisboa.songinfo.moredetails.domain.repository.ArtistInfoRepository
+import ayds.lisboa.songinfo.moredetails.data.CardsRepositoryImpl
+import ayds.lisboa.songinfo.moredetails.data.external.broker.CardsBroker
+import ayds.lisboa.songinfo.moredetails.data.external.broker.CardsBrokerImpl
+import ayds.lisboa.songinfo.moredetails.data.external.broker.proxy.CardProxy
+import ayds.lisboa.songinfo.moredetails.domain.repository.CardsRepository
 import ayds.lisboa.songinfo.moredetails.presentation.ArtistCardHelper
 import ayds.lisboa.songinfo.moredetails.presentation.ArtistCardHelperImpl
 import ayds.lisboa.songinfo.moredetails.presentation.HtmlHelper
@@ -15,11 +15,11 @@ import ayds.lisboa.songinfo.moredetails.presentation.OtherInfoPresenterImpl
 import ayds.lisboa.songinfo.moredetails.presentation.OtherInfoView
 import ayds.lisboa3.submodule.lastFm.LastFmInjector
 import ayds.lisboa3.submodule.lastFm.LastFmService
-import ayds.lisboa.songinfo.moredetails.data.external.proxy.ProxyLastFm
-import ayds.lisboa.songinfo.moredetails.data.external.proxy.ProxyNewYorkTimes
-import ayds.lisboa.songinfo.moredetails.data.external.proxy.ProxyWikipedia
-import ayds.lisboa.songinfo.moredetails.data.local.CardLocalStorage
-import ayds.lisboa.songinfo.moredetails.data.local.CardLocalStorageImpl
+import ayds.lisboa.songinfo.moredetails.data.external.broker.proxy.CardProxyLastFm
+import ayds.lisboa.songinfo.moredetails.data.external.broker.proxy.CardProxyNewYorkTimes
+import ayds.lisboa.songinfo.moredetails.data.external.broker.proxy.CardProxyWikipedia
+import ayds.lisboa.songinfo.moredetails.data.local.CardsLocalStorage
+import ayds.lisboa.songinfo.moredetails.data.local.CardsLocalStorageImpl
 import ayds.lisboa.songinfo.moredetails.data.local.CursorToCardMapper
 import ayds.lisboa.songinfo.moredetails.data.local.CursorToCardMapperImpl
 import ayds.lisboa.songinfo.moredetails.presentation.SourceFactory
@@ -31,18 +31,18 @@ import ayds.winchester.artistinfo.external.WikipediaService
 
 object MoreDetailsInjector {
     private lateinit var cursorToCardMapper: CursorToCardMapper
-    private lateinit var cardLocalStorage: CardLocalStorage
+    private lateinit var cardsLocalStorage: CardsLocalStorage
 
     private lateinit var lastFmService: LastFmService
     private lateinit var newYorkTimesService: NYTimesArtistService
     private lateinit var wikipediaService: WikipediaService
 
-    private lateinit var proxyLastFm: Proxy
-    private lateinit var proxyNewYorkTimes: Proxy
-    private lateinit var proxyWikipedia: Proxy
-    private lateinit var broker: Broker
+    private lateinit var cardProxyLastFm: CardProxy
+    private lateinit var cardProxyNewYorkTimes: CardProxy
+    private lateinit var cardProxyWikipedia: CardProxy
+    private lateinit var cardsBroker: CardsBroker
 
-    private lateinit var artistInfoRepository: ArtistInfoRepository
+    private lateinit var cardsRepository: CardsRepository
 
     private lateinit var artistCardHelper: ArtistCardHelper
     private lateinit var htmlHelper: HtmlHelper
@@ -59,7 +59,7 @@ object MoreDetailsInjector {
 
     private fun initLocalStorage(otherInfoView: OtherInfoView){
         cursorToCardMapper = CursorToCardMapperImpl()
-        cardLocalStorage = CardLocalStorageImpl(otherInfoView as Context, cursorToCardMapper)
+        cardsLocalStorage = CardsLocalStorageImpl(otherInfoView as Context, cursorToCardMapper)
     }
 
     private fun initExternalServices() {
@@ -69,20 +69,20 @@ object MoreDetailsInjector {
     }
 
     private fun initBroker(){
-        proxyLastFm = ProxyLastFm(lastFmService)
-        proxyNewYorkTimes = ProxyNewYorkTimes(newYorkTimesService)
-        proxyWikipedia = ProxyWikipedia(wikipediaService)
-        broker = BrokerImpl(listOf(proxyLastFm, proxyNewYorkTimes, proxyWikipedia))
+        cardProxyLastFm = CardProxyLastFm(lastFmService)
+        cardProxyNewYorkTimes = CardProxyNewYorkTimes(newYorkTimesService)
+        cardProxyWikipedia = CardProxyWikipedia(wikipediaService)
+        cardsBroker = CardsBrokerImpl(listOf(cardProxyLastFm, cardProxyNewYorkTimes, cardProxyWikipedia))
     }
     private fun initRepository() {
-        artistInfoRepository = ArtistInfoRepositoryImpl(cardLocalStorage, broker)
+        cardsRepository = CardsRepositoryImpl(cardsLocalStorage, cardsBroker)
     }
 
     private fun initPresenter(){
         htmlHelper = HtmlHelperImpl()
         sourceFactory = SourceFactoryImpl
         artistCardHelper = ArtistCardHelperImpl(htmlHelper, sourceFactory)
-        otherInfoPresenter = OtherInfoPresenterImpl(artistInfoRepository, artistCardHelper)
+        otherInfoPresenter = OtherInfoPresenterImpl(cardsRepository, artistCardHelper)
     }
 
     fun getPresenter() = otherInfoPresenter

@@ -4,19 +4,18 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
-import ayds.lisboa.songinfo.moredetails.domain.entities.Card
 import ayds.lisboa.songinfo.moredetails.domain.entities.Card.ArtistCard
 
-interface CardLocalStorage {
+interface CardsLocalStorage {
     fun saveArtistCard(artistName: String, artistCard: ArtistCard)
     fun getArtistCards(artistName: String): List<ArtistCard>
 }
 
-internal class CardLocalStorageImpl (
+internal class CardsLocalStorageImpl (
     context: Context,
     private val cursorToCardMapper: CursorToCardMapper
 ) : SQLiteOpenHelper(context, DB_NAME, null, 1),
-    CardLocalStorage {
+    CardsLocalStorage {
 
     private val projection = arrayOf(
         ID,
@@ -50,7 +49,6 @@ internal class CardLocalStorageImpl (
 
         return values
     }
-
 
     override fun getArtistCards(artistName: String): List<ArtistCard> {
         val artistValues = arrayOf(artistName)

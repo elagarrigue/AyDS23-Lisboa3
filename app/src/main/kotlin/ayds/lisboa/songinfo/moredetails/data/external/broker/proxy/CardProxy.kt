@@ -1,7 +1,7 @@
-package ayds.lisboa.songinfo.moredetails.data.external.proxy
+package ayds.lisboa.songinfo.moredetails.data.external.broker.proxy
 
 import ayds.lisboa.songinfo.moredetails.domain.entities.Card
 
-interface Proxy {
+interface CardProxy {
     fun getCard(artistName: String): Card
 }

@@ -127,38 +127,36 @@ class OtherInfoView: AppCompatActivity() {
 
     private data class CardViews(
         val layout: ConstraintLayout,
-        val textView: TextView,
+        val descriptionTextView: TextView,
         val imageView: ImageView,
-        val sourceTextView: TextView,
-        val openUrlButton: View
+        val openUrlButton: View,
+        val sourceTextView: TextView
     )
 
     private fun showCards(uiState: OtherInfoUiState) {
         val artistCards = uiState.artistCards
 
         val cardViews = listOf(
-            CardViews(layoutCard1, otherInfoTextViewCard1, imageViewCard1, sourceTextViewCard1, openUrlButtonCard1),
-            CardViews(layoutCard2, otherInfoTextViewCard2, imageViewCard2, sourceTextViewCard2, openUrlButtonCard2),
-            CardViews(layoutCard3, otherInfoTextViewCard3, imageViewCard3, sourceTextViewCard3, openUrlButtonCard3)
+            CardViews(layoutCard1, otherInfoTextViewCard1, imageViewCard1, openUrlButtonCard1, sourceTextViewCard1),
+            CardViews(layoutCard2, otherInfoTextViewCard2, imageViewCard2, openUrlButtonCard2, sourceTextViewCard2),
+            CardViews(layoutCard3, otherInfoTextViewCard3, imageViewCard3, openUrlButtonCard3, sourceTextViewCard3)
         )
 
-        var hasCards = false
+        if (artistCards.isNotEmpty()) {
+            cardViews.forEachIndexed { index, cardView ->
+                val card = artistCards.getOrNull(index)
 
-        cardViews.forEachIndexed { index, cardView ->
-            val card = artistCards.getOrNull(index)
-            if (card != null) {
-                cardView.textView.text = HtmlCompat.fromHtml(card.formattedDescription, HtmlCompat.FROM_HTML_MODE_LEGACY)
-                cardView.textView.setOnClickListener { navigationUtils.openExternalUrl(this, card.infoUrl) }
-                cardView.sourceTextView.text = card.title
-                imageLoader.loadImageIntoView(card.sourceLogo, cardView.imageView)
-                cardView.layout.visibility = View.VISIBLE
-                hasCards = true
-            } else {
-                cardView.layout.visibility = View.GONE
+                if (card != null) {
+                    cardView.descriptionTextView.text = HtmlCompat.fromHtml(card.formattedDescription, HtmlCompat.FROM_HTML_MODE_LEGACY)
+                    imageLoader.loadImageIntoView(card.sourceLogo, cardView.imageView)
+                    cardView.openUrlButton.setOnClickListener { navigationUtils.openExternalUrl(this, card.infoUrl) }
+                    cardView.sourceTextView.text = card.title
+                    cardView.layout.visibility = View.VISIBLE
+                } else {
+                    cardView.layout.visibility = View.GONE
+                }
             }
-        }
-
-        if (!hasCards) {
+        } else {
             showNoResults()
         }
     }

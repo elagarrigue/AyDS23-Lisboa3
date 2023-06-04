@@ -1,4 +1,4 @@
-package ayds.lisboa.songinfo.moredetails.data.external.proxy
+package ayds.lisboa.songinfo.moredetails.data.external.broker.proxy
 
 import ayds.lisboa.songinfo.moredetails.domain.entities.Card
 import ayds.lisboa.songinfo.moredetails.domain.entities.Source
@@ -7,7 +7,7 @@ import ayds.newYork4.artist.external.entities.Artist
 import ayds.newYork4.artist.external.entities.NY_TIMES_LOGO_URL
 
 
-internal class ProxyNewYorkTimes(private val newYorkTimesService: NYTimesArtistService): Proxy {
+internal class CardProxyNewYorkTimes(private val newYorkTimesService: NYTimesArtistService): CardProxy {
     override fun getCard(artistName: String): Card {
         val newYorkTimes = newYorkTimesService.getArtist(artistName)
 

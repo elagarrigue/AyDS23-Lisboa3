@@ -1,6 +1,6 @@
 package ayds.lisboa.songinfo.moredetails.presentation
 
-import ayds.lisboa.songinfo.moredetails.domain.repository.ArtistInfoRepository
+import ayds.lisboa.songinfo.moredetails.domain.repository.CardsRepository
 import ayds.observer.Observable
 import ayds.observer.Subject
 
@@ -10,7 +10,7 @@ interface OtherInfoPresenter {
     fun fetch(artistName: String)
 }
 
-internal class OtherInfoPresenterImpl(private val artistInfoRepository: ArtistInfoRepository,
+internal class OtherInfoPresenterImpl(private val cardsRepository: CardsRepository,
                                       private val artistCardHelper: ArtistCardHelper
 ): OtherInfoPresenter {
 
@@ -24,7 +24,7 @@ internal class OtherInfoPresenterImpl(private val artistInfoRepository: ArtistIn
     }
 
     private fun getArtistCards(artistName: String) {
-        val artistCards = artistInfoRepository.getArtistInfo(artistName)
+        val artistCards = cardsRepository.getArtistCards(artistName)
         val uiState = OtherInfoUiState(artistCardHelper.getArtistCards(artistName, artistCards))
         uiEventObservable.notify(uiState)
     }

@@ -1,4 +1,4 @@
-package ayds.lisboa.songinfo.moredetails.data.external.proxy
+package ayds.lisboa.songinfo.moredetails.data.external.broker.proxy
 
 import ayds.lisboa.songinfo.moredetails.domain.entities.Card
 import ayds.lisboa.songinfo.moredetails.domain.entities.Source
@@ -6,7 +6,7 @@ import ayds.winchester.artistinfo.external.DEFAULT_IMAGE
 import ayds.winchester.artistinfo.external.WikipediaArtistInfo
 import ayds.winchester.artistinfo.external.WikipediaService
 
-internal class ProxyWikipedia(private val wikipediaService: WikipediaService) : Proxy {
+internal class CardProxyWikipedia(private val wikipediaService: WikipediaService) : CardProxy {
     override fun getCard(artistName: String): Card {
         val wikipedia = wikipediaService.getArtist(artistName)
 

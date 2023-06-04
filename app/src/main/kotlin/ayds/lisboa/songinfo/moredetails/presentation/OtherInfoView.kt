@@ -145,15 +145,12 @@ class OtherInfoView: AppCompatActivity() {
         if (artistCards.isNotEmpty()) {
             cardViews.forEachIndexed { index, cardView ->
                 val card = artistCards.getOrNull(index)
-
-                if (card != null) {
-                    cardView.descriptionTextView.text = HtmlCompat.fromHtml(card.formattedDescription, HtmlCompat.FROM_HTML_MODE_LEGACY)
-                    imageLoader.loadImageIntoView(card.sourceLogo, cardView.imageView)
+                card?.let {
+                    cardView.descriptionTextView.text = HtmlCompat.fromHtml(it.formattedDescription, HtmlCompat.FROM_HTML_MODE_LEGACY)
+                    imageLoader.loadImageIntoView(it.sourceLogo, cardView.imageView)
                     cardView.openUrlButton.setOnClickListener { navigationUtils.openExternalUrl(this, card.infoUrl) }
-                    cardView.sourceTextView.text = card.title
+                    cardView.sourceTextView.text = it.title
                     cardView.layout.visibility = View.VISIBLE
-                } else {
-                    cardView.layout.visibility = View.GONE
                 }
             }
         } else {

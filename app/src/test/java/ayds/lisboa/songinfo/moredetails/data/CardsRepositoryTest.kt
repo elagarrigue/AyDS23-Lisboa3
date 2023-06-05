@@ -12,12 +12,11 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
-import java.lang.Exception
 
 internal class CardsRepositoryTest {
 
     private val cardsLocalStorage: CardsLocalStorage = mockk(relaxUnitFun = true)
-    private val cardsBroker : CardsBroker = mockk(relaxUnitFun = true)
+    private val cardsBroker: CardsBroker = mockk(relaxUnitFun = true)
 
     private val cardsRepository: CardsRepository by lazy {
         CardsRepositoryImpl(cardsLocalStorage, cardsBroker)
@@ -35,38 +34,36 @@ internal class CardsRepositoryTest {
 
     @Test
     fun `given existing artist from db should return artistInfo`(){
-        val artistInfo = listOf(
-            ArtistCard("bioContent", "url", Source.LastFm),
-            ArtistCard().
-        every { cardsLocalStorage.getArtistCards("artistName") } returns listOf(artistInfo)
+        val artistCards = listOf(
+            ArtistCard("description", "infoUrl", Source.LastFm, "sourceLogo"),
+            ArtistCard("description", "infoUrl", Source.NewYorkTimes, "sourceLogo"),
+            ArtistCard("description", "infoUrl", Source.Wikipedia, "sourceLogo")
+        )
+        every { cardsLocalStorage.getArtistCards("artistName") } returns artistCards
 
         val result = cardsRepository.getArtistCards("artistName")
 
-        assertEquals(artistInfo, result)
-        assertTrue(artistInfo.isLocallyStored)
+        assertEquals(artistCards, result)
+        artistCards.forEach { assertTrue(it.isLocallyStored) }
     }
 
     @Test
     fun `given existing artist from service should get the artistInfo and store it`(){
-        val artistInfo = LastFmArtistInfo("bioContent", "url", false)
-        every { cardsLocalStorage.getArtistInfo("artistName") } returns null
-        every { cardsBroker.getArtistInfo("artistName") } returns artistInfo
+        val artistCards = listOf(
+            ArtistCard("description", "infoUrl", Source.LastFm, "sourceLogo", false),
+            ArtistCard("description", "infoUrl", Source.NewYorkTimes, "sourceLogo", false),
+            ArtistCard("description", "infoUrl", Source.Wikipedia, "sourceLogo", false)
+        )
+        every { cardsLocalStorage.getArtistCards("artistName") } returns emptyList()
+        every { cardsBroker.getArtistCards("artistName") } returns artistCards
 
         val result = cardsRepository.getArtistCards("artistName")
 
-        assertEquals(artistInfo, result)
-        assertFalse(artistInfo.isLocallyStored)
-        verify { cardsLocalStorage.saveArtist("artistName", artistInfo) }
-    }
-
-    @Test
-    fun `given service exception should return emptyArtistInfo`() {
-        every { cardsLocalStorage.getArtistInfo("artistName") } returns null
-        every { cardsBroker.getArtistInfo("artistName") } throws mockk<Exception>()
-
-        val result = cardsRepository.getArtistCards("artistName")
-
-        assertEquals(ArtistInfo.EmptyArtistInfo, result)
+        assertEquals(artistCards, result)
+        artistCards.forEach {
+            assertFalse(it.isLocallyStored)
+            verify { cardsLocalStorage.saveArtistCard("artistName", it) }
+        }
     }
 
 }

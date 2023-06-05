@@ -10,9 +10,7 @@ interface OtherInfoPresenter {
     fun fetch(artistName: String)
 }
 
-internal class OtherInfoPresenterImpl(private val cardsRepository: CardsRepository,
-                                      private val artistCardHelper: ArtistCardHelper
-): OtherInfoPresenter {
+internal class OtherInfoPresenterImpl(private val cardsRepository: CardsRepository, private val artistCardHelper: ArtistCardHelper): OtherInfoPresenter {
 
     private val onActionSubject = Subject<OtherInfoUiState>()
     override val uiEventObservable = onActionSubject

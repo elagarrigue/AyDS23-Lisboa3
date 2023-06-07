@@ -1,7 +1,6 @@
 package ayds.lisboa.songinfo.moredetails.presentation
 
-import ayds.lisboa.songinfo.moredetails.domain.entities.ArtistInfo
-import ayds.lisboa.songinfo.moredetails.domain.repository.ArtistInfoRepository
+import ayds.lisboa.songinfo.moredetails.domain.repository.CardsRepository
 import ayds.observer.Observable
 import ayds.observer.Subject
 
@@ -11,30 +10,20 @@ interface OtherInfoPresenter {
     fun fetch(artistName: String)
 }
 
-internal class OtherInfoPresenterImpl(private val artistInfoRepository: ArtistInfoRepository,
-                                      private val artistInfoHelper: ArtistInfoHelper
-): OtherInfoPresenter {
+internal class OtherInfoPresenterImpl(private val cardsRepository: CardsRepository, private val artistCardHelper: ArtistCardHelper): OtherInfoPresenter {
 
     private val onActionSubject = Subject<OtherInfoUiState>()
     override val uiEventObservable = onActionSubject
 
     override fun fetch(artistName: String){
         Thread {
-            getArtistInfoOnUpdateView(artistName)
+            getArtistCards(artistName)
         }.start()
     }
 
-    private fun getArtistInfoOnUpdateView(artistName: String) {
-        val artistInfo = artistInfoRepository.getArtistInfo(artistName)
-        val uiState = getUiState(artistName, artistInfo)
+    private fun getArtistCards(artistName: String) {
+        val artistCards = cardsRepository.getArtistCards(artistName)
+        val uiState = OtherInfoUiState(artistCardHelper.getArtistCards(artistName, artistCards))
         uiEventObservable.notify(uiState)
     }
-
-    private fun getUiState(artistName: String, artistInfo: ArtistInfo): OtherInfoUiState {
-        return OtherInfoUiState(
-            artistInfoBioContent = artistInfoHelper.getArtistInfoText(artistName, artistInfo),
-            artistInfoUrl = artistInfoHelper.getArtistInfoUrl(artistInfo)
-        )
-    }
-
 }

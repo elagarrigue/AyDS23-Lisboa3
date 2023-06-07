@@ -35,11 +35,9 @@ internal class HtmlHelperImpl: HtmlHelper {
 
         var modifiedText = text.replace(singleQuote, space)
         modifiedText = modifiedText.replace(lineBreakJson, lineBreakHTML)
-        modifiedText = modifiedText.replace((caseInsensitive + term).toRegex(),
-            startBoldLabel + term.uppercase(Locale.getDefault()) + finishBoldLabel)
+        modifiedText = modifiedText.replace((caseInsensitive + term).toRegex(),startBoldLabel + term.uppercase(Locale.getDefault()) + finishBoldLabel)
 
         return modifiedText
     }
-
 
 }

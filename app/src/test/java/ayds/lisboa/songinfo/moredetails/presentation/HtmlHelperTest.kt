@@ -5,9 +5,10 @@ import org.junit.Test
 
 internal class HtmlHelperTest {
 
+    private val htmlHelper: HtmlHelper by lazy { HtmlHelperImpl() }
+
     @Test
     fun `getHtmlText should return the correct HTML text`() {
-        val htmlHelper: HtmlHelper = HtmlHelperImpl()
         val text = "Hello world Lisbon 3"
         val term = "world"
 
@@ -16,4 +17,5 @@ internal class HtmlHelperTest {
 
         assertEquals(expectedHtmlText, result)
     }
+
 }

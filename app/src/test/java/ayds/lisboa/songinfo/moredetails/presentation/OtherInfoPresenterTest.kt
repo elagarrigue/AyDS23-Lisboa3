@@ -1,37 +1,44 @@
 package ayds.lisboa.songinfo.moredetails.presentation
 
-import ayds.lisboa.songinfo.moredetails.domain.entities.ArtistInfo
-import ayds.lisboa.songinfo.moredetails.domain.repository.ArtistInfoRepository
+import ayds.lisboa.songinfo.moredetails.domain.entities.Card.ArtistCard
+import ayds.lisboa.songinfo.moredetails.domain.entities.Source
+import ayds.lisboa.songinfo.moredetails.domain.repository.CardsRepository
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import org.junit.Test
 
 internal class OtherInfoPresenterTest {
-    private val artistInfoRepository: ArtistInfoRepository = mockk()
-    private val artistInfoHelper: ArtistInfoHelper= mockk()
-    private val otherInfoPresenter = OtherInfoPresenterImpl(artistInfoRepository,artistInfoHelper)
+
+    private val cardsRepository = mockk<CardsRepository>()
+    private val artistCardHelper = mockk<ArtistCardHelper>()
+    private val otherInfoPresenter: OtherInfoPresenter by lazy {
+        OtherInfoPresenterImpl(cardsRepository, artistCardHelper)
+    }
 
     @Test
     fun `on fetch should notify subscribers with otherInfoUiState`() {
-        val artistInfo:ArtistInfo = mockk()
-        val bio = ""
-        val url = ""
+        val artistCards = listOf(
+            ArtistCard("description", "infoUrl", Source.LastFm, "sourceLogo"),
+            ArtistCard("description", "infoUrl", Source.NewYorkTimes, "sourceLogo"),
+            ArtistCard("description", "infoUrl", Source.Wikipedia, "sourceLogo")
+        )
+        val artistCardsStates = listOf(
+            ArtistCardState("formattedDescription", "infoUrl", "title", "sourceLogo"),
+            ArtistCardState("formattedDescription", "infoUrl", "title", "sourceLogo"),
+            ArtistCardState("formattedDescription", "infoUrl", "title", "sourceLogo")
+        )
         val otherInfoUiStateTester: (OtherInfoUiState) -> Unit = mockk(relaxed = true)
         otherInfoPresenter.uiEventObservable.subscribe {
             otherInfoUiStateTester(it)
         }
 
-        every { artistInfoRepository.getArtistInfo("artist") } returns artistInfo
-        every { artistInfoHelper.getArtistInfoText("artist",artistInfo) } returns bio
-        every { artistInfoHelper.getArtistInfoUrl(artistInfo) } returns url
-        val otherInfoUiState = OtherInfoUiState(
-            artistInfoBioContent = bio,
-            artistInfoUrl = url
-        )
+        every { cardsRepository.getArtistCards("artist") } returns artistCards
+        every { artistCardHelper.getArtistCards("artist", artistCards) } returns artistCardsStates
+        val result = OtherInfoUiState(artistCardsStates)
         otherInfoPresenter.fetch("artist")
 
-        verify { otherInfoUiStateTester(otherInfoUiState) }
+        verify { otherInfoUiStateTester(result) }
     }
 
 }
